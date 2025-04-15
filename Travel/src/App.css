@@ -1,0 +1,13 @@
+* {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+
+}
+
+.app-div {
+    margin-top: -5.5rem;
+}
+
+.mt-6 {
+    margin-top: 11rem;
+}

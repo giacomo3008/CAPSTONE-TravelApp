@@ -1,0 +1,231 @@
+.search-container {
+    width: 70%;
+    max-width: 1245px;
+    margin: 0 auto;
+
+}
+
+.search-container h4 {
+    color: #FEFAF6;
+    font-size: 0.8rem;
+}
+
+.search-container h5 {
+    color: #FEFAF6;
+    font-size: 0.7rem;
+    position: relative;
+}
+
+.search-container .div-h5 {
+    cursor: pointer;
+}
+
+.search-container h5 i {
+    font-size: 0.5rem;
+    margin-left: 0.2rem;
+    position: absolute;
+    top: 2px;
+    right: -13px;
+}
+
+.search-container h2 {
+    color: #FEFAF6;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+
+/* Layout del form */
+.search-form-container {
+    padding: 1.5rem;
+    padding-bottom: 4rem;
+    box-shadow: 4px 4px 50px rgba(0, 0, 0, 0.8);
+    box-shadow: -4px -4px 50px rgba(0, 0, 0, 0.8);
+    position: relative;
+    border-radius: 15px;
+}
+
+.search-form-container label,
+.search-form-container p {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-form label,
+.search-form input,
+.search-form p {
+    color: rgb(91, 91, 91);
+}
+
+.search-form span {
+    color: rgb(151, 150, 150);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Stile per le singole sezioni del form */
+.form-section {
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+input[type="text"],
+input[type="date"] {
+    padding: 10px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    width: 300px;
+    height: 40px;
+    background-color: #F9F9F9;
+    color: rgb(111, 111, 111);
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="date"]:hover,
+input[type="text"]:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.142);
+}
+
+input[type="text"]::placeholder {
+    color: #a8a8a8;
+}
+
+/* Sezione del range per il budget */
+.range-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 250px;
+}
+
+.range {
+    appearance: none;
+    /* disattiva lo stile di default su Chrome/Safari */
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    cursor: pointer;
+    box-shadow: 0 0 0px rgba(0, 0, 0, 0);
+    transition: all 0.3 ease-in-out;
+}
+
+.range:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.151);
+}
+
+.range::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(to right,
+            #26ADB4 0%,
+            /* colore prima del thumb */
+            #26ADB4 var(--progress),
+            /* colore fino al valore */
+            #E3E3E3 var(--progress),
+            /* colore dopo il valore */
+            #E3E3E3 100%);
+    /* colore della barra */
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.range::-webkit-slider-thumb {
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #26ADB4;
+    /* colore del thumb */
+    margin-top: -6px;
+    /* centratura verticale rispetto alla track */
+    cursor: pointer;
+}
+
+
+/* Bottone di invio */
+.search-form-container button {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-top: 7px;
+    padding-bottom: 5px;
+    background-color: #F16571;
+    color: #E8EEFA;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 20px;
+    width: 43px;
+    transition: all 0.5s ease-in-out;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.427);
+}
+
+.search-form-container button i {
+    color: inherit;
+    /* Rende l'icona dello stesso colore del bottone */
+}
+
+.search-form-container button:hover {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.178);
+    width: 150px;
+}
+
+.search-form-container button:hover i {
+    color: #b8bdc7;
+}
+
+
+/*SEARCH FORM QUANDO SI è NELLA PAGINA RISULTATI*/
+
+.search-form-container.search {
+    position: sticky;
+    top: 5.5rem;
+    padding: 0 15rem;
+    box-shadow: none;
+    box-shadow: 0px 20px 20px rgba(0, 0, 0, 0.097);
+    border-radius: 0;
+    margin-bottom: 4rem;
+    z-index: 10;
+    background: linear-gradient(to bottom, rgb(255, 255, 255) 70%, rgba(255, 255, 255, 0.186)) !important;
+    /* background-color: rgba(255, 255, 255, 0.385) !important; */
+}
+
+.search-form-container.search .search-form {
+    padding-bottom: 2rem;
+    padding-top: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.search-form-container.search button {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.242);
+    margin-left: 2rem;
+    transition: all 0.5s ease-in-out;
+}
+
+.search-form-container.search button:hover {
+    transform: scale(1.2);
+    width: 43px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.23);
+}

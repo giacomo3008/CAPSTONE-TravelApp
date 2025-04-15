@@ -1,0 +1,76 @@
+.details-container {
+    padding: 20px;
+}
+
+.details-container .main-image-card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.details-container .main-image-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.details-container .card-img-top {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.details-container .card-img-top:hover {
+    transform: scale(1.05);
+}
+
+.details-container h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.details-container .continent,
+.details-container .type,
+.details-container .price {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.details-container .price {
+    font-weight: bold;
+}
+
+.details-container .btn-primary {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border-radius: 50px;
+    background-color: #ff5a5f;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.details-container .btn-primary:hover {
+    background-color: #e04e4f;
+}
+
+.details-container .d-flex .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Griglia per le immagini piccole */
+.details-container .d-flex .col-md-4 .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+/* Styling delle immagini più piccole */
+.details-container .d-flex .col-md-4 .col {
+    padding: 0;
+}
+
+.details-container .d-flex .col-md-4 .col img {
+    border-radius: 8px;
+}

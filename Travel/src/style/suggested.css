@@ -1,0 +1,95 @@
+.suggested-container {
+    width: 75%;
+    max-width: 1245px;
+    transition: transform 0.2s ease-in-out;
+}
+
+.suggested-container.pulse {
+    transform: scale(1.03);
+}
+
+.suggested-container .icons {
+    top: 173px;
+    right: 30px;
+    background-color: #FFD000;
+    padding: 8px 12px;
+    border-radius: 100px;
+}
+
+.suggested-container .icons i {
+    transform: scale(1.2);
+    color: rgb(255, 255, 255);
+}
+
+.suggested-container .card {
+    height: 35rem;
+    z-index: 1 !important;
+    border: none;
+    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: -4px -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.suggested-container h2 {
+    color: #5B5B5B;
+}
+
+.suggested-container .card-title {
+    font-weight: 600;
+    color: rgb(91, 91, 91);
+}
+
+.suggested-container .continente,
+.suggested-container .continente i {
+    color: #B7B7B7;
+    font-size: 0.8rem;
+}
+
+.suggested-container .tipo {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #797979;
+    width: 70%;
+    padding-right: 95px;
+}
+
+.suggested-container .prezzo {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #525252;
+    width: 30%;
+    margin-bottom: auto;
+    text-align: end;
+}
+
+.suggested-container .intermedio {
+    border-bottom: 1px solid rgba(158, 158, 158, 0.201);
+    border-top: 1px solid rgb(158, 158, 158, 0.201);
+}
+
+.suggested-container .card-text {
+    padding-right: 20px;
+    color: #797979;
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.9;
+}
+
+.suggested-container .card-body .btn {
+    width: 100px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background-color: #FFD000;
+    border-radius: 30px;
+    border: none;
+    transition: transform 0.3s ease-in-out;
+}
+
+.suggested-container .card-body .btn:hover {
+    transform: scale(1.1);
+}
+
+
+.results-div {
+    padding-top: 5rem !important;
+}
