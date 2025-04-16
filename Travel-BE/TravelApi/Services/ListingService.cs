@@ -25,5 +25,17 @@ namespace TravelApi.Services
                                                     .ThenInclude(c => c.ExperienceType)
                                             .ToListAsync();
         }
+
+        public async Task<Listing?> GetListingByIdAsync(Guid id)
+        {
+            return await _context.Listings.Include(l => l.Description)
+                                                .ThenInclude(d => d.PropertyType)
+                                            .Include(l => l.Description)
+                                                .ThenInclude(d => d.City)
+                                                    .ThenInclude(c => c.Country)
+                                            .Include(l => l.Description)
+                                                .ThenInclude(d => d.City)
+                                                    .ThenInclude(c => c.ExperienceType).FirstOrDefaultAsync(l => l.Id == id);
+        }
     }
 }

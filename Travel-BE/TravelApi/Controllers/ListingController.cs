@@ -13,9 +13,12 @@ namespace TravelApi.Controllers
     {
         private readonly ListingService _listingService;
 
-        public ListingController(ListingService listingService)
+        private readonly ILogger<ListingController> _logger;
+
+        public ListingController(ListingService listingService, ILogger<ListingController> logger)
         {
             _listingService = listingService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -61,6 +64,52 @@ namespace TravelApi.Controllers
             });
 
             return Ok(listingsDto);
+        }
+
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> GetListingById(Guid id)
+        {
+            var listing = await _listingService.GetListingByIdAsync(id);
+
+            var listingDto = new ListingDto()
+            {
+                Id = listing.Id,
+                HotelName = listing.HotelName,
+                ImgUrls = listing.ImgUrls,
+                Description = new ListingDescriptionDto()
+                {
+                    Id = listing.Description.Id,
+                    Description = listing.Description.Description,
+                    Beds = listing.Description.Beds,
+                    Capacity = listing.Description.Capacity,
+                    PricePerNight = listing.Description.PricePerNight,
+                    PropertyType = new PropertyTypeDto()
+                    {
+                        Id = listing.Description.PropertyType.Id,
+                        Name = listing.Description.PropertyType.Name,
+                    },
+                    City = new CityDto()
+                    {
+                        Id = listing.Description.City.Id,
+                        Name = listing.Description.City.Name,
+                        Description = listing.Description.City.Description,
+                        Country = new CountryDto()
+                        {
+                            Id = listing.Description.City.Country.Id,
+                            Name = listing.Description.City.Country.Name,
+                            ImgUrl = listing.Description.City.Country.ImgUrl,
+                        },
+                        ExperienceType = new ExperienceTypeDto()
+                        {
+                            Id = listing.Description.City.ExperienceType.Id,
+                            Name = listing.Description.City.ExperienceType.Name,
+                            Icon = listing.Description.City.ExperienceType.Icon,
+                        }
+                    }
+                }
+            };
+
+            return Ok(listingDto);
         }
     }
 }

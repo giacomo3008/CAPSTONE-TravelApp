@@ -9,7 +9,7 @@ namespace TravelApi.DTOs.Listings
 
         public Guid Id { get; set; }
         public required string HotelName { get; set; }
-
+        public List<string>? ImgUrls { get; set; }
         public ListingDescriptionDto Description { get; set; }
     }
 }

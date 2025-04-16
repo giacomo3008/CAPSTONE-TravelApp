@@ -111,6 +111,7 @@ namespace TravelApi.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HotelName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ImgUrls = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DescriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>

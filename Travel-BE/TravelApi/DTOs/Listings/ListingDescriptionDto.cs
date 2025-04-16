@@ -14,5 +14,7 @@ namespace TravelApi.DTOs.Listings
         public double PricePerNight { get; set; }
         public PropertyTypeDto PropertyType { get; set; }
         public CityDto City { get; set; }
+
+        public ListingDto? Listing { get; set; }
     }
 }

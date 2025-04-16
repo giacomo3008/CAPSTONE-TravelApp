@@ -17,6 +17,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 );
 
 builder.Services.AddScoped<ListingService>();
+builder.Services.AddScoped<CityService>();
+
 
 var app = builder.Build();
 

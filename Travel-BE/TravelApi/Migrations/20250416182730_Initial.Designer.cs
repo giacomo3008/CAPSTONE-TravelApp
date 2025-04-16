@@ -12,7 +12,7 @@ using TravelApi.Data;
 namespace TravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250416100219_Initial")]
+    [Migration("20250416182730_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -122,6 +122,10 @@ namespace TravelApi.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ImgUrls")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

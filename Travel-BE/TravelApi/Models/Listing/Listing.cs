@@ -13,6 +13,9 @@ namespace TravelApi.Models
         public required string HotelName { get; set; }
 
         [Required]
+        public List<string>? ImgUrls { get; set; }
+
+        [Required]
         public Guid DescriptionId { get; set; }
 
         [ForeignKey("DescriptionId")]
