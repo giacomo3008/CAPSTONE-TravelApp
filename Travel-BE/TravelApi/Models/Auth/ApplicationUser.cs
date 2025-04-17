@@ -11,7 +11,7 @@ public class ApplicationUser : IdentityUser
     [Required]
     public required string LastName { get; set; }
 
-    public Guid CartItemId { get; set; }
+    public Guid? CartItemId { get; set; }
 
     [ForeignKey("CartItemId")]
     public CartItem? CartItem { get; set; }

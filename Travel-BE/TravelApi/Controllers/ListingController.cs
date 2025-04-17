@@ -4,11 +4,13 @@ using TravelApi.Models;
 using TravelApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TravelApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ListingController : ControllerBase
     {
         private readonly ListingService _listingService;
@@ -19,6 +21,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllListings()
         {
             var listings = await _listingService.GetAllListingsAsync();
@@ -27,6 +30,7 @@ namespace TravelApi.Controllers
             {
                 Id = l.Id,
                 HotelName = l.HotelName,
+                ImgUrls = l.ImgUrls,
                 Description = new ListingDescriptionDto()
                 {
                     Id = l.Description.Id,
@@ -107,6 +111,48 @@ namespace TravelApi.Controllers
             };
 
             return Ok(listingDto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> addListing(ListingRequestDto listingRequestDto)
+        {
+            var result = await _listingService.AddListingAsync(listingRequestDto, User);
+
+            if (!result)
+            {
+                return BadRequest(new { message = "Something went wrong" });
+            }
+            return Ok(new { message = "Prodotto aggiunto correttamente!" });
+        }
+
+        [HttpPost("favorites/{listingId:Guid}")]
+        [Authorize]
+        public async Task<IActionResult> AddFavorite(Guid listingId)
+        {
+            var result = await _listingService.AddListingToFavoritesAsync(listingId, User);
+            if (!result)
+                return BadRequest("Impossibile aggiungere ai preferiti.");
+
+            return Ok("Listing aggiunto ai preferiti!");
+        }
+
+
+
+        [HttpGet("favorites")]
+        [Authorize]
+        public async Task<IActionResult> GetFavorites()
+        {
+
+            var favorites = await _listingService.GetFavoritesAsync(User);
+
+            var listingsDto = favorites.Select(f => f.Listing).Select(l => new ListingDto()
+            {
+                Id = l.Id,
+                HotelName = l.HotelName,
+                ImgUrls = l.ImgUrls,
+            });
+
+            return Ok(listingsDto);
         }
     }
 }
