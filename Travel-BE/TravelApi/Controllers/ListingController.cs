@@ -13,12 +13,9 @@ namespace TravelApi.Controllers
     {
         private readonly ListingService _listingService;
 
-        private readonly ILogger<ListingController> _logger;
-
-        public ListingController(ListingService listingService, ILogger<ListingController> logger)
+        public ListingController(ListingService listingService)
         {
             _listingService = listingService;
-            _logger = logger;
         }
 
         [HttpGet]

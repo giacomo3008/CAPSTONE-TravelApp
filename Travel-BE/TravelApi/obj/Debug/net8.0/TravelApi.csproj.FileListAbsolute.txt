@@ -297,3 +297,5 @@
 /Users/giacomorigo/Desktop/epicode/CAPSTONE-TravelApp/Travel-BE/TravelApi/obj/Debug/net8.0/TravelApi.pdb
 /Users/giacomorigo/Desktop/epicode/CAPSTONE-TravelApp/Travel-BE/TravelApi/obj/Debug/net8.0/TravelApi.genruntimeconfig.cache
 /Users/giacomorigo/Desktop/epicode/CAPSTONE-TravelApp/Travel-BE/TravelApi/obj/Debug/net8.0/ref/TravelApi.dll
+/Users/giacomorigo/Desktop/epicode/CAPSTONE-TravelApp/Travel-BE/TravelApi/bin/Debug/net8.0/response_1744805750804.json
+/Users/giacomorigo/Desktop/epicode/CAPSTONE-TravelApp/Travel-BE/TravelApi/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll

@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using TravelApi.Models;
+using TravelApi.Models.Auth;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace TravelApi.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string, IdentityUserClaim<string>, ApplicationUserRole, IdentityUserLogin<string>,
+        IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -21,6 +25,14 @@ namespace TravelApi.Data
 
         // Carrello
         public DbSet<CartItem> CartItems { get; set; }
+
+
+        //Auth
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
+        public DbSet<ApplicationRole> ApplicationRoles { get; set; }
+
+        public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -67,6 +79,10 @@ namespace TravelApi.Data
                 .WithMany(l => l.CartItems)
                 .HasForeignKey(ci => ci.ListingId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ApplicationUserRole>().HasOne(a => a.ApplicationUser).WithMany(u => u.UserRoles).HasForeignKey(a => a.UserId);
+
+            modelBuilder.Entity<ApplicationUserRole>().HasOne(a => a.ApplicationRole).WithMany(r => r.UserRoles).HasForeignKey(a => a.RoleId);
         }
     }
 }
