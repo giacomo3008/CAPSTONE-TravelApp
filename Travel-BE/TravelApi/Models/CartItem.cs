@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TravelApi.Models.Auth;
 
 namespace TravelApi.Models
 {
@@ -18,10 +19,13 @@ namespace TravelApi.Models
         [Range(1, 20)]
         public int NumberOfPeople { get; set; }
 
-        // [Required]
-        // public DateOnly StartDate { get; set; }
+        [Required]
+        public DateOnly StartDate { get; set; }
 
-        // [Required]
-        // public DateOnly EndDate { get; set; }
+        [Required]
+        public DateOnly EndDate { get; set; }
+
+        [InverseProperty("CartItem")]
+        public ICollection<ApplicationUser>? Users { get; set; }
     }
 }

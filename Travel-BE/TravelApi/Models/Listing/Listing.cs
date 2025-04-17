@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TravelApi.Models.Auth;
 
 namespace TravelApi.Models
 {
@@ -24,6 +25,10 @@ namespace TravelApi.Models
 
         [InverseProperty("Listing")]
         public ICollection<CartItem> CartItems { get; set; }
+
+        public ICollection<UserListing>? UserListings { get; set; }
+
+        public ICollection<UserListingFavorites>? UserListingsFavorites { get; set; }
     }
 
 }

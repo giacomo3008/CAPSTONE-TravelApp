@@ -34,6 +34,10 @@ namespace TravelApi.Data
 
         public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; }
 
+        public DbSet<UserListing> UserListings { get; set; }
+
+        public DbSet<UserListingFavorites> UserListingsFavorites { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -80,9 +84,23 @@ namespace TravelApi.Data
                 .HasForeignKey(ci => ci.ListingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(u => u.CartItem)
+                .WithMany(c => c.Users)
+                .HasForeignKey(u => u.CartItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<ApplicationUserRole>().HasOne(a => a.ApplicationUser).WithMany(u => u.UserRoles).HasForeignKey(a => a.UserId);
 
             modelBuilder.Entity<ApplicationUserRole>().HasOne(a => a.ApplicationRole).WithMany(r => r.UserRoles).HasForeignKey(a => a.RoleId);
+
+            modelBuilder.Entity<UserListing>().HasOne(ul => ul.User).WithMany(u => u.UserListings).HasForeignKey(a => a.UserId);
+
+            modelBuilder.Entity<UserListing>().HasOne(ul => ul.Listing).WithMany(u => u.UserListings).HasForeignKey(a => a.ListingId);
+
+            modelBuilder.Entity<UserListingFavorites>().HasOne(ul => ul.User).WithMany(u => u.UserListingsFavorites).HasForeignKey(a => a.UserId);
+
+            modelBuilder.Entity<UserListingFavorites>().HasOne(ul => ul.Listing).WithMany(u => u.UserListingsFavorites).HasForeignKey(a => a.ListingId);
         }
     }
 }
