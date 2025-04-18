@@ -25,7 +25,9 @@ namespace TravelApi.Models
         [Required]
         public DateOnly EndDate { get; set; }
 
-        [InverseProperty("CartItem")]
-        public ICollection<ApplicationUser>? Users { get; set; }
+        public string? UserId { get; set; }
+
+        [ForeignKey(nameof(UserId))]
+        public ApplicationUser User { get; set; }
     }
 }

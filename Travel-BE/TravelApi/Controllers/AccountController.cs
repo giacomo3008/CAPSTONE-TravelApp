@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace TravelApi.Controllers
@@ -86,6 +87,10 @@ namespace TravelApi.Controllers
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
         {
             var user = await _userManager.FindByEmailAsync(loginRequestDto.Email);
+            if (user == null)
+            {
+                return BadRequest();
+            }
 
             await _signInManager.PasswordSignInAsync(user, loginRequestDto.Password, false, false);
 
@@ -113,6 +118,27 @@ namespace TravelApi.Controllers
                 Token = tokenString,
                 Expires = expiry
             });
+        }
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            if (string.IsNullOrEmpty(userEmail))
+                return Unauthorized("Utente non autenticato.");
+
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+                return NotFound("Utente non trovato.");
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return Ok("Utente eliminato");
         }
 
     }

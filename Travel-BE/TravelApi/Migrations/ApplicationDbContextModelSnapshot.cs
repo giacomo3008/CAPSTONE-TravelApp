@@ -148,9 +148,6 @@ namespace TravelApi.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("CartItemId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -204,8 +201,6 @@ namespace TravelApi.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CartItemId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -295,9 +290,16 @@ namespace TravelApi.Migrations
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ListingId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("CartItems");
                 });
@@ -478,16 +480,6 @@ namespace TravelApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TravelApi.Models.Auth.ApplicationUser", b =>
-                {
-                    b.HasOne("TravelApi.Models.CartItem", "CartItem")
-                        .WithMany("Users")
-                        .HasForeignKey("CartItemId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CartItem");
-                });
-
             modelBuilder.Entity("TravelApi.Models.Auth.ApplicationUserRole", b =>
                 {
                     b.HasOne("TravelApi.Models.Auth.ApplicationRole", "ApplicationRole")
@@ -553,7 +545,14 @@ namespace TravelApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TravelApi.Models.Auth.ApplicationUser", "User")
+                        .WithOne("CartItem")
+                        .HasForeignKey("TravelApi.Models.CartItem", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("Listing");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TravelApi.Models.City", b =>
@@ -612,16 +611,13 @@ namespace TravelApi.Migrations
 
             modelBuilder.Entity("TravelApi.Models.Auth.ApplicationUser", b =>
                 {
+                    b.Navigation("CartItem");
+
                     b.Navigation("UserListings");
 
                     b.Navigation("UserListingsFavorites");
 
                     b.Navigation("UserRoles");
-                });
-
-            modelBuilder.Entity("TravelApi.Models.CartItem", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("TravelApi.Models.City", b =>

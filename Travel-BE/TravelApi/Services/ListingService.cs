@@ -5,6 +5,7 @@ using System.Security.Claims;
 using TravelApi.DTOs.Listings;
 using TravelApi.Models.Auth;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TravelApi.Services
 {
@@ -50,7 +51,7 @@ namespace TravelApi.Services
 
         public async Task<Listing?> GetListingByIdAsync(Guid id)
         {
-            return await _context.Listings.Include(l => l.Description)
+            var listing = await _context.Listings.Include(l => l.Description)
                                                 .ThenInclude(d => d.PropertyType)
                                             .Include(l => l.Description)
                                                 .ThenInclude(d => d.City)
@@ -58,6 +59,11 @@ namespace TravelApi.Services
                                             .Include(l => l.Description)
                                                 .ThenInclude(d => d.City)
                                                     .ThenInclude(c => c.ExperienceType).FirstOrDefaultAsync(l => l.Id == id);
+            if (listing == null)
+            {
+                return null;
+            }
+            return listing;
         }
 
         public async Task<bool> AddListingAsync(ListingRequestDto listingRequestDto, ClaimsPrincipal userPrincipal)
@@ -168,6 +174,22 @@ namespace TravelApi.Services
             return true;
         }
 
+        public async Task<ICollection<UserListing>?> GetListingByUserAsync(ClaimsPrincipal userPrincipal)
+        {
+            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var user = await _userManager.Users
+                    .Include(u => u.UserListings)
+                        .ThenInclude(ul => ul.Listing)
+                    .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (user == null)
+            {
+                return null; // L'utente non è stato trovato
+            }
+            return user.UserListings;
+        }
+
         public async Task<ICollection<UserListingFavorites>?> GetFavoritesAsync(ClaimsPrincipal userPrincipal)
         {
             var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -183,6 +205,131 @@ namespace TravelApi.Services
             }
 
             return user.UserListingsFavorites;
+        }
+
+        public async Task<bool> DeleteListingAsync(Guid id)
+        {
+            var listing = await GetListingByIdAsync(id);
+            if (listing == null)
+            {
+                return false;
+            }
+
+            _context.Listings.Remove(listing);
+            if (!await SaveAsync())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> DeleteFavoriteAsync(Guid id, ClaimsPrincipal userPrincipal)
+        {
+            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail == null)
+            {
+                return false;
+            }
+
+            var user = _userManager.FindByEmailAsync(userEmail);
+            if (userEmail == null)
+            {
+                return false;
+            }
+
+            var userId = user.Id;
+            var favoriteToDelete = await _context.UserListingsFavorites.FirstOrDefaultAsync(ulf => ulf.UserId.Equals(userId) && ulf.ListingId == id);
+
+            _context.UserListingsFavorites.Remove(favoriteToDelete);
+            if (!await SaveAsync())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> AddToCartAsync(Guid id, ClaimsPrincipal userPrincipal, CartItemRequestDto cartItemRequestDto)
+        {
+            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            if (userEmail == null)
+            {
+                return false;
+            }
+
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (user == null)
+            {
+                return false; // L'utente non è stato trovato
+            }
+
+            var cartItem = new CartItem()
+            {
+                Id = Guid.NewGuid(),
+                ListingId = id,
+                NumberOfPeople = cartItemRequestDto.NumberOfPeople,
+                StartDate = cartItemRequestDto.StartDate,
+                EndDate = cartItemRequestDto.EndDate,
+                UserId = user.Id
+            };
+
+            _context.CartItems.Add(cartItem);
+            if (!await SaveAsync())
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<CartItem?> GetCartAsync(ClaimsPrincipal userPrincipal)
+        {
+            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            var user = await _userManager.Users
+                    .Include(u => u.CartItem)
+            .ThenInclude(ci => ci.Listing)
+                .ThenInclude(l => l.Description)
+                    .ThenInclude(d => d.PropertyType)
+        .Include(u => u.CartItem)
+            .ThenInclude(ci => ci.Listing)
+                .ThenInclude(l => l.Description)
+                    .ThenInclude(d => d.City)
+                        .ThenInclude(c => c.Country)
+        .Include(u => u.CartItem)
+            .ThenInclude(ci => ci.Listing)
+                .ThenInclude(l => l.Description)
+                    .ThenInclude(d => d.City)
+                        .ThenInclude(c => c.ExperienceType)
+        .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (user == null)
+            {
+                return null; // L'utente non è stato trovato
+            }
+            return user.CartItem;
+        }
+
+
+        public async Task<bool> DeleteCartAsync(ClaimsPrincipal user)
+        {
+            var userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(userEmail))
+                return false;
+
+            var currentUser = await _userManager.Users
+                .Include(u => u.CartItem)
+                .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+            if (currentUser?.CartItem == null)
+                return false;
+
+            _context.CartItems.Remove(currentUser.CartItem);
+            currentUser.CartItem = null;
+            if (!await SaveAsync())
+            {
+                return false;
+            }
+            return true;
         }
 
     }

@@ -20,7 +20,7 @@ namespace TravelApi.Controllers
             _listingService = listingService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllListings()
         {
@@ -71,6 +71,11 @@ namespace TravelApi.Controllers
         public async Task<IActionResult> GetListingById(Guid id)
         {
             var listing = await _listingService.GetListingByIdAsync(id);
+
+            if (listing == null)
+            {
+                return NotFound();
+            }
 
             var listingDto = new ListingDto()
             {
@@ -125,8 +130,24 @@ namespace TravelApi.Controllers
             return Ok(new { message = "Prodotto aggiunto correttamente!" });
         }
 
+        [HttpGet("user")]
+        public async Task<IActionResult> GetListingsByUser()
+        {
+            var listings = await _listingService.GetListingByUserAsync(User);
+
+            var listingsDto = listings.Select(li => li.Listing).Select(l => new ListingDto()
+            {
+                Id = l.Id,
+                HotelName = l.HotelName,
+                ImgUrls = l.ImgUrls,
+            });
+
+            return Ok(listingsDto);
+
+        }
+
+
         [HttpPost("favorites/{listingId:Guid}")]
-        [Authorize]
         public async Task<IActionResult> AddFavorite(Guid listingId)
         {
             var result = await _listingService.AddListingToFavoritesAsync(listingId, User);
@@ -139,7 +160,6 @@ namespace TravelApi.Controllers
 
 
         [HttpGet("favorites")]
-        [Authorize]
         public async Task<IActionResult> GetFavorites()
         {
 
@@ -153,6 +173,125 @@ namespace TravelApi.Controllers
             });
 
             return Ok(listingsDto);
+        }
+
+        [HttpDelete("general/{id:Guid}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GeneralDeleteListing(Guid id)
+        {
+            var result = await _listingService.DeleteListingAsync(id);
+
+            if (!result)
+            {
+                return BadRequest(new { message = "Something went wrong" });
+            }
+            return Ok(new { message = "Prodotto eliminato correttamente!" });
+        }
+
+        [HttpDelete("user/{id:Guid}")]
+        public async Task<IActionResult> UserDeleteListing(Guid id)
+        {
+            var result = await _listingService.DeleteListingAsync(id);
+
+            if (!result)
+            {
+                return BadRequest(new { message = "Something went wrong" });
+            }
+            return Ok(new { message = "Prodotto eliminato correttamente!" });
+        }
+
+        [HttpDelete("favorite/{id:Guid}")]
+        public async Task<IActionResult> DeleteFavorite(Guid id)
+        {
+            var result = await _listingService.DeleteFavoriteAsync(id, User);
+
+            if (!result)
+            {
+                return BadRequest(new { message = "Something went wrong" });
+            }
+            return Ok(new { message = "Prodotto eliminato correttamente!" });
+        }
+
+        [HttpPost("cart/{id:Guid}")]
+        public async Task<IActionResult> AddToCart(Guid id, CartItemRequestDto cartItemRequestDto)
+        {
+            var result = await _listingService.AddToCartAsync(id, User, cartItemRequestDto);
+            if (!result)
+            {
+                return BadRequest(new { message = "Something went wrong" });
+            }
+            return Ok(new { message = "Prodotto aggiunto al carrello correttamente!" });
+        }
+
+        [HttpGet("cart")]
+        public async Task<IActionResult> GetCart()
+        {
+            var cartItem = await _listingService.GetCartAsync(User);
+            if (cartItem == null)
+            {
+                return NotFound("Carrello vuoto");
+            }
+
+            var cartItemDto = new CartItemDto()
+            {
+                NumberOfPeople = cartItem.NumberOfPeople,
+                StartDate = cartItem.StartDate,
+                EndDate = cartItem.EndDate,
+                Listing = new ListingDto()
+                {
+                    Id = cartItem.Listing.Id,
+                    HotelName = cartItem.Listing.HotelName,
+                    ImgUrls = cartItem.Listing.ImgUrls,
+                    Description = new ListingDescriptionDto()
+                    {
+                        Id = cartItem.Listing.Description.Id,
+                        Description = cartItem.Listing.Description.Description,
+                        Beds = cartItem.Listing.Description.Beds,
+                        Capacity = cartItem.Listing.Description.Capacity,
+                        PricePerNight = cartItem.Listing.Description.PricePerNight,
+
+                        PropertyType = new PropertyTypeDto
+                        {
+                            Id = cartItem.Listing.Description.PropertyType.Id,
+                            Name = cartItem.Listing.Description.PropertyType.Name
+                        },
+
+                        City = new CityDto
+                        {
+                            Id = cartItem.Listing.Description.City.Id,
+                            Name = cartItem.Listing.Description.City.Name,
+                            Description = cartItem.Listing.Description.City.Description,
+
+                            Country = new CountryDto
+                            {
+                                Id = cartItem.Listing.Description.City.Country.Id,
+                                Name = cartItem.Listing.Description.City.Country.Name,
+                                ImgUrl = cartItem.Listing.Description.City.Country.ImgUrl
+                            },
+
+                            ExperienceType = new ExperienceTypeDto
+                            {
+                                Id = cartItem.Listing.Description.City.ExperienceType.Id,
+                                Name = cartItem.Listing.Description.City.ExperienceType.Name,
+                                Icon = cartItem.Listing.Description.City.ExperienceType.Icon
+                            }
+                        }
+                    }
+                }
+            };
+
+            return Ok(cartItemDto);
+        }
+
+        [HttpDelete("cart")]
+        public async Task<IActionResult> DeleteCart()
+        {
+            var result = await _listingService.DeleteCartAsync(User);
+            if (!result)
+            {
+                return BadRequest(new { message = "Something went wrong" });
+            }
+            return Ok(new { message = "Carrello svuotato correttamente!" });
         }
     }
 }

@@ -37,8 +37,6 @@ namespace TravelApi.Models
         [ForeignKey("CityId")]
         public City City { get; set; }
 
-
-        [InverseProperty("Description")]
         public Listing Listing { get; set; }
 
     }

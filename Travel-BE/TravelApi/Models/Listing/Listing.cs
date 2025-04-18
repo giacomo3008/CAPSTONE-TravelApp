@@ -20,7 +20,6 @@ namespace TravelApi.Models
         public Guid DescriptionId { get; set; }
 
         [ForeignKey("DescriptionId")]
-        [InverseProperty("Listing")]
         public ListingDescription Description { get; set; }
 
         [InverseProperty("Listing")]

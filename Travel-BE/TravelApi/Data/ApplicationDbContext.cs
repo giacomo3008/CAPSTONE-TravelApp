@@ -86,9 +86,9 @@ namespace TravelApi.Data
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasOne(u => u.CartItem)
-                .WithMany(c => c.Users)
-                .HasForeignKey(u => u.CartItemId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithOne(c => c.User)
+                .HasForeignKey<CartItem>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ApplicationUserRole>().HasOne(a => a.ApplicationUser).WithMany(u => u.UserRoles).HasForeignKey(a => a.UserId);
 
