@@ -12,6 +12,7 @@ const NavBarComponent = function () {
     const searchBool = useSelector((state) => state.toggleSearch.search);
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const user = useSelector((state) => state.authLogin.user);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -85,7 +86,11 @@ const NavBarComponent = function () {
                                     <img src="/src/assets/img/profile-placeholder.png" alt="User" className="profile-icon" />
                                 </div>
                                 <Dropdown.Menu align="end" className="custom-dropdown-menu">
-                                    <Dropdown.Item onClick={handleLogin}>Log In</Dropdown.Item>
+                                    {
+                                        !user && (
+                                            <Dropdown.Item onClick={handleLogin}>Log In</Dropdown.Item>
+                                        )
+                                    }
                                     <Dropdown.Item onClick={handleSignUp}>Sign Up</Dropdown.Item>
                                     <hr className="m-0" />
                                     <Dropdown.Item>Centro Assistenza</Dropdown.Item>

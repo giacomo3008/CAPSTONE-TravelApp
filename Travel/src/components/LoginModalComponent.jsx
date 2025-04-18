@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../style/login.css';
 import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../redux/actions/authActions';
 
 const LoginModalComponent = () => {
     const isLoginModal = useSelector((state) => state.loginSignUp.login);
@@ -30,8 +31,12 @@ const LoginModalComponent = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
+        setEmail(e.target.email.value);
+        setPassword(e.target.password.value);
         console.log('Login con:', email, password);
-        // Qui puoi aggiungere la tua chiamata API
+
+        dispatch(login(email, password));
+
         handleClose();
     };
 
