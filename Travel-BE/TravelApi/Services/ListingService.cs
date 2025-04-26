@@ -12,11 +12,8 @@ namespace TravelApi.Services
     public class ListingService
     {
         private readonly ApplicationDbContext _context;
-
         private readonly UserManager<ApplicationUser> _userManager;
-
         private readonly ILogger<ListingService> _logger;
-
 
         public ListingService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<ListingService> logger)
         {
@@ -27,368 +24,382 @@ namespace TravelApi.Services
 
         private async Task<bool> SaveAsync()
         {
-            var rowsAffected = await _context.SaveChangesAsync();
-
-            if (rowsAffected > 0)
+            try
             {
-                return true;
+                var rowsAffected = await _context.SaveChangesAsync();
+                return rowsAffected > 0;
             }
-            else
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Errore durante il salvataggio dei dati nel database.");
                 return false;
             }
-
         }
 
         public async Task<List<Listing>?> GetAllListingsAsync()
         {
-            return await _context.Listings.Include(l => l.Description)
+            try
+            {
+                return await _context.Listings.Include(l => l.Description)
                                                 .ThenInclude(d => d.PropertyType)
-                                            .Include(l => l.Description)
+                                              .Include(l => l.Description)
                                                 .ThenInclude(d => d.City)
                                                     .ThenInclude(c => c.Country)
-                                            .Include(l => l.Description)
+                                              .Include(l => l.Description)
                                                 .ThenInclude(d => d.City)
                                                     .ThenInclude(c => c.ExperienceType)
-                                            .ToListAsync();
+                                              .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero di tutte le listing.");
+                return null;
+            }
         }
 
         public async Task<Listing?> GetListingByIdAsync(Guid id)
         {
-            var listing = await _context.Listings.Include(l => l.Description)
-                                                .ThenInclude(d => d.PropertyType)
-                                            .Include(l => l.Description)
-                                                .ThenInclude(d => d.City)
-                                                    .ThenInclude(c => c.Country)
-                                            .Include(l => l.Description)
-                                                .ThenInclude(d => d.City)
-                                                    .ThenInclude(c => c.ExperienceType).FirstOrDefaultAsync(l => l.Id == id);
-            if (listing == null)
+            try
             {
+                return await _context.Listings.Include(l => l.Description)
+                                              .ThenInclude(d => d.PropertyType)
+                                          .Include(l => l.Description)
+                                              .ThenInclude(d => d.City)
+                                                  .ThenInclude(c => c.Country)
+                                          .Include(l => l.Description)
+                                              .ThenInclude(d => d.City)
+                                                  .ThenInclude(c => c.ExperienceType)
+                                          .FirstOrDefaultAsync(l => l.Id == id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero della listing per id {ListingId}.", id);
                 return null;
             }
-            return listing;
         }
 
         public async Task<bool> AddListingAsync(ListingRequestDto listingRequestDto, ClaimsPrincipal userPrincipal)
         {
-            // Trova l'utente usando l'email contenuta nei Claims
-            var user = await _userManager.FindByEmailAsync(userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value);
-            if (user == null)
+            try
             {
-                return false; // L'utente non è stato trovato
+                var user = await _userManager.FindByEmailAsync(userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value);
+                if (user == null) return false;
+
+                var city = await _context.Cities.FirstOrDefaultAsync(c => c.Name == listingRequestDto.City);
+                if (city == null) return false;
+
+                var propertyType = await _context.PropertyTypes.FirstOrDefaultAsync(pt => pt.Name == listingRequestDto.PropertyType);
+                if (propertyType == null) return false;
+
+                var listingDescription = new ListingDescription
+                {
+                    Id = Guid.NewGuid(),
+                    Description = listingRequestDto.Description,
+                    Beds = listingRequestDto.Beds,
+                    Capacity = listingRequestDto.Capacity,
+                    PricePerNight = listingRequestDto.PricePerNight,
+                    PropertyTypeId = propertyType.Id,
+                    CityId = city.Id
+                };
+
+                _context.ListingDescriptions.Add(listingDescription);
+                if (!await SaveAsync()) return false;
+
+                var listing = new Listing
+                {
+                    Id = Guid.NewGuid(),
+                    HotelName = listingRequestDto.HotelName,
+                    ImgUrls = listingRequestDto.ImgUrls ?? new List<string>(),
+                    DescriptionId = listingDescription.Id
+                };
+
+                _context.Listings.Add(listing);
+                if (!await SaveAsync()) return false;
+
+                var userListing = new UserListing
+                {
+                    UserId = user.Id,
+                    ListingId = listing.Id
+                };
+
+                _context.UserListings.Add(userListing);
+                return await SaveAsync();
             }
-
-            // Trova la città e il tipo di proprietà che l'utente ha selezionato tramite Dto
-            var city = await _context.Cities
-                .FirstOrDefaultAsync(c => c.Name == listingRequestDto.City);
-            if (city == null)
+            catch (Exception ex)
             {
-                return false; // La città non è stata trovata
-            }
-
-            var propertyType = await _context.PropertyTypes
-                .FirstOrDefaultAsync(pt => pt.Name == listingRequestDto.PropertyType);
-            if (propertyType == null)
-            {
-                return false; // Tipo di proprietà non trovato
-            }
-
-
-            // Crea la ListingDescription
-            var listingDescription = new ListingDescription
-            {
-                Id = Guid.NewGuid(),
-                Description = listingRequestDto.Description,
-                Beds = listingRequestDto.Beds,
-                Capacity = listingRequestDto.Capacity,
-                PricePerNight = listingRequestDto.PricePerNight,
-                PropertyTypeId = propertyType.Id,
-                CityId = city.Id
-            };
-
-            // Aggiungi la ListingDescription al contesto per salvarla
-            _context.ListingDescriptions.Add(listingDescription);
-            if (!await SaveAsync())
-            {
+                _logger.LogError(ex, "Errore durante l'aggiunta di una nuova listing.");
                 return false;
             }
-
-            // Ora crea la Listing
-            var listing = new Listing
-            {
-                Id = Guid.NewGuid(),
-                HotelName = listingRequestDto.HotelName,
-                ImgUrls = listingRequestDto.ImgUrls ?? new List<string>(), //Se la variabile è null, allora restituisce il valore che sta a destra dell'operatore. In caso contrario, restituisce il valore a sinistra.
-                DescriptionId = listingDescription.Id, // Associa la ListingDescription
-            };
-
-            // Aggiungi la Listing al contesto
-            _context.Listings.Add(listing);
-            if (!await SaveAsync())
-            {
-                return false;
-            }
-
-            // Aggiungi la relazione User-Listing
-            var userListing = new UserListing
-            {
-                UserId = user.Id,
-                ListingId = listing.Id
-            };
-            _context.UserListings.Add(userListing);
-            if (!await SaveAsync())
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public async Task<bool> AddListingToFavoritesAsync(Guid listingId, ClaimsPrincipal userPrincipal)
         {
-            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            if (userEmail == null) return false;
-
-            var user = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.Email == userEmail);
-
-            if (user == null) return false;
-
-            var listing = await _context.Listings.FindAsync(listingId);
-            if (listing == null) return false;
-
-            // Verifica che non sia già nei preferiti
-            bool alreadyFavorited = await _context.UserListingsFavorites
-                .AnyAsync(f => f.UserId == user.Id && f.ListingId == listingId);
-
-            if (alreadyFavorited) return false;
-
-            var favorite = new UserListingFavorites
+            try
             {
-                UserId = user.Id,
-                ListingId = listing.Id
-            };
+                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                if (userEmail == null) return false;
 
-            _context.UserListingsFavorites.Add(favorite);
-            if (!await SaveAsync())
+                var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+                if (user == null) return false;
+
+                var listing = await _context.Listings.FindAsync(listingId);
+                if (listing == null) return false;
+
+                bool alreadyFavorited = await _context.UserListingsFavorites.AnyAsync(f => f.UserId == user.Id && f.ListingId == listingId);
+                if (alreadyFavorited) return false;
+
+                var favorite = new UserListingFavorites
+                {
+                    UserId = user.Id,
+                    ListingId = listing.Id
+                };
+
+                _context.UserListingsFavorites.Add(favorite);
+                return await SaveAsync();
+            }
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Errore durante l'aggiunta della listing ai preferiti.");
                 return false;
             }
-
-            return true;
         }
 
         public async Task<ICollection<UserListing>?> GetListingByUserAsync(ClaimsPrincipal userPrincipal)
         {
-            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-            var user = await _userManager.Users
-                    .Include(u => u.UserListings)
-                        .ThenInclude(ul => ul.Listing)
-                            .ThenInclude(l => l.Description)
-                                .ThenInclude(d => d.PropertyType)
-                    .Include(u => u.UserListings)
-                        .ThenInclude(ul => ul.Listing)
-                            .ThenInclude(l => l.Description)
-                                .ThenInclude(d => d.City)
-                                    .ThenInclude(c => c.ExperienceType)
-                    .FirstOrDefaultAsync(u => u.Email == userEmail);
-
-            if (user == null)
+            try
             {
-                return null; // L'utente non è stato trovato
+                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                var user = await _userManager.Users
+                        .Include(u => u.UserListings)
+                            .ThenInclude(ul => ul.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.PropertyType)
+                        .Include(u => u.UserListings)
+                            .ThenInclude(ul => ul.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.City)
+                                        .ThenInclude(c => c.ExperienceType)
+                        .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+                return user?.UserListings;
             }
-            return user.UserListings;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle listing per utente.");
+                return null;
+            }
         }
 
         public async Task<ApplicationUser?> GetUserByListingAsync(Guid id)
         {
-            return await _context.UserListings
-                .Where(ul => ul.ListingId == id)
-                .Include(ul => ul.User)
-                .Select(ul => ul.User)
-                .FirstOrDefaultAsync();
+            try
+            {
+                return await _context.UserListings
+                    .Where(ul => ul.ListingId == id)
+                    .Include(ul => ul.User)
+                    .Select(ul => ul.User)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero dell'utente per la listing {ListingId}.", id);
+                return null;
+            }
         }
 
         public async Task<ICollection<UserListingFavorites>?> GetFavoritesAsync(ClaimsPrincipal userPrincipal)
         {
-            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-            var user = await _userManager.Users
-                    .Include(u => u.UserListingsFavorites)
-                        .ThenInclude(ulf => ulf.Listing)
-                    .FirstOrDefaultAsync(u => u.Email == userEmail);
-
-            if (user == null)
+            try
             {
-                return null; // L'utente non è stato trovato
-            }
+                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-            return user.UserListingsFavorites;
+                var user = await _userManager.Users
+                        .Include(u => u.UserListingsFavorites)
+                            .ThenInclude(ulf => ulf.Listing)
+                        .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+                return user?.UserListingsFavorites;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero dei preferiti dell'utente.");
+                return null;
+            }
         }
 
         public async Task<bool> DeleteListingAsync(Guid id)
         {
-            var listing = await GetListingByIdAsync(id);
-            if (listing == null)
+            try
             {
+                var listing = await GetListingByIdAsync(id);
+                if (listing == null) return false;
+
+                _context.Listings.Remove(listing);
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'eliminazione della listing {ListingId}.", id);
                 return false;
             }
-
-            _context.Listings.Remove(listing);
-            if (!await SaveAsync())
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public async Task<bool> DeleteFavoriteAsync(Guid id, ClaimsPrincipal userPrincipal)
         {
-            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            if (userEmail == null)
+            try
             {
+                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                if (userEmail == null) return false;
+
+                var user = await _userManager.FindByEmailAsync(userEmail);
+                if (user == null) return false;
+
+                var favoriteToDelete = await _context.UserListingsFavorites
+                    .FirstOrDefaultAsync(ulf => ulf.UserId == user.Id && ulf.ListingId == id);
+
+                if (favoriteToDelete == null) return false;
+
+                _context.UserListingsFavorites.Remove(favoriteToDelete);
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'eliminazione del preferito.");
                 return false;
             }
-
-            var user = _userManager.FindByEmailAsync(userEmail);
-            if (userEmail == null)
-            {
-                return false;
-            }
-
-            var userId = user.Id;
-            var favoriteToDelete = await _context.UserListingsFavorites.FirstOrDefaultAsync(ulf => ulf.UserId.Equals(userId) && ulf.ListingId == id);
-
-            _context.UserListingsFavorites.Remove(favoriteToDelete);
-            if (!await SaveAsync())
-            {
-                return false;
-            }
-            return true;
         }
 
         public async Task<bool> AddToCartAsync(Guid id, ClaimsPrincipal userPrincipal, CartItemRequestDto cartItemRequestDto)
         {
-            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-            if (userEmail == null)
+            try
             {
+                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+                if (userEmail == null) return false;
+
+                var user = await _userManager.FindByEmailAsync(userEmail);
+                if (user == null) return false;
+
+                var cartItem = new CartItem
+                {
+                    Id = Guid.NewGuid(),
+                    ListingId = id,
+                    NumberOfPeople = cartItemRequestDto.NumberOfPeople,
+                    StartDate = cartItemRequestDto.StartDate,
+                    EndDate = cartItemRequestDto.EndDate,
+                    UserId = user.Id
+                };
+
+                _context.CartItems.Add(cartItem);
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'aggiunta di una listing al carrello.");
                 return false;
             }
-
-            var user = await _userManager.FindByEmailAsync(userEmail);
-            if (user == null)
-            {
-                return false; // L'utente non è stato trovato
-            }
-
-            var cartItem = new CartItem()
-            {
-                Id = Guid.NewGuid(),
-                ListingId = id,
-                NumberOfPeople = cartItemRequestDto.NumberOfPeople,
-                StartDate = cartItemRequestDto.StartDate,
-                EndDate = cartItemRequestDto.EndDate,
-                UserId = user.Id
-            };
-
-            _context.CartItems.Add(cartItem);
-            if (!await SaveAsync())
-            {
-                return false;
-            }
-            return true;
         }
 
         public async Task<CartItem?> GetCartAsync(ClaimsPrincipal userPrincipal)
         {
-            var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-            var user = await _userManager.Users
-                    .Include(u => u.CartItem)
-            .ThenInclude(ci => ci.Listing)
-                .ThenInclude(l => l.Description)
-                    .ThenInclude(d => d.PropertyType)
-        .Include(u => u.CartItem)
-            .ThenInclude(ci => ci.Listing)
-                .ThenInclude(l => l.Description)
-                    .ThenInclude(d => d.City)
-                        .ThenInclude(c => c.Country)
-        .Include(u => u.CartItem)
-            .ThenInclude(ci => ci.Listing)
-                .ThenInclude(l => l.Description)
-                    .ThenInclude(d => d.City)
-                        .ThenInclude(c => c.ExperienceType)
-        .FirstOrDefaultAsync(u => u.Email == userEmail);
-
-            if (user == null)
+            try
             {
-                return null; // L'utente non è stato trovato
-            }
-            return user.CartItem;
-        }
+                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
+                var user = await _userManager.Users
+                        .Include(u => u.CartItem)
+                            .ThenInclude(ci => ci.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.PropertyType)
+                        .Include(u => u.CartItem)
+                            .ThenInclude(ci => ci.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.City)
+                                        .ThenInclude(c => c.Country)
+                        .Include(u => u.CartItem)
+                            .ThenInclude(ci => ci.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.City)
+                                        .ThenInclude(c => c.ExperienceType)
+                        .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+                return user?.CartItem;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero del carrello.");
+                return null;
+            }
+        }
 
         public async Task<bool> DeleteCartAsync(ClaimsPrincipal user)
         {
-            var userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(userEmail))
-                return false;
-
-            var currentUser = await _userManager.Users
-                .Include(u => u.CartItem)
-                .FirstOrDefaultAsync(u => u.Email == userEmail);
-
-            if (currentUser?.CartItem == null)
-                return false;
-
-            _context.CartItems.Remove(currentUser.CartItem);
-            currentUser.CartItem = null;
-            if (!await SaveAsync())
+            try
             {
+                var userEmail = user.FindFirst(ClaimTypes.Email)?.Value;
+                if (string.IsNullOrEmpty(userEmail)) return false;
+
+                var currentUser = await _userManager.Users
+                    .Include(u => u.CartItem)
+                    .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+                if (currentUser?.CartItem == null) return false;
+
+                _context.CartItems.Remove(currentUser.CartItem);
+                currentUser.CartItem = null;
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'eliminazione del carrello.");
                 return false;
             }
-            return true;
         }
 
         public async Task<ICollection<PropertyType>?> getPropertyTypeAsync()
         {
-            return await _context.PropertyTypes.ToListAsync();
+            try
+            {
+                return await _context.PropertyTypes.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero dei tipi di proprietà.");
+                return null;
+            }
         }
 
         public async Task<bool> UpdateListingAsync(Guid id, ListingRequestDto updateDto)
         {
-            var listing = await _context.Listings
-                .Include(l => l.Description)
-                .FirstOrDefaultAsync(l => l.Id == id);
-
-            if (listing == null) return false;
-
-            listing.HotelName = updateDto.HotelName;
-            listing.ImgUrls = updateDto.ImgUrls;
-
-            var city = await _context.Cities.FirstOrDefaultAsync(c => c.Name == updateDto.City);
-            var propertyType = await _context.PropertyTypes.FirstOrDefaultAsync(p => p.Name == updateDto.PropertyType);
-
-            if (city == null || propertyType == null) return false;
-
-            listing.Description.Description = updateDto.Description;
-            listing.Description.Beds = updateDto.Beds;
-            listing.Description.Capacity = updateDto.Capacity;
-            listing.Description.PricePerNight = updateDto.PricePerNight;
-            listing.Description.CityId = city.Id;
-            listing.Description.PropertyTypeId = propertyType.Id;
-
-            if (!await SaveAsync())
+            try
             {
+                var listing = await _context.Listings
+                    .Include(l => l.Description)
+                    .FirstOrDefaultAsync(l => l.Id == id);
+
+                if (listing == null) return false;
+
+                var city = await _context.Cities.FirstOrDefaultAsync(c => c.Name == updateDto.City);
+                var propertyType = await _context.PropertyTypes.FirstOrDefaultAsync(p => p.Name == updateDto.PropertyType);
+
+                if (city == null || propertyType == null) return false;
+
+                listing.HotelName = updateDto.HotelName;
+                listing.ImgUrls = updateDto.ImgUrls;
+                listing.Description.Description = updateDto.Description;
+                listing.Description.Beds = updateDto.Beds;
+                listing.Description.Capacity = updateDto.Capacity;
+                listing.Description.PricePerNight = updateDto.PricePerNight;
+                listing.Description.CityId = city.Id;
+                listing.Description.PropertyTypeId = propertyType.Id;
+
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'aggiornamento della listing {ListingId}.", id);
                 return false;
             }
-
-            return true;
         }
-
-
     }
 }
