@@ -35,6 +35,13 @@ namespace TravelApi.Controllers
             _logger = logger;
         }
 
+        [Authorize]
+        [HttpGet("validate")]
+        public IActionResult ValidateToken()
+        {
+            return Ok(new { status = "valid" });
+        }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
         {
@@ -92,7 +99,11 @@ namespace TravelApi.Controllers
                 return BadRequest();
             }
 
-            await _signInManager.PasswordSignInAsync(user, loginRequestDto.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(user, loginRequestDto.Password, false, false);
+            if (!result.Succeeded)
+            {
+                return Unauthorized(new { message = "Email o password non validi." });
+            }
 
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
 

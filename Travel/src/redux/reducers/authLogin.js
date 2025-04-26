@@ -9,10 +9,17 @@ let initialState = {
 const authLoginReducer = (state = initialState, action) => {
     switch (action.type) {
         case 'LOGIN_ACCESSO':
+            console.log(jwtDecode(action.payload));
             return {
                 ...state,
                 token: action.payload,
                 user: jwtDecode(action.payload),
+            }
+        case 'LOGIN_ACCESSO_NULL':
+            return {
+                ...state,
+                token: null,
+                user: null,
             }
         case 'LOGOUT':
             return {

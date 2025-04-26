@@ -80,6 +80,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 999px;
     padding: 6px 12px;
+    padding-right: 5px;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -103,12 +104,24 @@
     color: #ffffff;
 }
 
-.profile-icon {
-    width: 32px;
-    height: 32px;
+.navbar .profile-icon {
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid #c2cce1;
+}
+
+.profile-icon-login {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #7b494d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #DFDFDF;
+    font-size: 0.8rem;
 }
 
 .menu-toggle-custom::after {
@@ -153,4 +166,31 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+
+.welcome-container {
+    animation: fadeInSlide 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(5px);
+    font-size: 0.9rem;
+    color: #dfdfdf;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+@keyframes fadeInSlide {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.welcome-text {
+    white-space: nowrap;
 }

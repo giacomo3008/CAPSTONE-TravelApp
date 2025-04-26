@@ -20,9 +20,17 @@ export const login = (email, password) => async (dispatch) => {
             type: LOGIN_ACCESSO,
             payload: data.token,
         });
+        dispatch({
+            type: 'CLOSE',
+            payload: true,
+        });
         localStorage.setItem("token", data.token);
     }
     catch (error) {
+        dispatch({
+            type: 'LOGIN_ERROR',
+            payload: "Email o password errati, riprova",
+        });
         console.error(error);
     }
 }

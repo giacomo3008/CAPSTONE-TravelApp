@@ -8,6 +8,7 @@ const LoginModalComponent = () => {
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const loginError = useSelector((state) => state.error.login);
 
     useEffect(() => {
         if (isLoginModal) {
@@ -31,13 +32,11 @@ const LoginModalComponent = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        setEmail(e.target.email.value);
-        setPassword(e.target.password.value);
         console.log('Login con:', email, password);
 
         dispatch(login(email, password));
 
-        handleClose();
+        // handleClose();
     };
 
     const handleSignUp = (e) => {
@@ -87,6 +86,11 @@ const LoginModalComponent = () => {
                                         required
                                     />
                                 </div>
+                                {loginError && (
+                                    <div className="error-message mb-3" style={{ color: 'red', marginTop: '10px' }}>
+                                        {loginError}
+                                    </div>
+                                )}
                                 <button type="submit">
                                     <span>Log in</span>
                                     <i className="fas fa-arrow-right"></i>

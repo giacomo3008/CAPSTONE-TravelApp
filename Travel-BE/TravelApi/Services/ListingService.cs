@@ -15,10 +15,14 @@ namespace TravelApi.Services
 
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ListingService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        private readonly ILogger<ListingService> _logger;
+
+
+        public ListingService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<ListingService> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         private async Task<bool> SaveAsync()
@@ -89,6 +93,7 @@ namespace TravelApi.Services
             {
                 return false; // Tipo di proprietà non trovato
             }
+
 
             // Crea la ListingDescription
             var listingDescription = new ListingDescription
@@ -181,6 +186,13 @@ namespace TravelApi.Services
             var user = await _userManager.Users
                     .Include(u => u.UserListings)
                         .ThenInclude(ul => ul.Listing)
+                            .ThenInclude(l => l.Description)
+                                .ThenInclude(d => d.PropertyType)
+                    .Include(u => u.UserListings)
+                        .ThenInclude(ul => ul.Listing)
+                            .ThenInclude(l => l.Description)
+                                .ThenInclude(d => d.City)
+                                    .ThenInclude(c => c.ExperienceType)
                     .FirstOrDefaultAsync(u => u.Email == userEmail);
 
             if (user == null)
@@ -188,6 +200,15 @@ namespace TravelApi.Services
                 return null; // L'utente non è stato trovato
             }
             return user.UserListings;
+        }
+
+        public async Task<ApplicationUser?> GetUserByListingAsync(Guid id)
+        {
+            return await _context.UserListings
+                .Where(ul => ul.ListingId == id)
+                .Include(ul => ul.User)
+                .Select(ul => ul.User)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<ICollection<UserListingFavorites>?> GetFavoritesAsync(ClaimsPrincipal userPrincipal)
@@ -331,6 +352,43 @@ namespace TravelApi.Services
             }
             return true;
         }
+
+        public async Task<ICollection<PropertyType>?> getPropertyTypeAsync()
+        {
+            return await _context.PropertyTypes.ToListAsync();
+        }
+
+        public async Task<bool> UpdateListingAsync(Guid id, ListingRequestDto updateDto)
+        {
+            var listing = await _context.Listings
+                .Include(l => l.Description)
+                .FirstOrDefaultAsync(l => l.Id == id);
+
+            if (listing == null) return false;
+
+            listing.HotelName = updateDto.HotelName;
+            listing.ImgUrls = updateDto.ImgUrls;
+
+            var city = await _context.Cities.FirstOrDefaultAsync(c => c.Name == updateDto.City);
+            var propertyType = await _context.PropertyTypes.FirstOrDefaultAsync(p => p.Name == updateDto.PropertyType);
+
+            if (city == null || propertyType == null) return false;
+
+            listing.Description.Description = updateDto.Description;
+            listing.Description.Beds = updateDto.Beds;
+            listing.Description.Capacity = updateDto.Capacity;
+            listing.Description.PricePerNight = updateDto.PricePerNight;
+            listing.Description.CityId = city.Id;
+            listing.Description.PropertyTypeId = propertyType.Id;
+
+            if (!await SaveAsync())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
 
     }
 }

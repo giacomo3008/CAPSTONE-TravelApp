@@ -24,274 +24,437 @@ namespace TravelApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllListings()
         {
-            var listings = await _listingService.GetAllListingsAsync();
-
-            var listingsDto = listings.Select(l => new ListingDto()
+            try
             {
-                Id = l.Id,
-                HotelName = l.HotelName,
-                ImgUrls = l.ImgUrls,
-                Description = new ListingDescriptionDto()
+                var listings = await _listingService.GetAllListingsAsync();
+
+                var listingsDto = listings.Select(l => new ListingDto()
                 {
-                    Id = l.Description.Id,
-                    Description = l.Description.Description,
-                    Beds = l.Description.Beds,
-                    Capacity = l.Description.Capacity,
-                    PricePerNight = l.Description.PricePerNight,
-                    PropertyType = new PropertyTypeDto()
+                    Id = l.Id,
+                    HotelName = l.HotelName,
+                    ImgUrls = l.ImgUrls,
+                    Description = new ListingDescriptionDto()
                     {
-                        Id = l.Description.PropertyType.Id,
-                        Name = l.Description.PropertyType.Name,
-                    },
-                    City = new CityDto()
-                    {
-                        Id = l.Description.City.Id,
-                        Name = l.Description.City.Name,
-                        Description = l.Description.City.Description,
-                        Country = new CountryDto()
+                        Id = l.Description.Id,
+                        Description = l.Description.Description,
+                        Beds = l.Description.Beds,
+                        Capacity = l.Description.Capacity,
+                        PricePerNight = l.Description.PricePerNight,
+                        PropertyType = new PropertyTypeDto()
                         {
-                            Id = l.Description.City.Country.Id,
-                            Name = l.Description.City.Country.Name,
-                            ImgUrl = l.Description.City.Country.ImgUrl,
+                            Id = l.Description.PropertyType.Id,
+                            Name = l.Description.PropertyType.Name,
                         },
-                        ExperienceType = new ExperienceTypeDto()
+                        City = new CityDto()
                         {
-                            Id = l.Description.City.ExperienceType.Id,
-                            Name = l.Description.City.ExperienceType.Name,
-                            Icon = l.Description.City.ExperienceType.Icon,
+                            Id = l.Description.City.Id,
+                            Name = l.Description.City.Name,
+                            Description = l.Description.City.Description,
+                            Country = new CountryDto()
+                            {
+                                Id = l.Description.City.Country.Id,
+                                Name = l.Description.City.Country.Name,
+                                ImgUrl = l.Description.City.Country.ImgUrl,
+                            },
+                            ExperienceType = new ExperienceTypeDto()
+                            {
+                                Id = l.Description.City.ExperienceType.Id,
+                                Name = l.Description.City.ExperienceType.Name,
+                                Icon = l.Description.City.ExperienceType.Icon,
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            return Ok(listingsDto);
+                return Ok(listingsDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet("{id:Guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetListingById(Guid id)
         {
-            var listing = await _listingService.GetListingByIdAsync(id);
-
-            if (listing == null)
+            try
             {
-                return NotFound();
-            }
+                var listing = await _listingService.GetListingByIdAsync(id);
 
-            var listingDto = new ListingDto()
-            {
-                Id = listing.Id,
-                HotelName = listing.HotelName,
-                ImgUrls = listing.ImgUrls,
-                Description = new ListingDescriptionDto()
+                if (listing == null)
                 {
-                    Id = listing.Description.Id,
-                    Description = listing.Description.Description,
-                    Beds = listing.Description.Beds,
-                    Capacity = listing.Description.Capacity,
-                    PricePerNight = listing.Description.PricePerNight,
-                    PropertyType = new PropertyTypeDto()
+                    return NotFound();
+                }
+
+                var listingDto = new ListingDto()
+                {
+                    Id = listing.Id,
+                    HotelName = listing.HotelName,
+                    ImgUrls = listing.ImgUrls,
+                    Description = new ListingDescriptionDto()
                     {
-                        Id = listing.Description.PropertyType.Id,
-                        Name = listing.Description.PropertyType.Name,
-                    },
-                    City = new CityDto()
-                    {
-                        Id = listing.Description.City.Id,
-                        Name = listing.Description.City.Name,
-                        Description = listing.Description.City.Description,
-                        Country = new CountryDto()
+                        Id = listing.Description.Id,
+                        Description = listing.Description.Description,
+                        Beds = listing.Description.Beds,
+                        Capacity = listing.Description.Capacity,
+                        PricePerNight = listing.Description.PricePerNight,
+                        PropertyType = new PropertyTypeDto()
                         {
-                            Id = listing.Description.City.Country.Id,
-                            Name = listing.Description.City.Country.Name,
-                            ImgUrl = listing.Description.City.Country.ImgUrl,
+                            Id = listing.Description.PropertyType.Id,
+                            Name = listing.Description.PropertyType.Name,
                         },
-                        ExperienceType = new ExperienceTypeDto()
+                        City = new CityDto()
                         {
-                            Id = listing.Description.City.ExperienceType.Id,
-                            Name = listing.Description.City.ExperienceType.Name,
-                            Icon = listing.Description.City.ExperienceType.Icon,
+                            Id = listing.Description.City.Id,
+                            Name = listing.Description.City.Name,
+                            Description = listing.Description.City.Description,
+                            Country = new CountryDto()
+                            {
+                                Id = listing.Description.City.Country.Id,
+                                Name = listing.Description.City.Country.Name,
+                                ImgUrl = listing.Description.City.Country.ImgUrl,
+                            },
+                            ExperienceType = new ExperienceTypeDto()
+                            {
+                                Id = listing.Description.City.ExperienceType.Id,
+                                Name = listing.Description.City.ExperienceType.Name,
+                                Icon = listing.Description.City.ExperienceType.Icon,
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            return Ok(listingDto);
+                return Ok(listingDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> addListing(ListingRequestDto listingRequestDto)
         {
-            var result = await _listingService.AddListingAsync(listingRequestDto, User);
-
-            if (!result)
+            try
             {
-                return BadRequest(new { message = "Something went wrong" });
+                var result = await _listingService.AddListingAsync(listingRequestDto, User);
+
+                if (!result)
+                {
+                    return BadRequest(new { message = "Something went wrong" });
+                }
+                return Ok(new { message = "Prodotto aggiunto correttamente!" });
             }
-            return Ok(new { message = "Prodotto aggiunto correttamente!" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet("user")]
         public async Task<IActionResult> GetListingsByUser()
         {
-            var listings = await _listingService.GetListingByUserAsync(User);
-
-            var listingsDto = listings.Select(li => li.Listing).Select(l => new ListingDto()
+            try
             {
-                Id = l.Id,
-                HotelName = l.HotelName,
-                ImgUrls = l.ImgUrls,
-            });
+                var listings = await _listingService.GetListingByUserAsync(User);
 
-            return Ok(listingsDto);
+                var listingsDto = listings.Select(li => li.Listing).Select(l => new ListingDto()
+                {
+                    Id = l.Id,
+                    HotelName = l.HotelName,
+                    ImgUrls = l.ImgUrls,
+                    Description = new ListingDescriptionDto()
+                    {
+                        Id = l.Description.Id,
+                        Description = l.Description.Description,
+                        Beds = l.Description.Beds,
+                        Capacity = l.Description.Capacity,
+                        PricePerNight = l.Description.PricePerNight,
+                        PropertyType = new PropertyTypeDto()
+                        {
+                            Id = l.Description.PropertyType.Id,
+                            Name = l.Description.PropertyType.Name,
+                        },
+                        City = new CityDto()
+                        {
+                            Id = l.Description.City.Id,
+                            Name = l.Description.City.Name,
+                            Description = l.Description.City.Description,
+                            ExperienceType = new ExperienceTypeDto()
+                            {
+                                Id = l.Description.City.ExperienceType.Id,
+                                Name = l.Description.City.ExperienceType.Name,
+                                Icon = l.Description.City.ExperienceType.Icon,
+                            }
+                        }
+                    }
+                });
 
+                return Ok(listingsDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
+        [HttpGet("user/{listingId:Guid}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserByListing(Guid listingId)
+        {
+            try
+            {
+                var user = await _listingService.GetUserByListingAsync(listingId);
+
+                if (user == null)
+                {
+                    return NotFound("user non trovato");
+                }
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
         [HttpPost("favorites/{listingId:Guid}")]
         public async Task<IActionResult> AddFavorite(Guid listingId)
         {
-            var result = await _listingService.AddListingToFavoritesAsync(listingId, User);
-            if (!result)
-                return BadRequest("Impossibile aggiungere ai preferiti.");
+            try
+            {
+                var result = await _listingService.AddListingToFavoritesAsync(listingId, User);
+                if (!result)
+                    return BadRequest("Impossibile aggiungere ai preferiti.");
 
-            return Ok("Listing aggiunto ai preferiti!");
+                return Ok("Listing aggiunto ai preferiti!");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
-
-
 
         [HttpGet("favorites")]
         public async Task<IActionResult> GetFavorites()
         {
-
-            var favorites = await _listingService.GetFavoritesAsync(User);
-
-            var listingsDto = favorites.Select(f => f.Listing).Select(l => new ListingDto()
+            try
             {
-                Id = l.Id,
-                HotelName = l.HotelName,
-                ImgUrls = l.ImgUrls,
-            });
+                var favorites = await _listingService.GetFavoritesAsync(User);
 
-            return Ok(listingsDto);
+                var listingsDto = favorites.Select(f => f.Listing).Select(l => new ListingDto()
+                {
+                    Id = l.Id,
+                    HotelName = l.HotelName,
+                    ImgUrls = l.ImgUrls,
+                });
+
+                return Ok(listingsDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpDelete("general/{id:Guid}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GeneralDeleteListing(Guid id)
         {
-            var result = await _listingService.DeleteListingAsync(id);
-
-            if (!result)
+            try
             {
-                return BadRequest(new { message = "Something went wrong" });
+                var result = await _listingService.DeleteListingAsync(id);
+
+                if (!result)
+                {
+                    return BadRequest(new { message = "Something went wrong" });
+                }
+                return Ok(new { message = "Prodotto eliminato correttamente!" });
             }
-            return Ok(new { message = "Prodotto eliminato correttamente!" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpDelete("user/{id:Guid}")]
         public async Task<IActionResult> UserDeleteListing(Guid id)
         {
-            var result = await _listingService.DeleteListingAsync(id);
-
-            if (!result)
+            try
             {
-                return BadRequest(new { message = "Something went wrong" });
+                var result = await _listingService.DeleteListingAsync(id);
+
+                if (!result)
+                {
+                    return BadRequest(new { message = "Something went wrong" });
+                }
+                return Ok(new { message = "Prodotto eliminato correttamente!" });
             }
-            return Ok(new { message = "Prodotto eliminato correttamente!" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpDelete("favorite/{id:Guid}")]
         public async Task<IActionResult> DeleteFavorite(Guid id)
         {
-            var result = await _listingService.DeleteFavoriteAsync(id, User);
-
-            if (!result)
+            try
             {
-                return BadRequest(new { message = "Something went wrong" });
+                var result = await _listingService.DeleteFavoriteAsync(id, User);
+
+                if (!result)
+                {
+                    return BadRequest(new { message = "Something went wrong" });
+                }
+                return Ok(new { message = "Prodotto eliminato correttamente!" });
             }
-            return Ok(new { message = "Prodotto eliminato correttamente!" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPost("cart/{id:Guid}")]
         public async Task<IActionResult> AddToCart(Guid id, CartItemRequestDto cartItemRequestDto)
         {
-            var result = await _listingService.AddToCartAsync(id, User, cartItemRequestDto);
-            if (!result)
+            try
             {
-                return BadRequest(new { message = "Something went wrong" });
+                var result = await _listingService.AddToCartAsync(id, User, cartItemRequestDto);
+                if (!result)
+                {
+                    return BadRequest(new { message = "Something went wrong" });
+                }
+                return Ok(new { message = "Prodotto aggiunto al carrello correttamente!" });
             }
-            return Ok(new { message = "Prodotto aggiunto al carrello correttamente!" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet("cart")]
         public async Task<IActionResult> GetCart()
         {
-            var cartItem = await _listingService.GetCartAsync(User);
-            if (cartItem == null)
+            try
             {
-                return NotFound("Carrello vuoto");
-            }
-
-            var cartItemDto = new CartItemDto()
-            {
-                NumberOfPeople = cartItem.NumberOfPeople,
-                StartDate = cartItem.StartDate,
-                EndDate = cartItem.EndDate,
-                Listing = new ListingDto()
+                var cartItem = await _listingService.GetCartAsync(User);
+                if (cartItem == null)
                 {
-                    Id = cartItem.Listing.Id,
-                    HotelName = cartItem.Listing.HotelName,
-                    ImgUrls = cartItem.Listing.ImgUrls,
-                    Description = new ListingDescriptionDto()
+                    return NotFound("Carrello vuoto");
+                }
+
+                var cartItemDto = new CartItemDto()
+                {
+                    NumberOfPeople = cartItem.NumberOfPeople,
+                    StartDate = cartItem.StartDate,
+                    EndDate = cartItem.EndDate,
+                    Listing = new ListingDto()
                     {
-                        Id = cartItem.Listing.Description.Id,
-                        Description = cartItem.Listing.Description.Description,
-                        Beds = cartItem.Listing.Description.Beds,
-                        Capacity = cartItem.Listing.Description.Capacity,
-                        PricePerNight = cartItem.Listing.Description.PricePerNight,
-
-                        PropertyType = new PropertyTypeDto
+                        Id = cartItem.Listing.Id,
+                        HotelName = cartItem.Listing.HotelName,
+                        ImgUrls = cartItem.Listing.ImgUrls,
+                        Description = new ListingDescriptionDto()
                         {
-                            Id = cartItem.Listing.Description.PropertyType.Id,
-                            Name = cartItem.Listing.Description.PropertyType.Name
-                        },
+                            Id = cartItem.Listing.Description.Id,
+                            Description = cartItem.Listing.Description.Description,
+                            Beds = cartItem.Listing.Description.Beds,
+                            Capacity = cartItem.Listing.Description.Capacity,
+                            PricePerNight = cartItem.Listing.Description.PricePerNight,
 
-                        City = new CityDto
-                        {
-                            Id = cartItem.Listing.Description.City.Id,
-                            Name = cartItem.Listing.Description.City.Name,
-                            Description = cartItem.Listing.Description.City.Description,
-
-                            Country = new CountryDto
+                            PropertyType = new PropertyTypeDto
                             {
-                                Id = cartItem.Listing.Description.City.Country.Id,
-                                Name = cartItem.Listing.Description.City.Country.Name,
-                                ImgUrl = cartItem.Listing.Description.City.Country.ImgUrl
+                                Id = cartItem.Listing.Description.PropertyType.Id,
+                                Name = cartItem.Listing.Description.PropertyType.Name
                             },
 
-                            ExperienceType = new ExperienceTypeDto
+                            City = new CityDto
                             {
-                                Id = cartItem.Listing.Description.City.ExperienceType.Id,
-                                Name = cartItem.Listing.Description.City.ExperienceType.Name,
-                                Icon = cartItem.Listing.Description.City.ExperienceType.Icon
+                                Id = cartItem.Listing.Description.City.Id,
+                                Name = cartItem.Listing.Description.City.Name,
+                                Description = cartItem.Listing.Description.City.Description,
+
+                                Country = new CountryDto
+                                {
+                                    Id = cartItem.Listing.Description.City.Country.Id,
+                                    Name = cartItem.Listing.Description.City.Country.Name,
+                                    ImgUrl = cartItem.Listing.Description.City.Country.ImgUrl
+                                },
+
+                                ExperienceType = new ExperienceTypeDto
+                                {
+                                    Id = cartItem.Listing.Description.City.ExperienceType.Id,
+                                    Name = cartItem.Listing.Description.City.ExperienceType.Name,
+                                    Icon = cartItem.Listing.Description.City.ExperienceType.Icon
+                                }
                             }
                         }
                     }
-                }
-            };
+                };
 
-            return Ok(cartItemDto);
+                return Ok(cartItemDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpDelete("cart")]
         public async Task<IActionResult> DeleteCart()
         {
-            var result = await _listingService.DeleteCartAsync(User);
-            if (!result)
+            try
             {
-                return BadRequest(new { message = "Something went wrong" });
+                var result = await _listingService.DeleteCartAsync(User);
+                if (!result)
+                {
+                    return BadRequest(new { message = "Something went wrong" });
+                }
+                return Ok(new { message = "Carrello svuotato correttamente!" });
             }
-            return Ok(new { message = "Carrello svuotato correttamente!" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("property-type")]
+        public async Task<IActionResult> getPropertyType()
+        {
+            try
+            {
+                var propertyTypes = await _listingService.getPropertyTypeAsync();
+
+                var propertyTypeDto = propertyTypes.Select(p => new PropertyTypeDto()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                });
+
+                return Ok(propertyTypeDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{id:Guid}")]
+        public async Task<IActionResult> UpdateListing(Guid id, ListingRequestDto updateListingDto)
+        {
+            try
+            {
+                var result = await _listingService.UpdateListingAsync(id, updateListingDto);
+                if (!result)
+                    return BadRequest(new { message = "Aggiornamento non riuscito" });
+
+                return Ok(new { message = "Listing aggiornato correttamente!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
     }
 }

@@ -1,10 +1,10 @@
 import { Container, Nav, Navbar, Dropdown } from "react-bootstrap";
 import "../style/navbar.css";
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import LoginModalComponent from "./LoginModalComponent";
-import SignUpModalComponent from "./SignupModalComponent";
+import SignUpModalComponent from "./SignUpModalComponent";
 
 const NavBarComponent = function () {
     const location = useLocation();
@@ -13,6 +13,7 @@ const NavBarComponent = function () {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
     const user = useSelector((state) => state.authLogin.user);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -47,6 +48,17 @@ const NavBarComponent = function () {
         })
     };
 
+    const handleLogout = (e) => {
+        e.preventDefault();
+        setDropdownOpen(false);
+        dispatch({
+            type: 'LOGOUT',
+            payload: true,
+        });
+        localStorage.removeItem("token");
+        navigate('/')
+    }
+
     const handleSignUp = (e) => {
         e.preventDefault();
         setDropdownOpen(false);
@@ -55,6 +67,30 @@ const NavBarComponent = function () {
             payload: true,
         })
     };
+
+    const handleWishlists = (e) => {
+        e.preventDefault();
+        setDropdownOpen(false);
+        navigate("/wishlists");
+    }
+
+    const handleCart = (e) => {
+        e.preventDefault();
+        setDropdownOpen(false);
+        navigate("/cart");
+    }
+
+    const handleAccount = (e) => {
+        e.preventDefault();
+        setDropdownOpen(false);
+        navigate("/account");
+    }
+
+    const handleListings = (e) => {
+        e.preventDefault();
+        setDropdownOpen(false);
+        navigate("/listings");
+    }
 
     return (
         <>
@@ -78,25 +114,58 @@ const NavBarComponent = function () {
 
                             {/* User Dropdown */}
                             <Dropdown show={isDropdownOpen} onToggle={() => { }} ref={dropdownRef}>
-                                <div
-                                    className="menu-toggle-custom"
-                                    onClick={() => setDropdownOpen((prev) => !prev)}
-                                >
-                                    <i className="bi bi-list menu-icon"></i>
-                                    <img src="/src/assets/img/profile-placeholder.png" alt="User" className="profile-icon" />
+                                <div className="d-flex align-items-center gap-3 position-relative menu-toggle-wrapper">
+                                    {/* Benvenuto animato */}
+                                    {user && (
+                                        <div className="welcome-container">
+                                            <span className="welcome-text">Benvenuto, <br />
+                                                <strong>{user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]}</strong></span>
+                                        </div>
+                                    )}
+                                    <div
+                                        className="menu-toggle-custom"
+                                        onClick={() => setDropdownOpen((prev) => !prev)}
+                                    >
+                                        <i className="bi bi-list menu-icon"></i>
+                                        {!user ? (
+                                            <img
+                                                src="/src/assets/img/profile-placeholder.png"
+                                                alt="User"
+                                                className="profile-icon"
+                                            />
+                                        ) : (
+                                            <div className="profile-icon-login">
+                                                {user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"].charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 <Dropdown.Menu align="end" className="custom-dropdown-menu">
                                     {
-                                        !user && (
-                                            <Dropdown.Item onClick={handleLogin}>Log In</Dropdown.Item>
+                                        !user ? (
+                                            <>
+                                                <Dropdown.Item onClick={handleLogin}>Log In</Dropdown.Item>
+                                                <Dropdown.Item onClick={handleSignUp}>Sign Up</Dropdown.Item>
+                                                <hr className="m-0" />
+                                                <Dropdown.Item>Centro Assistenza</Dropdown.Item>
+                                                <Dropdown.Item>Gift Card</Dropdown.Item>
+                                                <Dropdown.Item>Affitta con Travel</Dropdown.Item>
+                                                <Dropdown.Item>Proponi un esperienza</Dropdown.Item>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Dropdown.Item onClick={handleWishlists}>Wishlists</Dropdown.Item>
+                                                <Dropdown.Item onClick={handleCart}>Cart</Dropdown.Item>
+                                                <Dropdown.Item onClick={handleAccount}>Account</Dropdown.Item>
+                                                <Dropdown.Item onClick={handleListings}>Your Listings</Dropdown.Item>
+                                                <hr className="m-0" />
+                                                <Dropdown.Item>Centro Assistenza</Dropdown.Item>
+                                                <Dropdown.Item>Gift Card</Dropdown.Item>
+                                                <hr className="m-0" />
+                                                <Dropdown.Item onClick={handleLogout}>Log Out</Dropdown.Item>
+                                            </>
                                         )
                                     }
-                                    <Dropdown.Item onClick={handleSignUp}>Sign Up</Dropdown.Item>
-                                    <hr className="m-0" />
-                                    <Dropdown.Item>Centro Assistenza</Dropdown.Item>
-                                    <Dropdown.Item>Gift Card</Dropdown.Item>
-                                    <Dropdown.Item>Affitta con Travel</Dropdown.Item>
-                                    <Dropdown.Item>Proponi un esperienza</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Nav>

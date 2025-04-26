@@ -71,6 +71,8 @@ builder.Services.AddAuthentication(options =>
             // Indica se il sistema deve verificare che il token non sia scaduto.
             ValidateLifetime = true,
 
+            ClockSkew = TimeSpan.Zero,
+
             // Indica se il sistema deve validare la chiave di firma usata per generare il token.
             ValidateIssuerSigningKey = true,
 

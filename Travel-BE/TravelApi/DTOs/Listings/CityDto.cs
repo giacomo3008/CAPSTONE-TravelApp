@@ -10,11 +10,11 @@ namespace TravelApi.DTOs.Listings
 
         public required string Name { get; set; }
 
-        public required string Description { get; set; }
+        public string? Description { get; set; }
 
-        public CountryDto Country { get; set; }
+        public CountryDto? Country { get; set; }
 
-        public ExperienceTypeDto ExperienceType { get; set; }
+        public ExperienceTypeDto? ExperienceType { get; set; }
 
     }
 }

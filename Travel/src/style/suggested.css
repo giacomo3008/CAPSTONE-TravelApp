@@ -22,11 +22,16 @@
 }
 
 .suggested-container .card {
-    height: 35rem;
+    height: 450px;
     z-index: 1 !important;
     border: none;
     box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
     box-shadow: -4px -4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.suggested-container .card-listings {
+    height: 550px;
 }
 
 .suggested-container h2 {
@@ -49,17 +54,49 @@
     font-weight: 600;
     text-transform: uppercase;
     color: #797979;
-    width: 70%;
-    padding-right: 95px;
+}
+
+.suggested-container .tipo-suggested {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #797979;
+    padding-right: 50px;
 }
 
 .suggested-container .prezzo {
     font-size: 1.2rem;
     font-weight: 600;
     color: #525252;
-    width: 30%;
+    width: 60%;
     margin-bottom: auto;
     text-align: end;
+}
+
+.suggested-container .prezzo .notte {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #848484;
+}
+
+.suggested-container .card-body {
+    overflow: scroll !important;
+}
+
+.suggested-container .img-card {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.suggested-container .img-card-cities {
+    height: 195px !important;
+    background-color: grey;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .suggested-container .intermedio {
@@ -75,21 +112,105 @@
     line-height: 1.9;
 }
 
-.suggested-container .card-body .btn {
+.suggested-container .card-body button {
+    flex-shrink: 0;
+    flex-grow: 0;
     width: 100px;
     font-size: 0.8rem;
     font-weight: 500;
+    padding: 5px 10px;
+    color: #ffffff;
     background-color: #FFD000;
     border-radius: 30px;
     border: none;
     transition: transform 0.3s ease-in-out;
 }
 
-.suggested-container .card-body .btn:hover {
+.suggested-container .card-body button:hover {
     transform: scale(1.1);
 }
 
 
 .results-div {
     padding-top: 5rem !important;
+}
+
+/* Skeleton card base styles */
+.skeleton-card {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Card Image Placeholder */
+.skeleton-img {
+    width: 100%;
+    height: 195px;
+    background-color: #e0e0e0;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+/* Skeleton Text Placeholder */
+.skeleton-text {
+    background-color: #e0e0e0;
+    height: 15px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Skeleton Title */
+.skeleton-title {
+    width: 60%;
+    height: 20px;
+    margin-bottom: 15px;
+}
+
+/* Skeleton Continent */
+.skeleton-continent {
+    width: 40%;
+    height: 15px;
+}
+
+/* Skeleton Type */
+.skeleton-type {
+    width: 50%;
+    height: 15px;
+}
+
+/* Skeleton Button */
+.skeleton-btn {
+    width: 40%;
+    height: 25px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+}
+
+/* Skeleton Description */
+.skeleton-description {
+    width: 80%;
+    height: 30px;
+}
+
+/* Pulsing animation for the skeleton card */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
 }

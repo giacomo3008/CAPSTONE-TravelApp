@@ -3,61 +3,132 @@ import "../style/suggested.css"
 import SearchFormComponent from "./SearchFormComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { cityStructures } from "../redux/actions/cityStructuresAction";
 
 const RisultatiComponent = function () {
-    const pulseBool = useSelector((state) => state.pulseResults.pulseBool)
+    const { destination } = useParams();
+    const pulseBool = useSelector((state) => state.pulseResults.pulseBool);
+    const maxBudget = useSelector((state) => state.filtersSearch.maxBudget);
+    const prieviousDate = useSelector((state) => state.filtersSearch.date);
     const dispatch = useDispatch();
-    const cards = useSelector((state) => state.cards.cards);
+    const city = useSelector((state) => state.cityStructures.city);
+    const cards = useSelector((state) => state.cityStructures.listings);
     const navigate = useNavigate();
+    const isLoading = useSelector((state) => state.isLoading.isLoading);
 
     useEffect(() => {
+        dispatch({
+            type: 'SET_ISLOADING',
+            payload: true,
+        });
         dispatch({
             type: 'TOGGLE_SEARCH',
             payload: true,
         });
-    }, []);
+        dispatch(cityStructures(destination, maxBudget));
+    }, [destination, maxBudget, prieviousDate]);
+
 
     const handleDetailsBtn = (e, id) => {
         e.preventDefault();
+        console.log(id);
         navigate(`/details/${id}`);
     }
 
-    return (
-        <div className="results-div container-fluid py-5 px-0 bg-white">
-            <SearchFormComponent search={true} />
-            <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
-                <h2 className="mb-4">Risultati della tua ricerca :</h2>
-                <Row className="d-flex flex-row justify-content-between">
-                    {
-                        cards.map((card) => (
-                            <Col lg={4} key={card.id}>
-                                <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative">
-                                    <Card.Img variant="top" src={card.imgSrc} />
-                                    <div className=" position-absolute icons">
-                                        <i className="fa-solid fa-landmark"></i>
-                                    </div>
-                                    <Card.Body className="d-flex flex-column justify-content-between">
-                                        <div>
-                                            <Card.Title className="mb-1">{card.title}</Card.Title>
-                                            <p className="continente"><i className="bi bi-geo-alt-fill"></i> {card.continent}</p>
-                                            <div className="intermedio py-2 mb-3 d-flex flex-row justify-content-between align-items-center">
-                                                <p className="tipo m-0">{card.typeExp}</p>
-                                                <p className="prezzo m-0">{card.price} €</p>
-                                            </div>
-                                            <Card.Text>
-                                                {card.text}
-                                            </Card.Text>
-                                        </div>
-                                        <Button onClick={(e) => handleDetailsBtn(e, card.id)}>DETAILS</Button>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        ))
-                    }
-                </Row>
+    if (!isLoading && city == null) {
+        return (
+            <div className="results-div container-fluid py-5 px-0 bg-white">
+                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousDate={prieviousDate} />
+                <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
+                    <h3 className="mb-5">Non ci sono Strutture disponibili per "{destination}"</h3>
+                </div>
             </div>
-        </div>
+        )
+    }
+
+    if (!isLoading && cards.length == 0) {
+        return (
+            <div className="results-div container-fluid py-5 px-0 bg-white">
+                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousDate={prieviousDate} />
+                <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
+                    <h3 className="mb-5">Non ci sono Strutture disponibili per {city.name}</h3>
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <>
+            <div className="results-div container-fluid py-5 px-0 bg-white">
+                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousDate={prieviousDate} />
+                <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
+                    <h2 className="mb-5">Risultati della tua ricerca :</h2>
+                    <Row className="d-flex flex-row justify-content-start">
+                        {isLoading ? (
+                            <>
+                                {
+                                    Array.from({ length: 6 }, (_, index) => (
+                                        <Col lg={4} className="mb-5" key={index}>
+                                            <Card style={{ width: '18rem' }} className="mx-auto position-relative skeleton-card">
+                                                <div className="img-card skeleton-img" />
+                                                <Card.Body className="d-flex flex-column justify-content-between">
+                                                    <div>
+                                                        <div className="skeleton-title skeleton-text"></div>
+                                                        <div className="skeleton-continent skeleton-text"></div>
+                                                        <div className="intermedio py-2 mb-3 d-flex flex-row justify-content-between align-items-center">
+                                                            <div className="skeleton-type skeleton-text"></div>
+                                                            <div className="skeleton-btn skeleton-text"></div>
+                                                        </div>
+                                                        <div className="skeleton-description skeleton-text"></div>
+                                                    </div>
+                                                </Card.Body>
+                                            </Card>
+                                        </Col>
+                                    ))
+                                }
+                            </>
+                        ) : (
+                            <>
+                                {
+                                    cards.map((card) => (
+                                        <Col lg={4} key={card.id}>
+                                            <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative card-listings">
+                                                <div className="img-card-cities">
+                                                    {
+                                                        card.listing.imgUrls.length > 0 && (
+                                                            <img height="195px" src={card.listing.imgUrls[0]} />
+                                                        )
+                                                    }
+                                                </div>
+                                                <div className=" position-absolute icons">
+                                                    <i className={city.experienceType.icon}></i>
+                                                </div>
+                                                <Card.Body className="d-flex flex-column justify-content-between">
+                                                    <div className="card-body">
+                                                        <Card.Title className="mb-1">{card.listing.hotelName}</Card.Title>
+                                                        <p className="continente"><i className="bi bi-geo-alt-fill"></i> {city.name}</p>
+                                                        <div className="intermedio py-2 mb-3 d-flex flex-row justify-content-between align-items-center">
+                                                            <p className="tipo m-0">{city.experienceType.name}</p>
+                                                            <p className="prezzo m-0">{card.pricePerNight} € <span className="notte">/ notte</span></p>
+                                                        </div>
+                                                        <Card.Text>
+                                                            {card.description}
+                                                        </Card.Text>
+                                                    </div>
+                                                    <Button onClick={(e) => handleDetailsBtn(e, card.listing.id)}>DETAILS</Button>
+                                                </Card.Body>
+                                            </Card>
+                                        </Col>
+                                    ))
+                                }
+                            </>
+                        )
+                        }
+                    </Row>
+                </div>
+            </div>
+        </>
     );
 };
 
