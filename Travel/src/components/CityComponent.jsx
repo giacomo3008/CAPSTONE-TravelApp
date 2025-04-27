@@ -13,18 +13,94 @@ const CityComponent = function () {
     const city = useSelector((state) => state.cityStructures.city);
     const cards = useSelector((state) => state.cityStructures.listings);
     const navigate = useNavigate();
+    const token = useSelector((state) => state.authLogin.token);
 
     useEffect(() => {
         dispatch({
             type: 'TOGGLE_SEARCH',
             payload: true,
         });
-        dispatch(cityStructures(name));
+        if (token) {
+            dispatch(cityStructures({ name, token }));
+        } else {
+            dispatch(cityStructures({ name }));
+        }
     }, []);
 
     const handleDetailsBtn = (e, id) => {
         e.preventDefault();
         navigate(`/details/${id}`);
+    }
+
+    const handleFavoriteDelete = async (id) => {
+        try {
+            const url = "https://localhost:7146/api/";
+            const response = await fetch(url + "listing/favorite/" + id, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (response.status === 401 || response.status === 403) {
+                dispatch({
+                    type: 'LOGOUT',
+                    payload: true
+                });
+                localStorage.removeItem('token');
+                navigate('/');
+            } else {
+                if (!response.ok) {
+                    throw new Error("Errore nella delete");
+                }
+                const data = await response.json();
+                console.log(data);
+                dispatch(cityStructures({ name, token }));
+                navigate(`/city/${name}`);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const handleFavoriteAuthenticated = async (id) => {
+        try {
+            const url = "https://localhost:7146/api/";
+            const response = await fetch(url + "listing/favorites/" + id, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (response.status === 401 || response.status === 403) {
+                dispatch({
+                    type: 'LOGOUT',
+                    payload: true
+                });
+                localStorage.removeItem('token');
+                navigate('/');  //TODO: SISTEMARE IL FATTO CHE IN QUETO CASO DEVE MANDARMI ALLA PAGINA DI LOIGN
+            } else {
+                if (!response.ok) {
+                    throw new Error("Errore nella post");
+                }
+                dispatch(cityStructures({ name, token }));
+                navigate(`/city/${name}`);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    if (city && cards.length == 0) {
+        return (
+            <div className="results-div container-fluid py-5 px-0 bg-white">
+                <SearchFormComponent search={true} />
+                <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
+                    <h3 className="mb-5">Non ci sono Strutture disponibili per {city.name}</h3>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -49,6 +125,36 @@ const CityComponent = function () {
                                             <div className=" position-absolute icons">
                                                 <i className={city.experienceType.icon}></i>
                                             </div>
+                                            <div className=" position-absolute favorite">
+                                                {
+                                                    !card.listing.isUserListingFavorites ? (
+                                                        <>
+                                                            {
+                                                                token == null ? (
+                                                                    <i className="fa-solid fa-heart" onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        dispatch({
+                                                                            type: 'LOGIN',
+                                                                            payload: true,
+                                                                        });
+                                                                    }}></i>
+                                                                ) : (
+                                                                    <i className="fa-solid fa-heart" onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        handleFavoriteAuthenticated(card.listing.id);
+                                                                    }}></i>
+                                                                )
+                                                            }
+                                                        </>
+                                                    ) : (
+                                                        <i className="fa-solid fa-heart fav-card" onClick={(e) => {
+                                                            e.preventDefault();
+                                                            handleFavoriteDelete(card.listing.id);
+                                                        }}></i>
+                                                    )
+                                                }
+                                            </div>
+
                                             <Card.Body className="d-flex flex-column justify-content-between">
                                                 <div className="card-body">
                                                     <Card.Title className="mb-1">{card.listing.hotelName}</Card.Title>

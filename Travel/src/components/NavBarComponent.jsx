@@ -71,7 +71,7 @@ const NavBarComponent = function () {
     const handleWishlists = (e) => {
         e.preventDefault();
         setDropdownOpen(false);
-        navigate("/wishlists");
+        navigate("/wishlist");
     }
 
     const handleCart = (e) => {

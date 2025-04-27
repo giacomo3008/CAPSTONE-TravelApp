@@ -112,6 +112,25 @@
     color: #222;
 }
 
+.my-listings-div .favorite-btn {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.my-listings-div .favorite-btn i {
+    font-size: 1.5rem;
+    color: #F16571;
+    -webkit-text-stroke: 1.5px white;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+}
+
+.my-listings-div .favorite-btn i:hover {
+    color: rgba(59, 59, 59, 0.34);
+}
+
 /* Skeleton Card for Listing */
 .skeleton-listing {
     background-color: #f0f0f0;

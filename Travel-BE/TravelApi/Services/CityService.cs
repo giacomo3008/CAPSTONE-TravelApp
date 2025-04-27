@@ -62,6 +62,7 @@ namespace TravelApi.Services
                         .Include(c => c.ExperienceType)
                         .Include(c => c.ListingDescriptions)
                             .ThenInclude(ld => ld.Listing)
+                                .ThenInclude(l => l.UserListingsFavorites)
                         .Include(c => c.ListingDescriptions)
                             .ThenInclude(ld => ld.PropertyType)
                         .Where(c => c.Name == name)

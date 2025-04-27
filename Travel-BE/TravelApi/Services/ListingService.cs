@@ -138,23 +138,32 @@ namespace TravelApi.Services
             {
                 var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
                 if (userEmail == null) return false;
+                _logger.LogInformation("Email trovata");
 
                 var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
                 if (user == null) return false;
+                _logger.LogInformation("User trovato");
 
                 var listing = await _context.Listings.FindAsync(listingId);
                 if (listing == null) return false;
+                _logger.LogInformation("Listing trovata");
 
                 bool alreadyFavorited = await _context.UserListingsFavorites.AnyAsync(f => f.UserId == user.Id && f.ListingId == listingId);
-                if (alreadyFavorited) return false;
+                if (alreadyFavorited)
+                {
+                    _logger.LogInformation("Listing già presente nei favorites");
+                    return false;
+                }
 
                 var favorite = new UserListingFavorites
                 {
                     UserId = user.Id,
                     ListingId = listing.Id
                 };
+                _logger.LogInformation("creata istanza UserListingFavorite");
 
                 _context.UserListingsFavorites.Add(favorite);
+                _logger.LogInformation("Aggiunta favorite");
                 return await SaveAsync();
             }
             catch (Exception ex)
@@ -191,6 +200,33 @@ namespace TravelApi.Services
             }
         }
 
+        public async Task<ICollection<UserListingFavorites>?> GetFavoritesAsync(ClaimsPrincipal userPrincipal)
+        {
+            try
+            {
+                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+                var user = await _userManager.Users
+                        .Include(u => u.UserListingsFavorites)
+                            .ThenInclude(ulf => ulf.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.PropertyType)
+                        .Include(u => u.UserListingsFavorites)
+                            .ThenInclude(ulf => ulf.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.City)
+                                        .ThenInclude(c => c.ExperienceType)
+                        .FirstOrDefaultAsync(u => u.Email == userEmail);
+
+                return user?.UserListingsFavorites;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero dei preferiti dell'utente.");
+                return null;
+            }
+        }
+
         public async Task<ApplicationUser?> GetUserByListingAsync(Guid id)
         {
             try
@@ -208,34 +244,15 @@ namespace TravelApi.Services
             }
         }
 
-        public async Task<ICollection<UserListingFavorites>?> GetFavoritesAsync(ClaimsPrincipal userPrincipal)
-        {
-            try
-            {
-                var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-                var user = await _userManager.Users
-                        .Include(u => u.UserListingsFavorites)
-                            .ThenInclude(ulf => ulf.Listing)
-                        .FirstOrDefaultAsync(u => u.Email == userEmail);
-
-                return user?.UserListingsFavorites;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore durante il recupero dei preferiti dell'utente.");
-                return null;
-            }
-        }
-
         public async Task<bool> DeleteListingAsync(Guid id)
         {
             try
             {
                 var listing = await GetListingByIdAsync(id);
+                var listingDescription = listing.Description;
                 if (listing == null) return false;
 
-                _context.Listings.Remove(listing);
+                _context.ListingDescriptions.Remove(listingDescription);
                 return await SaveAsync();
             }
             catch (Exception ex)

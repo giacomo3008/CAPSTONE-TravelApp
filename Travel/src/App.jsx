@@ -14,6 +14,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import AddListingComponent from './components/AddListingComponent';
 import EditListingComponent from './components/EditListingComponent copy';
+import WishlistComponent from './components/WishlistComponent';
+import LoginModalComponent from './components/LoginModalComponent';
 
 function App() {
   const token = useSelector((state) => state.authLogin.token);
@@ -58,6 +60,7 @@ function App() {
           <Route path='/city/:name' element={<CityComponent />} />
           <Route path='/details/:id' element={<DetailsComponent />} />
           <Route path='/listings' element={<MyListingsComponent />} />
+          <Route path='/wishlist' element={<WishlistComponent />} />
           <Route path='/add' element={<AddListingComponent />} />
           <Route path='/edit/:id' element={<EditListingComponent />} />
         </Routes>

@@ -11,7 +11,7 @@ const cityStructuresReducer = (state = initialState, action) => {
             return {
                 ...state,
                 city: action.payload,
-                listings: action.payload.listingDescriptions,
+                listings: action.payload.listingDescriptions != null ? action.payload.listingDescriptions : [],
             }
         case CITY_STRUCTURES_NULL:
             return {

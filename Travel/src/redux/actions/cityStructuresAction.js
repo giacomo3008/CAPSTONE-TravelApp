@@ -1,16 +1,31 @@
 export const CITY_STRUCTURES = "CITY_STRUCTURES";
 export const CITY_STRUCTURES_NULL = "CITY_STRUCTURES_NULL";
 
-export const cityStructures = (name, maxBudget) => async (dispatch) => {
+export const cityStructures = ({ name, token = null, maxBudget = null }) => async (dispatch) => {
     try {
         const URL = maxBudget != null
             ? `https://localhost:7146/api/city/${name}?budget=${maxBudget}`
             : `https://localhost:7146/api/city/${name}`;
-        const response = await fetch(URL);
+        let response;
+        if (token) {
+            response = await fetch(URL, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+        } else {
+            response = await fetch(URL);
+        }
         if (response.status == 404) {
             dispatch({
                 type: CITY_STRUCTURES_NULL,
                 payload: null,
+            });
+            dispatch({
+                type: 'SET_ISLOADING',
+                payload: false,
             });
         }
         else {

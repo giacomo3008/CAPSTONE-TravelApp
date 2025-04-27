@@ -17,9 +17,36 @@
 }
 
 .suggested-container .icons i {
+    /*TODO: Aggiungere i:hover e che al click mi mostra le strutture di quel tipo*/
     transform: scale(1.2);
     color: rgb(255, 255, 255);
 }
+
+.suggested-container .favorite {
+    top: 10px;
+    right: 15px;
+}
+
+.suggested-container .favorite i {
+    font-size: 1.5rem;
+    color: rgba(59, 59, 59, 0.34);
+    -webkit-text-stroke: 1.5px white;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.suggested-container .favorite .fav-card {
+    font-size: 1.5rem;
+    -webkit-text-stroke: 1.5px white;
+    transition: color 0.3s ease;
+    cursor: pointer;
+    color: #F16571;
+}
+
+.suggested-container .favorite i:hover {
+    color: #F16571;
+}
+
 
 .suggested-container .card {
     height: 450px;
@@ -28,6 +55,12 @@
     box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
     box-shadow: -4px -4px 20px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+
+.suggested-container .card:hover {
+    transform: scale(1.05);
 }
 
 .suggested-container .card-listings {

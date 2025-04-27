@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TravelApi.DTOs.Account;
 using TravelApi.Models;
 
 namespace TravelApi.DTOs.Listings
@@ -11,5 +12,7 @@ namespace TravelApi.DTOs.Listings
         public required string HotelName { get; set; }
         public List<string>? ImgUrls { get; set; }
         public ListingDescriptionDto Description { get; set; }
+
+        public bool? isUserListingFavorites { get; set; }
     }
 }

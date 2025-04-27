@@ -199,6 +199,53 @@ namespace TravelApi.Controllers
             }
         }
 
+        [HttpGet("favorites")]
+        public async Task<IActionResult> GetFavorites()
+        {
+            try
+            {
+                var favorites = await _listingService.GetFavoritesAsync(User);
+
+                var listingsDto = favorites.Select(f => f.Listing).Select(l => new ListingDto()
+                {
+                    Id = l.Id,
+                    HotelName = l.HotelName,
+                    ImgUrls = l.ImgUrls,
+                    Description = new ListingDescriptionDto()
+                    {
+                        Id = l.Description.Id,
+                        Description = l.Description.Description,
+                        Beds = l.Description.Beds,
+                        Capacity = l.Description.Capacity,
+                        PricePerNight = l.Description.PricePerNight,
+                        PropertyType = new PropertyTypeDto()
+                        {
+                            Id = l.Description.PropertyType.Id,
+                            Name = l.Description.PropertyType.Name,
+                        },
+                        City = new CityDto()
+                        {
+                            Id = l.Description.City.Id,
+                            Name = l.Description.City.Name,
+                            Description = l.Description.City.Description,
+                            ExperienceType = new ExperienceTypeDto()
+                            {
+                                Id = l.Description.City.ExperienceType.Id,
+                                Name = l.Description.City.ExperienceType.Name,
+                                Icon = l.Description.City.ExperienceType.Icon,
+                            }
+                        }
+                    }
+                });
+
+                return Ok(listingsDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("user/{listingId:Guid}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserByListing(Guid listingId)
@@ -236,27 +283,6 @@ namespace TravelApi.Controllers
             }
         }
 
-        [HttpGet("favorites")]
-        public async Task<IActionResult> GetFavorites()
-        {
-            try
-            {
-                var favorites = await _listingService.GetFavoritesAsync(User);
-
-                var listingsDto = favorites.Select(f => f.Listing).Select(l => new ListingDto()
-                {
-                    Id = l.Id,
-                    HotelName = l.HotelName,
-                    ImgUrls = l.ImgUrls,
-                });
-
-                return Ok(listingsDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
 
         [HttpDelete("general/{id:Guid}")]
         [Authorize(Roles = "Admin")]

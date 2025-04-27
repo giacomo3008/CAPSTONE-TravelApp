@@ -13,6 +13,7 @@ public class UserListingFavorites
     public Guid ListingId { get; set; }
 
     [ForeignKey(nameof(ListingId))]
+    [InverseProperty("UserListingsFavorites")]
     public Listing Listing { get; set; }
     [ForeignKey(nameof(UserId))]
     public ApplicationUser User { get; set; }

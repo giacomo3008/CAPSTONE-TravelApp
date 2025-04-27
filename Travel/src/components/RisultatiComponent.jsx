@@ -16,6 +16,7 @@ const RisultatiComponent = function () {
     const cards = useSelector((state) => state.cityStructures.listings);
     const navigate = useNavigate();
     const isLoading = useSelector((state) => state.isLoading.isLoading);
+    const token = useSelector((state) => state.authLogin.token);
 
     useEffect(() => {
         dispatch({
@@ -26,7 +27,12 @@ const RisultatiComponent = function () {
             type: 'TOGGLE_SEARCH',
             payload: true,
         });
-        dispatch(cityStructures(destination, maxBudget));
+        const name = destination;
+        if (token) {
+            dispatch(cityStructures({ name, token, maxBudget }));
+        } else {
+            dispatch(cityStructures({ name, maxBudget }));
+        }
     }, [destination, maxBudget, prieviousDate]);
 
 
@@ -34,6 +40,77 @@ const RisultatiComponent = function () {
         e.preventDefault();
         console.log(id);
         navigate(`/details/${id}`);
+    }
+
+    const handleFavoriteDelete = async (id) => {
+        try {
+            const url = "https://localhost:7146/api/";
+            const response = await fetch(url + "listing/favorite/" + id, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (response.status === 401 || response.status === 403) {
+                dispatch({
+                    type: 'LOGOUT',
+                    payload: true
+                });
+                localStorage.removeItem('token');
+                dispatch({
+                    type: 'LOGIN',
+                    payload: true,
+                });
+                navigate(`/results/${destination}`);
+            } else {
+                if (!response.ok) {
+                    throw new Error("Errore nella delete");
+                }
+                const data = await response.json();
+                console.log(data);
+                const name = destination;
+                dispatch(cityStructures({ name, token }));
+                navigate(`/results/${destination}`);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const handleFavoriteAuthenticated = async (id) => {
+        try {
+            const url = "https://localhost:7146/api/";
+            const response = await fetch(url + "listing/favorites/" + id, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (response.status === 401 || response.status === 403) {
+                dispatch({
+                    type: 'LOGOUT',
+                    payload: true
+                });
+                localStorage.removeItem('token');
+                dispatch({
+                    type: 'LOGIN',
+                    payload: true,
+                });
+                navigate(`/results/${destination}`);
+            } else {
+                if (!response.ok) {
+                    throw new Error("Errore nella post");
+                }
+                const name = destination;
+
+                dispatch(cityStructures({ name, token }));
+                navigate(`/results/${destination}`);
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     if (!isLoading && city == null) {
@@ -104,6 +181,36 @@ const RisultatiComponent = function () {
                                                 <div className=" position-absolute icons">
                                                     <i className={city.experienceType.icon}></i>
                                                 </div>
+                                                <div className=" position-absolute favorite">
+                                                    {
+                                                        !card.listing.isUserListingFavorites ? (
+                                                            <>
+                                                                {
+                                                                    token == null ? (
+                                                                        <i className="fa-solid fa-heart" onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            dispatch({
+                                                                                type: 'LOGIN',
+                                                                                payload: true,
+                                                                            });
+                                                                        }}></i>
+                                                                    ) : (
+                                                                        <i className="fa-solid fa-heart" onClick={(e) => {
+                                                                            e.preventDefault();
+                                                                            handleFavoriteAuthenticated(card.listing.id);
+                                                                        }}></i>
+                                                                    )
+                                                                }
+                                                            </>
+                                                        ) : (
+                                                            <i className="fa-solid fa-heart fav-card" onClick={(e) => {
+                                                                e.preventDefault();
+                                                                handleFavoriteDelete(card.listing.id);
+                                                            }}></i>
+                                                        )
+                                                    }
+                                                </div>
+
                                                 <Card.Body className="d-flex flex-column justify-content-between">
                                                     <div className="card-body">
                                                         <Card.Title className="mb-1">{card.listing.hotelName}</Card.Title>
