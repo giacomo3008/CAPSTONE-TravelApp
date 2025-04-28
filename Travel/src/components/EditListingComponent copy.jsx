@@ -163,10 +163,10 @@ const EditListingComponent = function () {
 
     return (
         <>
-            {
-                propertyTypes.length > 0 && cities.length > 0 && !isLoading && (
-                    <div className="add-container">
-                        <h2 className="mb-4">Edit your Listing</h2>
+            <div className="add-container">
+                <h2 className="mb-4">Edit your Listing</h2>
+                {
+                    propertyTypes.length > 0 && cities.length > 0 && !isLoading ? (
                         <form onSubmit={handleSubmit}>
                             <div className="input-group">
                                 <label>Listing title</label>
@@ -312,9 +312,63 @@ const EditListingComponent = function () {
                                 <button type="submit" className="submit-btn me-5"><i class="fa-solid fa-pen"></i></button>
                             </div>
                         </form>
-                    </div>
-                )
-            }
+                    ) : (
+                        <div className="skeleton-form">
+                            {/* Title input */}
+                            <div className="skeleton-input-group">
+                                <div className="skeleton-label"></div>
+                                <div className="skeleton-input"></div>
+                            </div>
+
+                            {/* Description textarea */}
+                            <div className="skeleton-input-group">
+                                <div className="skeleton-label"></div>
+                                <div className="skeleton-textarea"></div>
+                            </div>
+
+                            {/* 3 inputs in grid */}
+                            <div className="skeleton-row">
+                                <div className="skeleton-input-group half">
+                                    <div className="skeleton-label"></div>
+                                    <div className="skeleton-input"></div>
+                                </div>
+                                <div className="skeleton-input-group half">
+                                    <div className="skeleton-label"></div>
+                                    <div className="skeleton-input"></div>
+                                </div>
+                                <div className="skeleton-input-group half">
+                                    <div className="skeleton-label"></div>
+                                    <div className="skeleton-input"></div>
+                                </div>
+                            </div>
+
+                            {/* Dropdowns */}
+                            <div className="skeleton-input-group wide">
+                                <div className="skeleton-label"></div>
+                                <div className="skeleton-input"></div>
+                            </div>
+
+                            <div className="skeleton-input-group wide">
+                                <div className="skeleton-label"></div>
+                                <div className="skeleton-input"></div>
+                            </div>
+
+                            {/* Image URLs */}
+                            <div className="skeleton-input-group wide">
+                                <div className="skeleton-label"></div>
+                                {[...Array(3)].map((_, i) => (
+                                    <div className="skeleton-input mb-2" key={i}></div>
+                                ))}
+                                <div className="skeleton-button mt-2"></div>
+                            </div>
+
+                            {/* Submit button */}
+                            <div className="skeleton-submit-btn"></div>
+                        </div>
+
+                    )
+                }
+            </div>
         </>
     );
 };

@@ -1,6 +1,6 @@
 export const LOGIN_ACCESSO = "LOGIN_ACCESSO";
 
-export const login = (email, password) => async (dispatch) => {
+export const login = (email, password, reload) => async (dispatch) => {
     try {
         const URL = "https://localhost:7146/api/"
         const response = await fetch(URL + "account/login", {
@@ -14,7 +14,6 @@ export const login = (email, password) => async (dispatch) => {
             throw new Error("Errore nel Login");
         }
         const data = await response.json();
-        console.log(data);
 
         dispatch({
             type: LOGIN_ACCESSO,
@@ -24,7 +23,11 @@ export const login = (email, password) => async (dispatch) => {
             type: 'CLOSE',
             payload: true,
         });
+        if (reload) {
+            window.location.reload();
+        }
         localStorage.setItem("token", data.token);
+        console.log(data);
     }
     catch (error) {
         dispatch({

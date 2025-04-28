@@ -56,7 +56,7 @@ const NavBarComponent = function () {
             payload: true,
         });
         localStorage.removeItem("token");
-        navigate('/')
+        navigate('/');
     }
 
     const handleSignUp = (e) => {
@@ -119,7 +119,8 @@ const NavBarComponent = function () {
                                     {user && (
                                         <div className="welcome-container">
                                             <span className="welcome-text">Benvenuto, <br />
-                                                <strong>{user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]}</strong></span>
+                                                <strong>{user.firstName} {user.lastName}</strong>
+                                            </span>
                                         </div>
                                     )}
                                     <div
@@ -135,7 +136,7 @@ const NavBarComponent = function () {
                                             />
                                         ) : (
                                             <div className="profile-icon-login">
-                                                {user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"].charAt(0)}
+                                                {user.firstName.charAt(0)}
                                             </div>
                                         )}
                                     </div>

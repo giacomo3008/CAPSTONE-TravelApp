@@ -1,0 +1,166 @@
+/* Imposta il body intero */
+.account-page {
+    min-height: 100vh;
+    background: #f2f2f2;
+    padding: 2rem 4rem;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+}
+
+/* Header */
+.account-header {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 2rem;
+    padding-left: 15rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    margin-top: 7rem;
+}
+
+.account-header,
+.account-page section {
+    width: 100%;
+    max-width: 1380px;
+}
+
+.account-page .header-icon {
+    font-size: 4rem;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.account-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.account-header p {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Sezioni */
+.account-section {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.account-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    color: #444;
+}
+
+.account-page .section-icon {
+    font-size: 1.8rem;
+    color: #777;
+}
+
+/* Info Utente */
+.account-page .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.account-page .info-card {
+    background: #f9f9f9;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.account-page .info-card:hover {
+    background: #e6e6e6;
+}
+
+.account-page .info-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.account-page .info-card span {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+/* FAQ */
+
+.faq-item {
+    padding: 1rem;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+.faq-item p {
+    margin-top: 0.5rem;
+    line-height: 1.6;
+}
+
+
+/*azioni rapide */
+.account-page .actions-section {
+    position: sticky;
+    top: 8rem;
+}
+
+.account-page .action-card {
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 10px;
+    width: 200px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.account-page .action-card span {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+}
+
+.account-page .action-icon {
+    font-size: 1.8rem;
+    color: #555;
+}
+
+.account-page .action-card.logout {
+    background: #e0e0e0;
+}
+
+.account-page .action-card.logout:hover {
+    background: #cfcfcf;
+    transform: translateY(-2px);
+}
+
+.account-page .action-card.delete {
+    background: #ffe5e5;
+    color: #a10000;
+}
+
+.account-page .action-card.delete:hover {
+    background: #ffc9c9;
+    transform: translateY(-2px);
+}

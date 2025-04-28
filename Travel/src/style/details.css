@@ -88,6 +88,17 @@
     top: 130px;
 }
 
+.booking-form .box-form {
+    border: 0.5px solid rgba(71, 71, 71, 0.51);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+
+.booking-form .box-form:hover {
+    border-color: black;
+}
+
 .booking-form h2 {
     color: #333;
     text-align: center;
@@ -96,31 +107,52 @@
     font-weight: 700;
 }
 
-.booking-form .input-group label {
+.booking-form label {
     font-weight: 600;
     color: #5b5b5b;
     margin-bottom: 6px;
     font-size: 0.9rem;
 }
 
-.booking-form .input-group input,
-.booking-form .input-group select {
+
+.booking-form input,
+.booking-form select {
     padding: 10px 15px;
-    border: none;
     width: 100%;
-    border-radius: 35px !important;
-    background-color: #F9F9F9;
+    border: none;
+    border-left: 0.5px solid rgba(71, 71, 71, 0.51);
+    border-radius: 0 !important;
+    background-color: white;
     color: #6f6f6f;
     font-size: 14px;
-    outline: none;
-    transition: box-shadow 0.3s ease;
+    transition: color 0.3s ease;
+    cursor: pointer;
 }
 
-.booking-form .input-group input:hover,
-.booking-form .input-group input:focus,
-.booking-form .input-group select:hover,
-.booking-form .input-group select:focus {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.booking-form select {
+    color: black;
+}
+
+.booking-form .first-input {
+    border: none;
+}
+
+.booking-form .last-input {
+    border: none;
+    border-top: 0.5px solid rgba(71, 71, 71, 0.51);
+}
+
+.booking-form input:hover,
+.booking-form input:focus,
+.booking-form select:hover,
+.booking-form select:focus {
+    box-shadow: none !important;
+    border-color: rgba(71, 71, 71, 0.51) !important;
+    color: black;
+}
+
+.booking-form .selected {
+    color: black;
 }
 
 .booking-form button {
@@ -132,7 +164,7 @@
     color: white;
     font-size: 16px;
     font-weight: 600;
-    margin-top: 1rem;
+    margin-top: 2rem;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
@@ -142,6 +174,14 @@
     background-color: #e25a64;
     transform: translateY(-2px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.booking-form .error-message {
+    transition: transform 0.5s ease-in-out;
+}
+
+.booking-form .error-message.pulse {
+    transform: scale(1.1);
 }
 
 /* Skeleton Container */

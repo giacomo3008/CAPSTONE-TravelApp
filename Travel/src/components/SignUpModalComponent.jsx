@@ -14,6 +14,11 @@ const SignUpModalComponent = () => {
     const [passwordError, setPasswordError] = useState(false);
 
     useEffect(() => {
+        dispatch({
+            type: 'SIGNUP_ERROR',
+            payload: null,
+        });
+        setPasswordError(false);
         if (isSignUpModal) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -125,7 +130,13 @@ const SignUpModalComponent = () => {
                                         id="email"
                                         placeholder="Enter your email"
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: 'SIGNUP_ERROR',
+                                                payload: null,
+                                            });
+                                            setEmail(e.target.value)
+                                        }}
                                         required
                                     />
                                 </div>
@@ -136,7 +147,10 @@ const SignUpModalComponent = () => {
                                         id="password"
                                         placeholder="Create a password"
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={(e) => {
+                                            setPasswordError(false);
+                                            setPassword(e.target.value)
+                                        }}
                                         required
                                     />
                                 </div>
@@ -147,7 +161,10 @@ const SignUpModalComponent = () => {
                                         id="confirmPassword"
                                         placeholder="Confirm your password"
                                         value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        onChange={(e) => {
+                                            setPasswordError(false);
+                                            setConfirmPassword(e.target.value)
+                                        }}
                                         required
                                     />
                                 </div>

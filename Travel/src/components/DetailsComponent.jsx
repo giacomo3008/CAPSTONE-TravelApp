@@ -1,8 +1,8 @@
 import { Col, Container, Row } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../style/details.css"
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const DetailsComponent = function () {
     const { id } = useParams();
@@ -13,10 +13,14 @@ const DetailsComponent = function () {
     const [imageSubset, setImageSubset] = useState([]);
     const [remainingSlots, setRemainingSlots] = useState(0);
     const [userHost, setUserHost] = useState(null);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const [guests, setGuests] = useState(1);
     const [maxGuests, setMaxGuests] = useState(1);
+    const [invalidDates, setInvalidDates] = useState(false);
+    const [pulse, setPulse] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
 
     const getStructureDetails = async (id) => {
@@ -81,7 +85,30 @@ const DetailsComponent = function () {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(startDate, endDate, guests);
+        if (invalidDates) {
+            setPulse(true);
+            setTimeout(() => {
+                setPulse(false);
+            }, 200);
+            return;
+        }
+        if (!token) {
+            dispatch({
+                type: 'LOGIN',
+                payload: true,
+            });
+            return;
+        }
+        // if()
+        dispatch({
+            type: 'CART_INFO',
+            payload: {
+                startDate: startDate,
+                endDate: endDate,
+                guests: guests,
+            }
+        });
+        navigate('/cart');
     };
 
     return (
@@ -183,41 +210,81 @@ const DetailsComponent = function () {
                         <Col xs={4}>
                             <form onSubmit={handleSubmit} className="booking-form">
                                 <h2>Prenota il tuo soggiorno</h2>
-
-                                <div className="input-group">
-                                    <label>Check-in</label>
-                                    <input
-                                        type="date"
-                                        value={startDate}
-                                        onChange={(e) => setStartDate(e.target.value)}
-                                        required
-                                    />
+                                <div className="box-form container-fluid">
+                                    <div className=" row">
+                                        <div className=" col-6 form-floating p-0 m-0">
+                                            {/* <label>Check-in</label> */}
+                                            <input
+                                                type="date"
+                                                className={`first-input form-control ${startDate ? 'selected' : ''}`}
+                                                id="startDate"
+                                                value={startDate}
+                                                onChange={(e) => {
+                                                    if (e.target.value < endDate && endDate) {
+                                                        setInvalidDates(false);
+                                                        setStartDate(e.target.value);
+                                                    } else if (!endDate) {
+                                                        setInvalidDates(false);
+                                                        setStartDate(e.target.value);
+                                                    } else {
+                                                        setStartDate(e.target.value);
+                                                        setInvalidDates(true);
+                                                    }
+                                                }}
+                                                required
+                                            />
+                                            <label htmlFor="startDate">Check-in</label>
+                                        </div>
+                                        <div className="col-6 form-floating p-0 m-0">
+                                            {/* <label>Check-out</label> */}
+                                            <input
+                                                type="date"
+                                                className={`form-control ${endDate ? 'selected' : ''}`}
+                                                id="endDate"
+                                                value={endDate}
+                                                onChange={(e) => {
+                                                    if (e.target.value > startDate && startDate) {
+                                                        setInvalidDates(false);
+                                                        setEndDate(e.target.value);
+                                                    } else if (!startDate) {
+                                                        setInvalidDates(false);
+                                                        setEndDate(e.target.value);
+                                                    } else {
+                                                        setEndDate(e.target.value);
+                                                        setInvalidDates(true);
+                                                    }
+                                                }}
+                                                required
+                                            />
+                                            <label htmlFor="endDate">Check-out</label>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-12 form-floating p-0 m-0">
+                                            <select
+                                                value={guests}
+                                                id="guests"
+                                                className="last-input form-control"
+                                                onChange={(e) => setGuests(parseInt(e.target.value))}
+                                                required
+                                            >
+                                                {Array.from({ length: maxGuests }, (_, i) => i + 1).map((num) => (
+                                                    <option key={num} value={num}>
+                                                        {num} {num === 1 ? "ospite" : "ospiti"}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <label htmlFor="guests">Numero di ospiti</label>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="input-group">
-                                    <label>Check-out</label>
-                                    <input
-                                        type="date"
-                                        value={endDate}
-                                        onChange={(e) => setEndDate(e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className="input-group">
-                                    <label>Numero di ospiti</label>
-                                    <select
-                                        value={guests}
-                                        onChange={(e) => setGuests(parseInt(e.target.value))}
-                                        required
-                                    >
-                                        {Array.from({ length: maxGuests }, (_, i) => i + 1).map((num) => (
-                                            <option key={num} value={num}>
-                                                {num} {num === 1 ? "ospite" : "ospiti"}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
+                                {
+                                    invalidDates && (
+                                        <div className={`ps-2 error-message ${pulse ? 'pulse' : ''}`} style={{ color: 'red', marginTop: '10px' }}>
+                                            Inserisci delle date valide!
+                                        </div>
+                                    )
+                                }
                                 <button type="submit">Aggiungi prenotazione</button>
                             </form>
 

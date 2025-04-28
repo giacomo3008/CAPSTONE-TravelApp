@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import '../style/login.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/actions/authActions';
+import { useLocation } from 'react-router-dom';
 
 const LoginModalComponent = () => {
     const isLoginModal = useSelector((state) => state.loginSignUp.login);
@@ -9,8 +10,13 @@ const LoginModalComponent = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const loginError = useSelector((state) => state.error.login);
+    const location = useLocation();
 
     useEffect(() => {
+        dispatch({
+            type: 'LOGIN_ERROR',
+            payload: null,
+        });
         if (isLoginModal) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -33,10 +39,13 @@ const LoginModalComponent = () => {
     const handleLogin = (e) => {
         e.preventDefault();
         console.log('Login con:', email, password);
-
-        dispatch(login(email, password));
-
-        // handleClose();
+        let reload = false;
+        if (location.pathname.startsWith("/results/") || location.pathname.startsWith("/city/")) {
+            reload = true;
+            dispatch(login(email, password, reload));
+            return;
+        }
+        dispatch(login(email, password, reload));
     };
 
     const handleSignUp = (e) => {
@@ -71,7 +80,13 @@ const LoginModalComponent = () => {
                                         id="email"
                                         placeholder="Enter your email"
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: 'LOGIN_ERROR',
+                                                payload: null,
+                                            });
+                                            setEmail(e.target.value)
+                                        }}
                                         required
                                     />
                                 </div>
@@ -82,7 +97,13 @@ const LoginModalComponent = () => {
                                         id="password"
                                         placeholder="Enter your password"
                                         value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
+                                        onChange={(e) => {
+                                            dispatch({
+                                                type: 'LOGIN_ERROR',
+                                                payload: null,
+                                            });
+                                            setPassword(e.target.value)
+                                        }}
                                         required
                                     />
                                 </div>

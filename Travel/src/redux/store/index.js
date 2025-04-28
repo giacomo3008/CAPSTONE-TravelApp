@@ -7,6 +7,7 @@ import cityStructuresReducer from '../reducers/cityStructures';
 import errorReducer from '../reducers/error';
 import filtersSearchReducer from '../reducers/filtersSearch';
 import isLoadingReducer from '../reducers/isLoading';
+import cartInfoReducer from '../reducers/cartInfo';
 
 const mainReducer = combineReducers({
     toggleSearch: toggleSearchReducer,
@@ -16,7 +17,8 @@ const mainReducer = combineReducers({
     cityStructures: cityStructuresReducer,
     error: errorReducer,
     filtersSearch: filtersSearchReducer,
-    isLoading: isLoadingReducer
+    isLoading: isLoadingReducer,
+    cartInfo: cartInfoReducer
 });
 
 const store = configureStore({

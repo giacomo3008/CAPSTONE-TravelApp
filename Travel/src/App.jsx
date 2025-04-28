@@ -16,6 +16,8 @@ import AddListingComponent from './components/AddListingComponent';
 import EditListingComponent from './components/EditListingComponent copy';
 import WishlistComponent from './components/WishlistComponent';
 import LoginModalComponent from './components/LoginModalComponent';
+import CartComponent from './components/CartComponent';
+import AccountComponent from './components/AccountComponent';
 
 function App() {
   const token = useSelector((state) => state.authLogin.token);
@@ -63,6 +65,8 @@ function App() {
           <Route path='/wishlist' element={<WishlistComponent />} />
           <Route path='/add' element={<AddListingComponent />} />
           <Route path='/edit/:id' element={<EditListingComponent />} />
+          <Route path='/cart' element={<CartComponent />} />
+          <Route path='/account' element={<AccountComponent />} />
         </Routes>
         <FooterComponent />
       </div>

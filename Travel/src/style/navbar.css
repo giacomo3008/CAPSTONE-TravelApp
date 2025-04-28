@@ -124,6 +124,21 @@
     font-size: 0.8rem;
 }
 
+.profile-icon-account {
+    position: absolute;
+    top: calc(50% - 75px);
+    left: 40px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #7b494d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #DFDFDF;
+    font-size: 3.5rem;
+}
+
 .menu-toggle-custom::after {
     display: none !important;
 }

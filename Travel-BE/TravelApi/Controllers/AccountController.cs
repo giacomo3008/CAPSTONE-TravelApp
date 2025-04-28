@@ -110,7 +110,9 @@ namespace TravelApi.Controllers
             List<Claim> claims = new List<Claim>();
 
             claims.Add(new Claim(ClaimTypes.Email, user.Email));
-            claims.Add(new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"));
+            claims.Add(new Claim("firstName", user.FirstName));
+            claims.Add(new Claim("lastName", user.LastName));
+            claims.Add(new Claim("createdAt", user.CreatedAt.ToString("o")));
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
