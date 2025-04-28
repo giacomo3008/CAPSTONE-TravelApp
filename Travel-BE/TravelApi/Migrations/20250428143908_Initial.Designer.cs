@@ -12,7 +12,7 @@ using TravelApi.Data;
 namespace TravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250427191620_Initial")]
+    [Migration("20250428143908_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -155,6 +155,9 @@ namespace TravelApi.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -294,15 +297,14 @@ namespace TravelApi.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ListingId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique()
-                        .HasFilter("[UserId] IS NOT NULL");
+                    b.HasIndex("UserId");
 
                     b.ToTable("CartItems");
                 });
@@ -549,9 +551,10 @@ namespace TravelApi.Migrations
                         .IsRequired();
 
                     b.HasOne("TravelApi.Models.Auth.ApplicationUser", "User")
-                        .WithOne("CartItem")
-                        .HasForeignKey("TravelApi.Models.CartItem", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany("CartItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Listing");
 
@@ -614,7 +617,7 @@ namespace TravelApi.Migrations
 
             modelBuilder.Entity("TravelApi.Models.Auth.ApplicationUser", b =>
                 {
-                    b.Navigation("CartItem");
+                    b.Navigation("CartItems");
 
                     b.Navigation("UserListings");
 

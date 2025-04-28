@@ -11,9 +11,9 @@ public class ApplicationUser : IdentityUser
     [Required]
     public required string LastName { get; set; }
 
-    public CartItem? CartItem { get; set; }
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public ICollection<CartItem>? CartItems { get; set; }
 
     public ICollection<ApplicationUserRole> UserRoles { get; set; }
 

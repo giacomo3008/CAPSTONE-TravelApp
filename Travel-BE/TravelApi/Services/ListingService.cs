@@ -317,30 +317,20 @@ namespace TravelApi.Services
             }
         }
 
-        public async Task<CartItem?> GetCartAsync(ClaimsPrincipal userPrincipal)
+        public async Task<ICollection<CartItem?>> GetCartAsync(ClaimsPrincipal userPrincipal)
         {
             try
             {
                 var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
                 var user = await _userManager.Users
-                        .Include(u => u.CartItem)
-                            .ThenInclude(ci => ci.Listing)
-                                .ThenInclude(l => l.Description)
-                                    .ThenInclude(d => d.PropertyType)
-                        .Include(u => u.CartItem)
+                        .Include(u => u.CartItems)
                             .ThenInclude(ci => ci.Listing)
                                 .ThenInclude(l => l.Description)
                                     .ThenInclude(d => d.City)
-                                        .ThenInclude(c => c.Country)
-                        .Include(u => u.CartItem)
-                            .ThenInclude(ci => ci.Listing)
-                                .ThenInclude(l => l.Description)
-                                    .ThenInclude(d => d.City)
-                                        .ThenInclude(c => c.ExperienceType)
                         .FirstOrDefaultAsync(u => u.Email == userEmail);
 
-                return user?.CartItem;
+                return user?.CartItems;
             }
             catch (Exception ex)
             {
@@ -349,7 +339,7 @@ namespace TravelApi.Services
             }
         }
 
-        public async Task<bool> DeleteCartAsync(ClaimsPrincipal user)
+        public async Task<bool> DeleteCartAsync(ClaimsPrincipal user, Guid cartItemId)
         {
             try
             {
@@ -357,13 +347,21 @@ namespace TravelApi.Services
                 if (string.IsNullOrEmpty(userEmail)) return false;
 
                 var currentUser = await _userManager.Users
-                    .Include(u => u.CartItem)
+                    .Include(u => u.CartItems)
                     .FirstOrDefaultAsync(u => u.Email == userEmail);
 
-                if (currentUser?.CartItem == null) return false;
+                if (currentUser == null)
+                {
+                    return false;
+                }
 
-                _context.CartItems.Remove(currentUser.CartItem);
-                currentUser.CartItem = null;
+                var cartItem = currentUser.CartItems.FirstOrDefault(ci => ci.Id == cartItemId);
+                if (cartItem == null)
+                {
+                    return false;
+                }
+
+                _context.CartItems.Remove(cartItem);
                 return await SaveAsync();
             }
             catch (Exception ex)

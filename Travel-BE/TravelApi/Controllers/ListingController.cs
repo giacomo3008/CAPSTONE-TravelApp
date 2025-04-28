@@ -365,13 +365,13 @@ namespace TravelApi.Controllers
         {
             try
             {
-                var cartItem = await _listingService.GetCartAsync(User);
-                if (cartItem == null)
+                var cartItems = await _listingService.GetCartAsync(User);
+                if (cartItems == null)
                 {
                     return NotFound("Carrello vuoto");
                 }
 
-                var cartItemDto = new CartItemDto()
+                var cartItemsDto = cartItems.Select(cartItem => new CartItemDto()
                 {
                     NumberOfPeople = cartItem.NumberOfPeople,
                     StartDate = cartItem.StartDate,
@@ -385,41 +385,17 @@ namespace TravelApi.Controllers
                         {
                             Id = cartItem.Listing.Description.Id,
                             Description = cartItem.Listing.Description.Description,
-                            Beds = cartItem.Listing.Description.Beds,
-                            Capacity = cartItem.Listing.Description.Capacity,
                             PricePerNight = cartItem.Listing.Description.PricePerNight,
-
-                            PropertyType = new PropertyTypeDto
-                            {
-                                Id = cartItem.Listing.Description.PropertyType.Id,
-                                Name = cartItem.Listing.Description.PropertyType.Name
-                            },
-
                             City = new CityDto
                             {
                                 Id = cartItem.Listing.Description.City.Id,
                                 Name = cartItem.Listing.Description.City.Name,
-                                Description = cartItem.Listing.Description.City.Description,
-
-                                Country = new CountryDto
-                                {
-                                    Id = cartItem.Listing.Description.City.Country.Id,
-                                    Name = cartItem.Listing.Description.City.Country.Name,
-                                    ImgUrl = cartItem.Listing.Description.City.Country.ImgUrl
-                                },
-
-                                ExperienceType = new ExperienceTypeDto
-                                {
-                                    Id = cartItem.Listing.Description.City.ExperienceType.Id,
-                                    Name = cartItem.Listing.Description.City.ExperienceType.Name,
-                                    Icon = cartItem.Listing.Description.City.ExperienceType.Icon
-                                }
                             }
                         }
                     }
-                };
+                }).ToList();
 
-                return Ok(cartItemDto);
+                return Ok(cartItemsDto);
             }
             catch (Exception ex)
             {
@@ -428,11 +404,11 @@ namespace TravelApi.Controllers
         }
 
         [HttpDelete("cart")]
-        public async Task<IActionResult> DeleteCart()
+        public async Task<IActionResult> DeleteCart([FromQuery] Guid id)
         {
             try
             {
-                var result = await _listingService.DeleteCartAsync(User);
+                var result = await _listingService.DeleteCartAsync(User, id);
                 if (!result)
                 {
                     return BadRequest(new { message = "Something went wrong" });

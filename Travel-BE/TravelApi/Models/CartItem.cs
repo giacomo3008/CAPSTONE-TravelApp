@@ -25,7 +25,8 @@ namespace TravelApi.Models
         [Required]
         public DateOnly EndDate { get; set; }
 
-        public string? UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public ApplicationUser User { get; set; }
