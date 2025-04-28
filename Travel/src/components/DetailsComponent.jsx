@@ -13,8 +13,8 @@ const DetailsComponent = function () {
     const [imageSubset, setImageSubset] = useState([]);
     const [remainingSlots, setRemainingSlots] = useState(0);
     const [userHost, setUserHost] = useState(null);
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [guests, setGuests] = useState(1);
     const [maxGuests, setMaxGuests] = useState(1);
     const [invalidDates, setInvalidDates] = useState(false);
@@ -83,7 +83,7 @@ const DetailsComponent = function () {
         }
     }, [structure]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (invalidDates) {
             setPulse(true);
@@ -99,16 +99,36 @@ const DetailsComponent = function () {
             });
             return;
         }
-        // if()
-        dispatch({
-            type: 'CART_INFO',
-            payload: {
-                startDate: startDate,
-                endDate: endDate,
-                guests: guests,
+
+        try {
+            const numberOfPeople = guests;
+            const URL = "https://localhost:7146/api/"
+            const response = await fetch(URL + "listing/cart/" + id, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ startDate, endDate, numberOfPeople })
+            });
+            if (response.status === 401 || response.status === 403) {
+                dispatch({
+                    type: 'LOGOUT',
+                    payload: true
+                });
+                localStorage.removeItem('token');
+                navigate('/');
+            } else {
+                if (!response.ok) {
+                    throw new Error("Errore nella post del cart item!");
+                }
+                const data = await response.json();
+                console.log(data);
+                navigate('/cart');
             }
-        });
-        navigate('/cart');
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     return (
@@ -198,7 +218,7 @@ const DetailsComponent = function () {
                                 </div>
                             </div>
                             <div className="mb-4 d-flex flex-row align-items-center lista-desc">
-                                <i class="fa-solid fa-user-group me-4 ms-3"></i>
+                                <i className="fa-solid fa-user-group me-4 ms-3"></i>
                                 <div>
                                     <h5 className="m-0">Capienza persone :</h5>
                                     <p className="m-0">{structure.description.capacity}</p>

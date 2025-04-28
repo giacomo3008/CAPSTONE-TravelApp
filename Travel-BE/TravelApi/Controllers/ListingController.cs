@@ -373,6 +373,7 @@ namespace TravelApi.Controllers
 
                 var cartItemsDto = cartItems.Select(cartItem => new CartItemDto()
                 {
+                    Id = cartItem.Id,
                     NumberOfPeople = cartItem.NumberOfPeople,
                     StartDate = cartItem.StartDate,
                     EndDate = cartItem.EndDate,
