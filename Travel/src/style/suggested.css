@@ -125,8 +125,6 @@
 
 .suggested-container .img-card-cities {
     height: 195px !important;
-    background-color: grey;
-
     display: flex;
     justify-content: center;
     align-items: center;

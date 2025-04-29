@@ -173,8 +173,22 @@ const RisultatiComponent = function () {
                                             <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative card-listings">
                                                 <div className="img-card-cities">
                                                     {
-                                                        card.listing.imgUrls.length > 0 && (
-                                                            <img height="195px" src={card.listing.imgUrls[0]} />
+                                                        card.listing.imgUrls[0] ? (
+                                                            <img src={card.listing.imgUrls[0]} height="195px" />
+                                                        ) : (
+                                                            <div style={{
+                                                                width: "100%",
+                                                                backgroundColor: "rgba(181, 181, 181, 0.32)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                height: "100%",
+                                                                overflow: "hidden"
+                                                            }}>
+                                                                <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                    <i className="fa-regular fa-building"></i>
+                                                                </div>
+                                                            </div>
                                                         )
                                                     }
                                                 </div>

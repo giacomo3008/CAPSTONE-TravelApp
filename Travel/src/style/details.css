@@ -277,3 +277,44 @@
     height: 40px;
     border-radius: 4px;
 }
+
+
+.details-container .summary-box .info-text {
+    font-size: 0.8rem;
+    text-align: center;
+    color: #555;
+}
+
+.details-container .summary-box .rows {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.details-container .summary-box .rows .underline-p {
+    color: #333;
+    text-decoration: underline;
+}
+
+.details-container .summary-box .rows.total {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.summary-box {
+    animation: slideFadeIn 0.5s ease-out forwards;
+}
+
+@keyframes slideFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

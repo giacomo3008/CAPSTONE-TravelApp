@@ -139,19 +139,36 @@ const DetailsComponent = function () {
                     {/* Sezione immagini */}
                     <div style={{ height: "450px", display: "flex" }} className="imgs-details mt-4 mb-5">
                         {/* Immagine principale a sinistra */}
-                        <div style={{ width: "50%", backgroundColor: "grey", marginRight: "0rem" }}>
+                        <div style={{ width: "50%", marginRight: "0rem" }}>
                             <div
                                 style={{
                                     height: "100%",
-                                    backgroundColor: "grey",
+                                    backgroundColor: "rgba(222, 222, 222, 0.55)",
                                     display: "flex",
                                     alignItems: "center",
                                     justifyContent: "center",
                                     fontSize: "1.5rem",
                                     overflow: "hidden"
                                 }}
-                            >
-                                <img className="h-100" src={structure.imgUrls[0]} />
+                            >{
+                                    structure.imgUrls[0] ? (
+                                        <img className="h-100" src={structure.imgUrls[0]} />
+                                    ) : (
+                                        <div style={{
+                                            width: "100%",
+                                            backgroundColor: "trasparent",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            height: "100%",
+                                            overflow: "hidden"
+                                        }}>
+                                            <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                <i className="fa-regular fa-building"></i>
+                                            </div>
+                                        </div>
+                                    )
+                                }
                             </div>
                         </div>
 
@@ -305,6 +322,34 @@ const DetailsComponent = function () {
                                         </div>
                                     )
                                 }
+                                {
+                                    startDate && endDate && !invalidDates && (
+                                        <div class="summary-box">
+                                            <p class="info-text mt-3 mb-4">Non riceverai alcun addebito in questa fase</p>
+
+                                            <div class="rows">
+                                                <p className="d-flex flex-row justify-content-between m-0 underline-p">Alloggio </p>
+                                                <p>{Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight} €</p>
+                                            </div>
+                                            <div class="rows">
+                                                <p className="d-flex flex-row justify-content-between m-0 underline-p">Costi di pulizia </p>
+                                                <p>100.00 €</p>
+                                            </div>
+                                            <div class="rows">
+                                                <p className="d-flex flex-row justify-content-between m-0 p-0 underline-p">Costi del servizio Travel </p>
+                                                <p className="m-0 p-0">{Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight * 0.2} €</p>
+                                            </div>
+
+                                            <hr className="my-4" />
+
+                                            <div class="rows total">
+                                                <p className="d-flex flex-row justify-content-between m-0 p-0">Totale </p>
+                                                <p className="m-0 p-0">{(Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight) * 1.2 + 100} €</p>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+
                                 <button type="submit">Aggiungi prenotazione</button>
                             </form>
 

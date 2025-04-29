@@ -25,7 +25,8 @@
 }
 
 .account-header,
-.account-page section {
+.account-page section,
+.account-page .last-boxes {
     width: 100%;
     max-width: 1380px;
 }
@@ -81,6 +82,10 @@
     border-radius: 12px;
     text-align: center;
     transition: all 0.3s;
+}
+
+.account-page .info-card.email {
+    overflow: scroll !important;
 }
 
 .account-page .info-card:hover {

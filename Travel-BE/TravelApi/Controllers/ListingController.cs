@@ -404,6 +404,52 @@ namespace TravelApi.Controllers
             }
         }
 
+        [HttpGet("cart/{id:Guid}")]
+        public async Task<IActionResult> GetCartItem(Guid id)
+        {
+            try
+            {
+                var cartItem = await _listingService.GetCartItemAsync(id);
+                if (cartItem == null)
+                {
+                    return NotFound("item insesistente");
+                }
+
+                var cartItemDto = new CartItemDto()
+                {
+                    Id = cartItem.Id,
+                    NumberOfPeople = cartItem.NumberOfPeople,
+                    StartDate = cartItem.StartDate,
+                    EndDate = cartItem.EndDate,
+                    Listing = new ListingDto()
+                    {
+                        Id = cartItem.Listing.Id,
+                        HotelName = cartItem.Listing.HotelName,
+                        ImgUrls = cartItem.Listing.ImgUrls,
+                        Description = new ListingDescriptionDto()
+                        {
+                            Id = cartItem.Listing.Description.Id,
+                            Description = cartItem.Listing.Description.Description,
+                            Beds = cartItem.Listing.Description.Beds,
+                            Capacity = cartItem.Listing.Description.Capacity,
+                            PricePerNight = cartItem.Listing.Description.PricePerNight,
+                            PropertyType = new PropertyTypeDto()
+                            {
+                                Id = cartItem.Listing.Description.PropertyType.Id,
+                                Name = cartItem.Listing.Description.PropertyType.Name,
+                            },
+                        },
+                    },
+                };
+
+                return Ok(cartItemDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpDelete("cart")]
         public async Task<IActionResult> DeleteCart([FromQuery] Guid id)
         {

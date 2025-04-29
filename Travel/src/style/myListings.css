@@ -40,6 +40,7 @@
     box-shadow: -5px -5px 25px rgba(84, 84, 84, 0.373);
 }
 
+
 .my-listings-div .listing-action {
     position: absolute;
     bottom: -0.5rem;
@@ -48,6 +49,30 @@
     flex-direction: column;
     gap: 0.5rem;
 }
+
+.my-listings-div .price-div {
+    position: absolute;
+    bottom: -0.5rem;
+    right: 3rem;
+}
+
+.my-listings-div .price-div .tot-span {
+    font-weight: 400;
+    margin-right: 1rem;
+}
+
+.my-listings-div .delete-action {
+    position: absolute;
+    top: -0.5rem;
+    right: 3rem;
+}
+
+.my-listings-div .delete-action i {
+    color: black;
+    font-size: 1.2rem;
+}
+
+
 
 .my-listings-div .btn {
     background: none;

@@ -18,6 +18,7 @@ import WishlistComponent from './components/WishlistComponent';
 import LoginModalComponent from './components/LoginModalComponent';
 import CartComponent from './components/CartComponent';
 import AccountComponent from './components/AccountComponent';
+import BookingComponent from './components/BookingComponent';
 
 function App() {
   const token = useSelector((state) => state.authLogin.token);
@@ -67,6 +68,7 @@ function App() {
           <Route path='/edit/:id' element={<EditListingComponent />} />
           <Route path='/cart' element={<CartComponent />} />
           <Route path='/account' element={<AccountComponent />} />
+          <Route path='/booking/:idListing' element={<BookingComponent />} />
         </Routes>
         <FooterComponent />
       </div>

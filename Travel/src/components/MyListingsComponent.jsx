@@ -149,7 +149,25 @@ const MyListingsComponent = function () {
                                             handleClickDiv(listing.id);
                                         }}>
                                             <div className='listing-imgs me-5'>
-                                                <img src={listing.imgUrls[0]} height="100%" />
+                                                {
+                                                    listing.imgUrls[0] ? (
+                                                        <img src={listing.imgUrls[0]} height="100%" />
+                                                    ) : (
+                                                        <div style={{
+                                                            width: "100%",
+                                                            backgroundColor: "rgba(222, 222, 222, 0.55)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            height: "100%",
+                                                            overflow: "hidden"
+                                                        }}>
+                                                            <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                <i className="fa-regular fa-building"></i>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
                                             </div>
                                             <div className="listing-info">
                                                 <h2 className="hotel-name">{listing.hotelName} - {listing.description.city.name}</h2>

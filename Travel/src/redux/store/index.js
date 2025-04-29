@@ -18,7 +18,7 @@ const mainReducer = combineReducers({
     error: errorReducer,
     filtersSearch: filtersSearchReducer,
     isLoading: isLoadingReducer,
-    cartInfo: cartInfoReducer
+    cartInfo: cartInfoReducer,
 });
 
 const store = configureStore({

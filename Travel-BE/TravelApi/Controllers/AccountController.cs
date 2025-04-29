@@ -79,7 +79,20 @@ namespace TravelApi.Controllers
                 return BadRequest("User creation failed.");
             }
 
-            var addRoleResult = await _userManager.AddToRoleAsync(user, "Admin");
+            IdentityResult addRoleResult;
+            if (registerRequestDto.Email == "giacomorigo7@gmail.com")
+            {
+                addRoleResult = await _userManager.AddToRoleAsync(user, "Admin");
+            }
+            else if (registerRequestDto.Email == "giacomorigo007@gmail.com")
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+                addRoleResult = await _userManager.AddToRoleAsync(user, "Admin");
+            }
+            else
+            {
+                addRoleResult = await _userManager.AddToRoleAsync(user, "User");
+            }
 
             if (!addRoleResult.Succeeded)
             {

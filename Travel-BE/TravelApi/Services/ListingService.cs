@@ -339,6 +339,23 @@ namespace TravelApi.Services
             }
         }
 
+        public async Task<CartItem?> GetCartItemAsync(Guid id)
+        {
+            try
+            {
+                return await _context.CartItems
+                            .Include(ci => ci.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.PropertyType)
+                            .FirstOrDefaultAsync(ci => ci.Id == id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero del carrello.");
+                return null;
+            }
+        }
+
         public async Task<bool> DeleteCartAsync(ClaimsPrincipal user, Guid cartItemId)
         {
             try

@@ -78,7 +78,7 @@ const AccountComponent = () => {
                 <section className="account-section info-section">
                     <h2><FiActivity className="section-icon" /> Informazioni Utente</h2>
                     <div className="info-grid">
-                        <div className="info-card">
+                        <div className="info-card email">
                             <FiMail className="info-icon" />
                             <span>Email</span>
                             <p>{user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"]}</p>
@@ -98,7 +98,7 @@ const AccountComponent = () => {
                             <span>Ruolo</span>
                             {
                                 Array.isArray(roles) ? roles.map(role => {
-                                    <p>{role}</p>
+                                    return <p key={role} className='m-0 p-0'>{role}</p>
                                 }) : (<p>{roles}</p>)
                             }
                         </div>
@@ -110,7 +110,7 @@ const AccountComponent = () => {
                     </div>
                 </section>
 
-                <div className=' container-fluid '>
+                <div className=' container-fluid last-boxes'>
                     <div className='row'>
                         <div className='col-5'>
                             <section className="account-section actions-section d-flex flex-column align-items-center">

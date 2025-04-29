@@ -10,6 +10,7 @@ const CartComponent = function () {
     const [dataLength, setDataLength] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
+
     const getListingsFromCart = async () => {
         try {
             const url = "https://localhost:7146/api/";
@@ -77,7 +78,7 @@ const CartComponent = function () {
         getListingsFromCart();
     }, []);
 
-    const handleClickDiv = (indexItem, idListing) => {
+    const handleClickDiv = (idListing) => {
         navigate(`/booking/${idListing}`)
     }
 
@@ -131,27 +132,49 @@ const CartComponent = function () {
                                     <div key={index} className={`listing-cards ${index == dataLength - 1 ? 'last-card' : ''}`}>
                                         <div className='transformation d-flex flex-row' onClick={(e) => {
                                             e.preventDefault();
-                                            handleClickDiv(index, listing.listing.id);
+                                            handleClickDiv(listing.id);
                                         }}>
                                             <div className='listing-imgs me-5'>
-                                                <img src={listing.listing.imgUrls[0]} height="100%" />
+                                                {
+                                                    listing.listing.imgUrls[0] ? (
+                                                        <img src={listing.listing.imgUrls[0]} height="100%" />
+                                                    ) : (
+                                                        <div style={{
+                                                            width: "100%",
+                                                            backgroundColor: "rgba(222, 222, 222, 0.55)",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            height: "100%",
+                                                            overflow: "hidden"
+                                                        }}>
+                                                            <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                <i className="fa-regular fa-building"></i>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+
                                             </div>
                                             <div className="listing-info">
                                                 <h2 className="hotel-name">{listing.listing.hotelName} - {listing.listing.description.city.name}</h2>
                                                 <p><strong>Data di inizio : &nbsp; </strong> {listing.startDate}</p>
                                                 <p><strong>Data di fine : &nbsp; </strong> {listing.endDate}</p>
                                                 <p><strong>Ospiti : &nbsp; </strong> {listing.numberOfPeople}</p>
+                                                <hr />
                                                 <p><strong>Descrizione : &nbsp; </strong> {listing.listing.description.description}</p>
-                                                <p><strong>Host : &nbsp; </strong> DA METTERE</p>
-                                                <p><strong>Prezzo a notte : &nbsp; </strong> €{listing.listing.description.pricePerNight}</p>
                                             </div>
-                                            <div className='listing-action'>
+                                            <div className='price-div'>
+
+                                                <strong className="fs-5"><span className="tot-span">Totale:</span> €{Math.ceil((new Date(listing.endDate) - new Date(listing.startDate)) / (1000 * 60 * 60 * 24)) * listing.listing.description.pricePerNight}</strong>
+                                            </div>
+                                            <div className="delete-action">
                                                 <button className="btn delete-btn" onClick={(e) => {
                                                     e.preventDefault();
                                                     e.stopPropagation();
                                                     deleteById(listing.id);
                                                 }}>
-                                                    <i className="bi bi-trash-fill"></i> Elimina
+                                                    <i class="fa-solid fa-x"></i>
                                                 </button>
                                             </div>
                                         </div>
