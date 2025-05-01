@@ -139,7 +139,7 @@ const DetailsComponent = function () {
                     {/* Sezione immagini */}
                     <div style={{ height: "450px", display: "flex" }} className="imgs-details mt-4 mb-5">
                         {/* Immagine principale a sinistra */}
-                        <div style={{ width: "50%", marginRight: "0rem" }}>
+                        <div style={{ width: "50%", marginRight: "0rem" }} className="img-principal">
                             <div
                                 style={{
                                     height: "100%",
@@ -172,7 +172,7 @@ const DetailsComponent = function () {
                             </div>
                         </div>
 
-                        <div style={{ width: "50%", display: "flex", flexDirection: "column", justifyContent: "space-between", flexWrap: "wrap" }}>
+                        <div style={{ width: "50%", flexDirection: "column", justifyContent: "space-between", flexWrap: "wrap" }} className="d-none d-lg-flex">
                             {
                                 imageSubset.map((url, index) => (
                                     <div key={`img-${index}`} style={{
@@ -208,7 +208,7 @@ const DetailsComponent = function () {
 
                     {/* Sezione descrizione */}
                     <Row>
-                        <Col xs={8} className="pe-5">
+                        <Col xs={12} md={8} className="pe-5">
                             <h4>{structure.description.propertyType.name} &nbsp;&bull;&nbsp; {structure.description.city.name}, {structure.description.city.country.name}</h4>
                             <p>{structure.description.city.experienceType.name} &bull; <i className={structure.description.city.experienceType.icon}></i></p>
                             <hr className="mt-4" />
@@ -244,8 +244,8 @@ const DetailsComponent = function () {
                             <hr className="mt-5 mb-4" />
                             <p className="mt-5 mb-5">{structure.description.description}</p>
                         </Col>
-                        <Col xs={4}>
-                            <form onSubmit={handleSubmit} className="booking-form">
+                        <Col xs={12} md={4}>
+                            <form onSubmit={handleSubmit} className="booking-form mx-md-auto">
                                 <h2>Prenota il tuo soggiorno</h2>
                                 <div className="box-form container-fluid">
                                     <div className=" row">

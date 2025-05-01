@@ -4,6 +4,10 @@
     transition: transform 0.2s ease-in-out;
 }
 
+.suggested-container-general {
+    z-index: 1;
+}
+
 .suggested-container.pulse {
     transform: scale(1.03);
 }
@@ -244,4 +248,18 @@
         transform: scale(1);
         opacity: 0.4;
     }
+}
+
+
+@media (max-width: 1200px) {
+    .suggested-container {
+        width: 90%;
+    }
+}
+
+@media (max-width: 665px) {
+    .suggested-container .row .col-lg-4 {
+        width: 100% !important;
+    }
+
 }

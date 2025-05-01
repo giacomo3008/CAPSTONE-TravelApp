@@ -15,6 +15,7 @@ const HomeComponent = function () {
 
     return (
         <div className="home-container">
+            <img src="/src/assets/img/background.jpeg" className="bg-img-home" />
             <SearchComponent />
             <SuggestedComponent />
         </div>

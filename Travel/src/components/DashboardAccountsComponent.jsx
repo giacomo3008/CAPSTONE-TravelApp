@@ -1,20 +1,21 @@
 import { useNavigate } from 'react-router-dom';
-import '../style/myListings.css'
+import '../style/dashboard-acc.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
-const WishlistComponent = function () {
+const DashboardAccountsComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
-    const [listings, setListings] = useState([]);
+    const userLoggato = useSelector((state) => state.authLogin.user);
+    const [users, setUsers] = useState([]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [dataLength, setDataLength] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
-    const getFavoritesUser = async () => {
+    const getAllUsers = async () => {
         try {
             const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/favorites", {
+            const response = await fetch(url + "account/all", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -30,12 +31,12 @@ const WishlistComponent = function () {
                 navigate('/');
             } else {
                 if (!response.ok) {
-                    throw new Error("Errore nella richiesta delle listings preferite dell'utente");
+                    throw new Error("Errore nella richiesta degli users!");
                 }
                 const data = await response.json();
                 console.log(data);
                 setDataLength(data.length);
-                setListings(data);
+                setUsers(data.filter(acc => acc.email !== userLoggato["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"])); //Rimuovo dalla lista l'Admin
                 setIsLoading(false);
             }
         } catch (err) {
@@ -44,59 +45,60 @@ const WishlistComponent = function () {
     }
 
     useEffect(() => {
-        getFavoritesUser();
+        getAllUsers();
     }, []);
 
-    const handleClickDiv = (id) => {
-        navigate(`/details/${id}`)
+    const handleClickDiv = (email) => {
+        navigate(`/user/${email}`)
     }
 
-    const deleteFavorite = async (id) => {
-        try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/favorite/" + id, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
-            if (response.status === 401 || response.status === 403) {
-                dispatch({
-                    type: 'LOGOUT',
-                    payload: true
+    const deleteUser = async (email) => {
+        if (window.confirm("Sei sicuro di voler eliminare questo account?")) {
+            try {
+                const url = "https://localhost:7146/api/";
+                const response = await fetch(url + "account/" + email, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
                 });
-                localStorage.removeItem('token');
-                navigate('/');
-            } else {
-                if (!response.ok) {
-                    throw new Error("Errore nella delete");
+                if (response.status === 401 || response.status === 403) {
+                    dispatch({
+                        type: 'LOGOUT',
+                        payload: true
+                    });
+                    localStorage.removeItem('token');
+                    navigate('/');
+                } else {
+                    if (!response.ok) {
+                        throw new Error("Errore nella delete");
+                    }
+                    alert('Account eliminato!');
+                    getAllUsers();
+                    navigate('/dashboard-acc');
                 }
-                const data = await response.json();
-                console.log(data);
-                getFavoritesUser();
-                navigate('/wishlist');
+            } catch (err) {
+                console.log(err);
             }
-        } catch (err) {
-            console.log(err);
         }
     }
 
-    if (!isLoading && listings.length == 0) {
+    if (!isLoading && users.length == 0) {
         return (
             <div className='container my-listings-div'>
                 <div className='d-flex flex-row justify-content-between'>
-                    <h3 className="mb-5">Your favorite Listings : </h3>
+                    <h3 className="mb-5">Dashboard Account : </h3>
                 </div>
-                <h5>Non hai nessuna listings nei tuoi preferiti!</h5>
+                <h5>Non sono presenti ulteriroi utenti in questo sito!</h5>
             </div>
         )
     }
 
     return (
-        <div className='container my-listings-div'>
+        <div className='container my-accounts-div'>
             <div className='d-flex flex-row justify-content-between'>
-                <h3 className="mb-5">Your favorite Listings : </h3>
+                <h3 className="mb-5">Dashboard Account : </h3>
             </div>
             <div className="listings-container m-0">
                 {
@@ -128,29 +130,29 @@ const WishlistComponent = function () {
                     ) : (
                         <>
                             {
-                                listings.map((listing, index) => (
-                                    <div key={listing.id} className={`listing-cards ${index == dataLength - 1 ? 'last-card' : ''}`}>
-                                        <div className='transformation d-flex flex-column flex-md-row' onClick={(e) => {
+                                users.map((user, index) => (
+                                    <div key={user.email} className={`accounts-cards ${index == dataLength - 1 ? 'last-card' : ''}`}>
+                                        <div className='transformation d-flex flex-row justify-content-between align-items-center' onClick={(e) => {
                                             e.preventDefault();
-                                            handleClickDiv(listing.id);
+                                            handleClickDiv(user.email);
                                         }}>
-                                            <div className='listing-imgs me-5'>
-                                                <img src={listing.imgUrls[0]} height="100%" />
+                                            <div className='d-flex flex-row justify-content-start'>
+                                                <div className="profile-icon-account">
+                                                    {user.firstName.charAt(0)}
+                                                </div>
+                                                <div className="listing-info d-flex flex-column justify-content-center ms-5">
+                                                    <h2 className="hotel-name m-0">{user.firstName} {user.lastName}</h2>
+                                                    <p><strong>Email : &nbsp; </strong> {user.email}</p>
+                                                </div>
                                             </div>
-                                            <div className="listing-info mt-4 mt-md-0">
-                                                <h2 className="hotel-name">{listing.hotelName} - {listing.description.city.name}</h2>
-                                                <p><strong>Tipo esperienza : &nbsp; </strong> {listing.description.city.experienceType.name}</p>
-                                                <p><strong>Descrizione : &nbsp; </strong> {listing.description.description}</p>
-                                                <p><strong>Posti letto : &nbsp; </strong> {listing.description.beds}</p>
-                                                <p><strong>Capacità : &nbsp; </strong> {listing.description.capacity} persone</p>
-                                                <p><strong>Prezzo a notte : &nbsp; </strong> €{listing.description.pricePerNight}</p>
-                                            </div>
-                                            <div className="favorite-btn" onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                deleteFavorite(listing.id);
-                                            }}>
-                                                <i class="fa-solid fa-heart"></i>
+                                            <div className="delete-action">
+                                                <button className="btn delete-btn" onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                    deleteUser(user.email);
+                                                }}>
+                                                    <i class="fa-solid fa-x"></i>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -164,4 +166,4 @@ const WishlistComponent = function () {
     );
 }
 
-export default WishlistComponent
+export default DashboardAccountsComponent

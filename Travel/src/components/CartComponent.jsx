@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import '../style/myListings.css'
 
 const CartComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
@@ -129,8 +130,8 @@ const CartComponent = function () {
                         <>
                             {
                                 listings.map((listing, index) => (
-                                    <div key={index} className={`listing-cards ${index == dataLength - 1 ? 'last-card' : ''}`}>
-                                        <div className='transformation d-flex flex-row' onClick={(e) => {
+                                    <div key={index} className={`listing-cards listing-cards-cart ${index == dataLength - 1 ? 'last-card' : ''}`}>
+                                        <div className='transformation d-flex flex-column flex-lg-row' onClick={(e) => {
                                             e.preventDefault();
                                             handleClickDiv(listing.id);
                                         }}>
@@ -156,7 +157,7 @@ const CartComponent = function () {
                                                 }
 
                                             </div>
-                                            <div className="listing-info">
+                                            <div className="listing-info mt-4 mt-lg-0">
                                                 <h2 className="hotel-name">{listing.listing.hotelName} - {listing.listing.description.city.name}</h2>
                                                 <p><strong>Data di inizio : &nbsp; </strong> {listing.startDate}</p>
                                                 <p><strong>Data di fine : &nbsp; </strong> {listing.endDate}</p>

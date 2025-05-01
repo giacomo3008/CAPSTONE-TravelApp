@@ -2,8 +2,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-image: url(/src/assets/img/background.jpeg);
-    background-repeat: no-repeat;
-    background-position: top;
-    background-size: contain;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-container .bg-img-home {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+@media (max-width: 1200px) {
+    .home-container .bg-img-home {
+        height: 580px;
+        width: auto;
+    }
 }

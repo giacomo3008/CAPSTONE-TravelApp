@@ -169,7 +169,7 @@ const RisultatiComponent = function () {
                             <>
                                 {
                                     cards.map((card) => (
-                                        <Col lg={4} key={card.id}>
+                                        <Col sm={6} lg={4} key={card.id}>
                                             <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative card-listings">
                                                 <div className="img-card-cities">
                                                     {

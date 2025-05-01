@@ -78,3 +78,43 @@
     font-weight: 500;
     text-transform: uppercase;
 }
+
+@media (max-width: 1200px) {
+    .footer {
+        height: auto;
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .inner-footer {
+        width: 90% !important;
+    }
+
+    .footer-description,
+    .footer-columns {
+        display: none !important;
+    }
+
+    .inner-footer .info {
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+
+    .inner-footer .info img {
+        margin-bottom: 1rem;
+    }
+
+    .inner-footer .d-flex.flex-row.justify-content-start.align-items-center {
+        justify-content: center !important;
+        margin-top: 1rem;
+    }
+
+    .inner-footer .slogan {
+        text-align: center;
+        padding-left: 0 !important;
+    }
+
+    .inner-footer .slogan p {
+        font-size: 0.8rem;
+    }
+}

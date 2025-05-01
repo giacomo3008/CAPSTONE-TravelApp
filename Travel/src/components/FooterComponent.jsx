@@ -8,7 +8,7 @@ const FooterComponent = function () {
                     <div className="row">
                         <div className=" col-sm-6">
                             <img src="/src/assets/img/travel-logo.png" alt="logo" className="mb-4" />
-                            <p className="mb-4">La nostra piattaforma ti connette con soggiorni autentici, accoglienti e spesso unici. Dalle case in centro alle esperienze locali, ti aiutiamo a vivere ogni destinazione come un vero abitante, con semplicità, sicurezza e quel tocco in più.</p>
+                            <p className="mb-4 footer-description">La nostra piattaforma ti connette con soggiorni autentici, accoglienti e spesso unici. Dalle case in centro alle esperienze locali, ti aiutiamo a vivere ogni destinazione come un vero abitante, con semplicità, sicurezza e quel tocco in più.</p>
                             <div className=" d-flex flex-row justify-content-start align-items-center">
                                 <a href="https://x.com/"><i className="bi bi-twitter-x"></i></a>
                                 <a href="https://www.youtube.com/"><i className="bi bi-youtube"></i></a>
@@ -16,7 +16,7 @@ const FooterComponent = function () {
                                 <a href="https://www.whatsapp.com/"><i className="bi bi-whatsapp"></i></a>
                             </div>
                         </div>
-                        <div className=" col-sm-6 d-flex flex-row justify-content-between">
+                        <div className=" col-sm-6 d-flex flex-row justify-content-between footer-columns">
                             <div className="col-sm-4">
                                 <h5 className="mb-4">
                                     OUR AGENCY

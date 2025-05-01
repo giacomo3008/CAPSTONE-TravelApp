@@ -36,14 +36,14 @@ const SuggestedComponent = function () {
     return (
 
 
-        <div className="container-fluid py-5 px-0 bg-white" id="book-now">
+        <div className="container-fluid py-5 px-0 bg-white suggested-container-general" id="book-now">
             <div className="suggested-container m-0 mx-auto bg-white">
                 <h2 className="mb-4">Popular Trips</h2>
-                <Row className="d-flex flex-row justify-content-between">
+                <Row>
                     {
                         cards.length > 0 ?
                             cards.map((card) => (
-                                <Col lg={4} key={card.id}>
+                                <Col sm={6} lg={4} key={card.id}>
                                     <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative">
                                         <div className="img-card">
                                             <img height="195px" src={encodeURI(card.country.imgUrl.trim())} />

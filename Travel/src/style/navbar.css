@@ -63,11 +63,23 @@
 }
 
 .navbar .btn-book {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 32px;
-    padding: 0 10px 0 10px;
+    padding: 0 16px;
     background-color: #F16571;
     border-radius: 14px;
+    color: #c2cce1;
+    text-decoration: none;
 }
+
+.navbar .btn-book p {
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+}
+
 
 .active-link {
     color: #ffffff !important;
@@ -122,21 +134,6 @@
     align-items: center;
     color: #DFDFDF;
     font-size: 0.8rem;
-}
-
-.profile-icon-account {
-    position: absolute;
-    top: calc(50% - 75px);
-    left: 40px;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background-color: #7b494d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #DFDFDF;
-    font-size: 3.5rem;
 }
 
 .menu-toggle-custom::after {
@@ -208,4 +205,87 @@
 
 .welcome-text {
     white-space: nowrap;
+}
+
+
+/* MOBILE MENU FULLSCREEN */
+@media (max-width: 991px) {
+
+    .navbar-collapse {
+        position: fixed !important;
+        top: 0rem;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: white;
+        overflow-y: scroll;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        z-index: 1050;
+    }
+
+    .navbar-collapse .links {
+        position: relative;
+    }
+
+    .navbar-collapse .links .btn-x {
+        border: none !important;
+        background: none !important;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    .navbar-collapse .links .btn-x i {
+        color: black;
+        font-size: 1.2rem;
+    }
+
+    .navbar .altro-nav {
+        font-weight: 600;
+    }
+
+    .navbar-collapse .nav {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .active-link {
+        color: black !important;
+        font-weight: 500;
+    }
+
+    .navbar a {
+        text-decoration: none;
+        font-family: "Montserrat", sans-serif;
+        color: rgb(81, 81, 81);
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .navbar-collapse .btn-book {
+        color: white !important;
+        background-color: #F16571;
+        border-radius: 14px;
+        padding: 0.5rem 1.2rem;
+        margin-top: 1rem;
+    }
+
+    .menu-sezione {
+        margin-bottom: 1.5rem;
+    }
+
+    .menu-sezione h6 {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+}
+
+@media (max-width: 450px) {
+    .navbar .welcome-container {
+        display: none !important;
+    }
 }

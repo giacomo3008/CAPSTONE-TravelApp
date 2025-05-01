@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace TravelApi.Controllers
@@ -165,6 +166,70 @@ namespace TravelApi.Controllers
                 return BadRequest(result.Errors);
 
             return Ok("Utente eliminato");
+        }
+
+        [HttpDelete("{email}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteAccountByEmail(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return NotFound("Utente non trovato.");
+
+            var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return Ok("Utente eliminato");
+        }
+
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = _userManager.Users.ToList();
+
+            var userInfoList = new List<UserInfoDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _signInManager.UserManager.GetRolesAsync(user);
+                var listingsCount = user.UserListings?.Count ?? 0; //se non ci sono listings associate ritorna 0
+
+                userInfoList.Add(new UserInfoDto
+                {
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    CreatedAt = user.CreatedAt,
+                    Roles = roles.ToList(),
+                    ListingsCount = listingsCount
+                });
+            }
+
+            return Ok(userInfoList);
+        }
+
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetUserInfo(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            var roles = await _signInManager.UserManager.GetRolesAsync(user);
+            var listingsCount = user.UserListings?.Count ?? 0; //se non ci sono listings associate ritorna 0
+
+            var userInfo = new UserInfoDto
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                CreatedAt = user.CreatedAt,
+                Roles = roles.ToList(),
+                ListingsCount = listingsCount
+            };
+            return Ok(userInfo);
         }
 
     }

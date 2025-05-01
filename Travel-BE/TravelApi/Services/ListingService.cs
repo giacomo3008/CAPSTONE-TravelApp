@@ -200,6 +200,32 @@ namespace TravelApi.Services
             }
         }
 
+
+        public async Task<ICollection<UserListing>?> GetListingByUserEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _userManager.Users
+                        .Include(u => u.UserListings)
+                            .ThenInclude(ul => ul.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.PropertyType)
+                        .Include(u => u.UserListings)
+                            .ThenInclude(ul => ul.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.City)
+                                        .ThenInclude(c => c.ExperienceType)
+                        .FirstOrDefaultAsync(u => u.Email == email);
+
+                return user?.UserListings;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero delle listing per utente.");
+                return null;
+            }
+        }
+
         public async Task<ICollection<UserListingFavorites>?> GetFavoritesAsync(ClaimsPrincipal userPrincipal)
         {
             try

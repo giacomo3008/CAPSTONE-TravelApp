@@ -80,8 +80,8 @@ const BookingComponent = function () {
                 structure && totPrice ? (
                     <div className='container' >
                         <div className="booking-container row">
-                            <div className='col-7 pe-4'>
-                                <div className="main-content pe-5">
+                            <div className='col-12 col-md-7 pe-0 ps-0 pe-md-4'>
+                                <div className="main-content pe-0 pe-md-5">
                                     <h1>Invia una richiesta di prenotazione</h1>
                                     <div className="left-panel mt-5">
                                         <section className="trip-info">
@@ -142,6 +142,65 @@ const BookingComponent = function () {
                                         </section>
                                         <hr className='my-5' />
 
+                                        <div className="right-panel-inner" >
+                                            <div onClick={handleDetails} className="listing-card d-flex flex-row align-items-center">
+                                                <div className='img-booking-div'>
+                                                    {
+                                                        structure.listing.imgUrls[0] ? (
+                                                            <img src={structure.listing.imgUrls[0]} height="100%" />
+                                                        ) : (
+
+                                                            <div style={{
+                                                                width: "100%",
+                                                                height: "100%",
+                                                                backgroundColor: "rgba(222, 222, 222, 0.55)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                            }}>
+                                                                <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                    <i className="fa-regular fa-building"></i>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
+                                                <div className='ms-3'>
+                                                    <h3 className='m-0 p-0 pb-1'>{structure.listing.hotelName}</h3>
+                                                    <p className="small-text m-0 p-0">{structure.listing.description.propertyType.name}</p>
+                                                </div>
+                                            </div>
+
+                                            <hr className='my-4' />
+
+                                            <div className="price-details">
+                                                <h3 className='mb-4'>Dettagli del prezzo</h3>
+                                                <div className="price-row">
+                                                    <span>Alloggio</span>
+                                                    <span>{totPrice} €</span>
+                                                </div>
+                                                <div className="price-row">
+                                                    <span>Costi di pulizia</span>
+                                                    <span>100,00 €</span>
+                                                </div>
+                                                <div className="price-row">
+                                                    <span>Costi del servizio Travel</span>
+                                                    <span>{totPrice * 0.10} €</span>
+                                                </div>
+                                                <div className="price-row discount">
+                                                    <span>Risparmi sui costi del servizio Travel</span>
+                                                    <span>-{totPrice * 0.02} €</span>
+                                                </div>
+
+                                                <hr className='my-4' />
+                                                <div className="price-row total">
+                                                    <strong>Totale (EUR)</strong>
+                                                    <strong>{totPrice + 100 + totPrice * 0.10 - totPrice * 0.02} €</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr className='my-5' />
+
                                         <section className="section-block legal-box">
                                             <p className="small-text">
                                                 Selezionando il pulsante qui sotto, accetto i termini stabiliti
@@ -164,8 +223,8 @@ const BookingComponent = function () {
 
                                 </div>
                             </div>
-                            <div className='col-5 pt-8'>
-                                <div className="right-panel mb-auto" >
+                            <div className='d-none d-md-block col-md-5 pt-8'>
+                                <div className="right-panel mb-lg-auto" >
                                     <div onClick={handleDetails} className="listing-card d-flex flex-row align-items-center">
                                         <div className='img-booking-div'>
                                             {

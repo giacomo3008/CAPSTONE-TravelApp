@@ -47,6 +47,21 @@
     color: #666;
 }
 
+.account-page .profile-icon-account {
+    position: absolute;
+    top: calc(50% - 75px);
+    left: 40px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #7b494d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #DFDFDF;
+    font-size: 3.5rem;
+}
+
 /* Sezioni */
 .account-section {
     background: #fff;
@@ -168,4 +183,38 @@
 .account-page .action-card.delete:hover {
     background: #ffc9c9;
     transform: translateY(-2px);
+}
+
+@media (max-width: 576px) {
+    .account-page {
+        padding: 0;
+    }
+
+    .account-page .profile-icon-account {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background-color: #7b494d;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #DFDFDF;
+        font-size: 3.5rem;
+        margin-left: 7.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .account-header {
+        padding-left: 2rem;
+    }
+}
+
+@media (max-width: 452px) {
+    .actions-grid {
+        display: flex;
+        flex-direction: column !important;
+        justify-content: space-between;
+        align-items: center;
+    }
 }

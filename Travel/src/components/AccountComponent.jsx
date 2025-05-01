@@ -67,12 +67,12 @@ const AccountComponent = () => {
         <>
             <div className="account-page">
                 <div className="account-header position-relative">
-                    <FiUser className="header-icon" />
-                    <h1>Benvenuto nel tuo Spazio Personale, {user.firstName}!</h1>
-                    <p>Qui puoi gestire ogni aspetto del tuo account in totale sicurezza e autonomia.</p>
                     <div className="profile-icon-account">
                         {user.firstName.charAt(0)}
                     </div>
+                    <FiUser className="header-icon d-none d-lg-block" />
+                    <h1>Benvenuto nel tuo Spazio Personale, {user.firstName}!</h1>
+                    <p>Qui puoi gestire ogni aspetto del tuo account in totale sicurezza e autonomia.</p>
                 </div>
 
                 <section className="account-section info-section">
@@ -112,7 +112,7 @@ const AccountComponent = () => {
 
                 <div className=' container-fluid last-boxes'>
                     <div className='row'>
-                        <div className='col-5'>
+                        <div className='col-12 col-md-5 px-0'>
                             <section className="account-section actions-section d-flex flex-column align-items-center">
                                 <h2><FiSettings className="section-icon" /> Azioni Rapide</h2>
                                 <div className="actions-grid compact-actions d-flex flex-row gap-4">
@@ -128,7 +128,7 @@ const AccountComponent = () => {
 
                             </section>
                         </div>
-                        <div className='col-7'>
+                        <div className='col-12 col-md-7 px-0 ps-md-4 mt-5 mb-5 mb-md-0 mt-md-0'>
                             <section className="account-section faq-section">
                                 <h2><FiHelpCircle className="section-icon" /> Domande Frequenti</h2>
                                 <div className="faq-list">

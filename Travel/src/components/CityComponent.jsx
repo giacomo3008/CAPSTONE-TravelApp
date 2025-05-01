@@ -110,10 +110,10 @@ const CityComponent = function () {
                     <SearchFormComponent search={true} />
                     <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
                         <h2 className="mb-5">Strutture trovate a {name} :</h2>
-                        <Row className="d-flex flex-row justify-content-start">
+                        <Row>
                             {
                                 cards.map((card) => (
-                                    <Col lg={4} key={card.id}>
+                                    <Col sm={6} lg={4} key={card.id}>
                                         <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative card-listings">
                                             <div className="img-card-cities">
                                                 {

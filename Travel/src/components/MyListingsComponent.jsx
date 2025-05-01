@@ -144,11 +144,11 @@ const MyListingsComponent = function () {
                             {
                                 listings.map((listing, index) => (
                                     <div key={listing.id} className={`listing-cards ${index == dataLength - 1 ? 'last-card' : ''}`}>
-                                        <div className='transformation d-flex flex-row' onClick={(e) => {
+                                        <div className='transformation d-flex flex-column flex-lg-row' onClick={(e) => {
                                             e.preventDefault();
                                             handleClickDiv(listing.id);
                                         }}>
-                                            <div className='listing-imgs me-5'>
+                                            <div className='listing-imgs m-0 me-lg-5'>
                                                 {
                                                     listing.imgUrls[0] ? (
                                                         <img src={listing.imgUrls[0]} height="100%" />
@@ -169,7 +169,7 @@ const MyListingsComponent = function () {
                                                     )
                                                 }
                                             </div>
-                                            <div className="listing-info">
+                                            <div className="listing-info mt-4 mt-md-0">
                                                 <h2 className="hotel-name">{listing.hotelName} - {listing.description.city.name}</h2>
                                                 <p><strong>Tipo esperienza : &nbsp; </strong> {listing.description.city.experienceType.name}</p>
                                                 <p><strong>Descrizione : &nbsp; </strong> {listing.description.description}</p>

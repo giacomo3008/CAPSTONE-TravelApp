@@ -1,4 +1,17 @@
-.my-listings-div {
+.accounts-cards .profile-icon-account {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #7b494d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #DFDFDF;
+    font-size: 1.5rem;
+}
+
+.my-accounts-div {
+    min-height: 50vh !important;
     margin-top: 10rem;
     margin-bottom: 8rem;
     padding-right: 10rem;
@@ -6,76 +19,39 @@
     min-height: 30vh;
 }
 
-.my-listings-div h5 {
+.my-accounts-div h5 {
     color: rgb(79, 79, 79);
     font-weight: 400;
 }
 
-.my-listings-div .listing-cards {
+.my-accounts-div h2 {
+    font-size: 1.5rem;
+}
+
+.my-accounts-div .accounts-cards {
     border-top: 0.5px solid rgba(142, 142, 142, 0.69);
-    min-height: 20rem;
     padding: 2rem 1rem;
 }
 
-.my-listings-div .listing-cards.last-card {
+.my-accounts-div .accounts-cards.last-card {
     border-bottom: 0.5px solid rgba(142, 142, 142, 0.69);
 }
 
-.my-listings-div .transformation {
-    position: relative;
+.my-accounts-div .accounts-cards .transformation {
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 }
 
-.my-listings-div .transformation:hover {
+.my-accounts-div .transformation:hover {
     transform: scale(1.03);
 }
 
-.my-listings-div .listing-imgs {
-    height: 16rem;
-    width: 30%;
-    min-width: 334px;
-    overflow: hidden;
-    border-radius: 10px;
-    box-shadow: 5px 5px 25px rgba(84, 84, 84, 0.373);
-    box-shadow: -5px -5px 25px rgba(84, 84, 84, 0.373);
-}
-
-
-.my-listings-div .listing-action {
-    position: absolute;
-    bottom: -0.5rem;
-    right: 3rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.my-listings-div .price-div {
-    position: absolute;
-    bottom: -0.5rem;
-    right: 3rem;
-}
-
-.my-listings-div .price-div .tot-span {
-    font-weight: 400;
-    margin-right: 1rem;
-}
-
-.my-listings-div .delete-action {
-    position: absolute;
-    top: -0.5rem;
-    right: 3rem;
-}
-
-.my-listings-div .delete-action i {
+.my-accounts-div .delete-action i {
     color: black;
     font-size: 1.2rem;
 }
 
-
-
-.my-listings-div .btn {
+.my-accounts-div .btn {
     background: none;
     color: #444;
     font-weight: 500;
@@ -89,73 +65,18 @@
     gap: 0.5rem;
 }
 
-.my-listings-div .btn:hover {
+.my-accounts-div .btn:hover {
     background-color: rgba(0, 0, 0, 0.05);
     transform: translateY(-2px);
 }
 
-.my-listings-div .edit-btn {
-    color: #363636;
-}
-
-.my-listings-div .delete-btn {
-    color: #F16571;
-}
-
-.my-listings-div .bi {
-    font-size: 1rem;
-}
-
-.my-listings-div .hotel-name {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #222;
-}
-
-.my-listings-div .listing-info p {
+.my-accounts-div .listing-info p {
     margin: 0.3rem 0;
     font-size: 0.95rem;
     color: #555;
     line-height: 1.4;
 }
 
-.my-listings-div .add-btn {
-    background-color: transparent;
-    color: #444;
-    border: 1px solid #ccc;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-}
-
-.my-listings-div .add-btn:hover {
-    background-color: #f8f9fa;
-    border-color: #aaa;
-    transform: translateY(-2px);
-    color: #222;
-}
-
-.my-listings-div .favorite-btn {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-}
-
-.my-listings-div .favorite-btn i {
-    font-size: 1.5rem;
-    color: #F16571;
-    -webkit-text-stroke: 1.5px white;
-    transition: color 0.3s ease;
-    cursor: pointer;
-    transition: color 0.3s ease-in-out;
-}
-
-.my-listings-div .favorite-btn i:hover {
-    color: rgba(59, 59, 59, 0.34);
-}
 
 /* Skeleton Card for Listing */
 .skeleton-listing {
@@ -235,32 +156,45 @@
     margin-top: 15px;
 }
 
+@media (max-width: 992px) {
+    .my-accounts-div {
+        padding-right: 1rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .my-accounts-div {
+        min-height: 70vh !important;
+    }
+}
+
+/* 
 @media (max-width: 576px) {
-    .my-listings-div {
+    .my-accounts-div {
         padding-left: 1rem;
         padding-right: 1rem;
     }
 
-    .my-listings-div .listing-imgs {
+    .my-accounts-div .listing-imgs {
         width: 100%;
     }
 
-    .my-listings-div .listing-cards-cart .transformation {
+    .my-accounts-div .listing-cards-cart .transformation {
         padding-bottom: 3rem !important;
     }
 
-    .my-listings-div .listing-cards-cart .delete-action {
+    .my-accounts-div .listing-cards-cart .delete-action {
         position: absolute;
         top: auto;
         bottom: -0.8rem !important;
         left: 0rem;
     }
 
-    .my-listings-div .listing-imgs {
+    .my-accounts-div .listing-imgs {
         height: 23rem;
     }
 
-    .my-listings-div .listing-action {
+    .my-accounts-div .listing-action {
         position: absolute;
         bottom: -0.5rem;
         right: 0rem;
@@ -268,4 +202,4 @@
         flex-direction: column;
         gap: 0rem;
     }
-}
+} */
