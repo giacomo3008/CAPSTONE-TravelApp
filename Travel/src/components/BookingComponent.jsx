@@ -63,7 +63,10 @@ const BookingComponent = function () {
         return dataStr;
     }
 
-
+    const handleThankyou = (e) => {
+        e.preventDefault();
+        navigate('/thankyou');
+    }
 
     useEffect(() => {
         getListingInfo();
@@ -78,7 +81,7 @@ const BookingComponent = function () {
         <>
             {
                 structure && totPrice ? (
-                    <div className='container' >
+                    <div className='container booking-container-principal' >
                         <div className="booking-container row">
                             <div className='col-12 col-md-7 pe-0 ps-0 pe-md-4'>
                                 <div className="main-content pe-0 pe-md-5">
@@ -112,15 +115,121 @@ const BookingComponent = function () {
                                         <hr className='my-5' />
 
                                         <section className="payment mb-5">
-                                            <h3 className='mb-3'>Paga con</h3>
-                                            <div className="cards mb-2">💳 VISA • MasterCard • Amex • PayPal • Google Pay</div>
+                                            <h3 className='mb-5 mb-lg-3 d-flex flex-column justify-content-center align-items-start flex-lg-row justify-content-lg-between align-items-lg-center'>Paga con <span className="h-100"><img src='/src/assets/img/metodi-pagamento.png' height="55%" /></span></h3>
+
                                             <select>
-                                                <option>Carta di credito o debito</option>
+                                                <option >Carta di credito o debito</option>
                                                 <option>Bonifico SEPA</option>
-                                                <option>PayPal</option>
-                                                <option>Revolut</option>
+                                                <option>Paga in struttura</option>
                                             </select>
                                         </section>
+                                        <div className="box-form container-fluid">
+                                            <div className="row">
+                                                <div className="col-12 form-floating p-0 m-0">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control first-input mb-2"
+                                                        id="cardNumber"
+                                                        placeholder="Numero Carta"
+                                                        maxLength={19}
+                                                        required
+                                                    />
+                                                    <label htmlFor="cardNumber">Numero Carta</label>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col-6 form-floating p-0 m-0">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="expiryDate"
+                                                        placeholder="MM/AA"
+                                                        maxLength={5}
+                                                        required
+                                                    />
+                                                    <label htmlFor="expiryDate">Scadenza (MM/AA)</label>
+                                                </div>
+                                                <div className="col-6 form-floating p-0 m-0 ps-2">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="cvv"
+                                                        placeholder="CVV"
+                                                        maxLength={4}
+                                                        required
+                                                    />
+                                                    <label htmlFor="cvv">CVV</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h6 className="mt-4 mb-2">Indirizzo di fatturazione</h6>
+
+                                        <div className="box-form container-fluid mb-5">
+                                            <div className="row mb-2">
+                                                <div className="col-12 form-floating p-0 m-0">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control first-input"
+                                                        id="billingAddress"
+                                                        placeholder="Indirizzo"
+                                                        required
+                                                    />
+                                                    <label htmlFor="billingAddress">Indirizzo</label>
+                                                </div>
+                                            </div>
+
+                                            <div className="row mb-2">
+                                                <div className="col-12 form-floating p-0 m-0">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="postalCode"
+                                                        placeholder="Codice postale"
+                                                        required
+                                                    />
+                                                    <label htmlFor="postalCode">Codice postale</label>
+                                                </div>
+                                            </div>
+
+                                            <div className="row pb-2">
+                                                <div className="col-12 form-floating p-0 m-0">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="city"
+                                                        placeholder="Città"
+                                                        required
+                                                    />
+                                                    <label htmlFor="city">Città</label>
+                                                </div>
+                                            </div>
+
+                                            <div className="row">
+                                                <div className="col-6 form-floating p-0 m-0">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="province"
+                                                        placeholder="Provincia"
+                                                        required
+                                                    />
+                                                    <label htmlFor="province">Provincia</label>
+                                                </div>
+                                                <div className="col-6 form-floating p-0 m-0 ps-2">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        id="zip"
+                                                        placeholder="CAP"
+                                                        required
+                                                    />
+                                                    <label htmlFor="zip">CAP</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+
 
                                         <section className="section-block">
                                             <h2>Termini di cancellazione</h2>
@@ -140,9 +249,9 @@ const BookingComponent = function () {
                                         <section className="section-block confirmation-box">
                                             <p><span className="icon">📩</span> La tua prenotazione verrà confermata solo una volta che l'host avrà accettato la tua richiesta (entro 24 ore). Fino ad allora, non ti addebiteremo nulla.</p>
                                         </section>
-                                        <hr className='my-5' />
+                                        <hr className='my-5 d-block d-md-none' />
 
-                                        <div className="right-panel-inner" >
+                                        <div className="right-panel-inner d-block d-md-none" >
                                             <div onClick={handleDetails} className="listing-card d-flex flex-row align-items-center">
                                                 <div className='img-booking-div'>
                                                     {
@@ -216,7 +325,7 @@ const BookingComponent = function () {
                                         </section>
 
                                         <div className="submit-button mt-5" id='book-btn'>
-                                            <button>Invia una richiesta di prenotazione</button>
+                                            <button type="submit" onClick={handleThankyou}>Invia una richiesta di prenotazione</button>
                                         </div>
                                     </div>
 

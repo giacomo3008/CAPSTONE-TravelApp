@@ -1,0 +1,98 @@
+/* THANK YOU PAGE FULLSCREEN */
+.thank-you-page {
+    height: 100vh;
+    width: 100%;
+    background: radial-gradient(circle at top left, rgba(255, 219, 176, 0.4), transparent),
+        radial-gradient(circle at bottom right, rgba(176, 235, 255, 0.3), transparent);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 2rem;
+}
+
+
+.thank-you-page .content {
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+    color: #333;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.thank-you-page h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    color: #2e7d32;
+    font-weight: 700;
+}
+
+.thank-you-page .lead {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.thank-you-page .email-confirm {
+    margin-top: 1rem;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.icon {
+    margin: 1rem 0;
+}
+
+.icon.success {
+    font-size: 4rem;
+    color: #4caf50;
+}
+
+.icon.small {
+    font-size: 2rem;
+    color: #1976d2;
+}
+
+.icons-row {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.icon.detail {
+    font-size: 2rem;
+    color: #6a6a6a;
+    transition: transform 0.3s;
+}
+
+.icon.detail:hover {
+    transform: scale(1.2);
+    color: #333;
+}
+
+.back-home {
+    display: inline-block;
+    margin-top: 2rem;
+    text-decoration: none;
+    color: #1976d2;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.back-home:hover {
+    color: #0d47a1;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

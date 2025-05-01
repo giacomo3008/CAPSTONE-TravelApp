@@ -73,7 +73,7 @@
 }
 
 /* Stile per le singole sezioni del form */
-.form-section {
+.search-form .form-section {
     margin: 0 10px;
     display: flex;
     flex-direction: column;
@@ -81,8 +81,8 @@
 }
 
 
-input[type="text"],
-input[type="date"] {
+.search-form input[type="text"],
+.search-form input[type="date"] {
     padding: 10px;
     border: none;
     border-radius: 25px;
@@ -97,14 +97,14 @@ input[type="date"] {
     transition: all 0.3s ease-in-out;
 }
 
-input[type="text"]:focus,
-input[type="date"]:focus,
-input[type="date"]:hover,
-input[type="text"]:hover {
+.search-form input[type="text"]:focus,
+.search-form input[type="date"]:focus,
+.search-form input[type="date"]:hover,
+.search-form input[type="text"]:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.142);
 }
 
-input[type="text"]::placeholder {
+.search-form input[type="text"]::placeholder {
     color: #a8a8a8;
 }
 
@@ -276,8 +276,8 @@ input[type="text"]::placeholder {
         margin: 0;
     }
 
-    input[type="text"],
-    input[type="date"] {
+    .search-form input[type="text"],
+    .search-form input[type="date"] {
         max-width: none;
         width: 100%;
     }
@@ -307,8 +307,8 @@ input[type="text"]::placeholder {
         margin: 0;
     }
 
-    input[type="text"],
-    input[type="date"] {
+    .search-form input[type="text"],
+    .search-form input[type="date"] {
         max-width: none;
         width: 100%;
     }
