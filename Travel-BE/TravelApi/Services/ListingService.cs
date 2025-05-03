@@ -40,7 +40,8 @@ namespace TravelApi.Services
         {
             try
             {
-                return await _context.Listings.Include(l => l.Description)
+                return await _context.Listings.Include(l => l.User)
+                                              .Include(l => l.Description)
                                                 .ThenInclude(d => d.PropertyType)
                                               .Include(l => l.Description)
                                                 .ThenInclude(d => d.City)
@@ -61,7 +62,8 @@ namespace TravelApi.Services
         {
             try
             {
-                return await _context.Listings.Include(l => l.Description)
+                return await _context.Listings.Include(l => l.User)
+                                          .Include(l => l.Description)
                                               .ThenInclude(d => d.PropertyType)
                                           .Include(l => l.Description)
                                               .ThenInclude(d => d.City)
@@ -82,14 +84,18 @@ namespace TravelApi.Services
         {
             try
             {
+                _logger.LogInformation("--------------------USER LOADING------------------------------");
                 var user = await _userManager.FindByEmailAsync(userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value);
                 if (user == null) return false;
+                _logger.LogInformation("--------------------USER TROVATO------------------------------");
 
                 var city = await _context.Cities.FirstOrDefaultAsync(c => c.Name == listingRequestDto.City);
                 if (city == null) return false;
+                _logger.LogInformation("--------------------CITY TROVATA------------------------------");
 
                 var propertyType = await _context.PropertyTypes.FirstOrDefaultAsync(pt => pt.Name == listingRequestDto.PropertyType);
                 if (propertyType == null) return false;
+                _logger.LogInformation("--------------------PROPERTY TROVATA------------------------------");
 
                 var listingDescription = new ListingDescription
                 {
@@ -101,29 +107,25 @@ namespace TravelApi.Services
                     PropertyTypeId = propertyType.Id,
                     CityId = city.Id
                 };
+                _logger.LogInformation("--------------------LISTING DESCRIPTION CREATA------------------------------");
 
                 _context.ListingDescriptions.Add(listingDescription);
                 if (!await SaveAsync()) return false;
+                _logger.LogInformation("--------------------LISTING DESCRIPTION AGGIUNTA------------------------------");
 
                 var listing = new Listing
                 {
                     Id = Guid.NewGuid(),
                     HotelName = listingRequestDto.HotelName,
                     ImgUrls = listingRequestDto.ImgUrls ?? new List<string>(),
-                    DescriptionId = listingDescription.Id
+                    DescriptionId = listingDescription.Id,
+                    UserId = user.Id
                 };
+                _logger.LogInformation("--------------------LISTING CREATA------------------------------");
 
                 _context.Listings.Add(listing);
-                if (!await SaveAsync()) return false;
-
-                var userListing = new UserListing
-                {
-                    UserId = user.Id,
-                    ListingId = listing.Id
-                };
-
-                _context.UserListings.Add(userListing);
                 return await SaveAsync();
+
             }
             catch (Exception ex)
             {
@@ -173,25 +175,23 @@ namespace TravelApi.Services
             }
         }
 
-        public async Task<ICollection<UserListing>?> GetListingByUserAsync(ClaimsPrincipal userPrincipal)
+        public async Task<ICollection<Listing>?> GetListingByUserAsync(ClaimsPrincipal userPrincipal)
         {
             try
             {
                 var userEmail = userPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
                 var user = await _userManager.Users
-                        .Include(u => u.UserListings)
-                            .ThenInclude(ul => ul.Listing)
-                                .ThenInclude(l => l.Description)
-                                    .ThenInclude(d => d.PropertyType)
-                        .Include(u => u.UserListings)
-                            .ThenInclude(ul => ul.Listing)
-                                .ThenInclude(l => l.Description)
-                                    .ThenInclude(d => d.City)
-                                        .ThenInclude(c => c.ExperienceType)
+                        .Include(u => u.Listings)
+                            .ThenInclude(l => l.Description)
+                                .ThenInclude(d => d.PropertyType)
+                        .Include(u => u.Listings)
+                            .ThenInclude(l => l.Description)
+                                .ThenInclude(d => d.City)
+                                    .ThenInclude(c => c.ExperienceType)
                         .FirstOrDefaultAsync(u => u.Email == userEmail);
 
-                return user?.UserListings;
+                return user?.Listings;
             }
             catch (Exception ex)
             {
@@ -201,23 +201,21 @@ namespace TravelApi.Services
         }
 
 
-        public async Task<ICollection<UserListing>?> GetListingByUserEmailAsync(string email)
+        public async Task<ICollection<Listing>?> GetListingByUserEmailAsync(string email)
         {
             try
             {
                 var user = await _userManager.Users
-                        .Include(u => u.UserListings)
-                            .ThenInclude(ul => ul.Listing)
+                        .Include(u => u.Listings)
                                 .ThenInclude(l => l.Description)
                                     .ThenInclude(d => d.PropertyType)
-                        .Include(u => u.UserListings)
-                            .ThenInclude(ul => ul.Listing)
+                        .Include(u => u.Listings)
                                 .ThenInclude(l => l.Description)
                                     .ThenInclude(d => d.City)
                                         .ThenInclude(c => c.ExperienceType)
                         .FirstOrDefaultAsync(u => u.Email == email);
 
-                return user?.UserListings;
+                return user?.Listings;
             }
             catch (Exception ex)
             {
@@ -249,23 +247,6 @@ namespace TravelApi.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Errore durante il recupero dei preferiti dell'utente.");
-                return null;
-            }
-        }
-
-        public async Task<ApplicationUser?> GetUserByListingAsync(Guid id)
-        {
-            try
-            {
-                return await _context.UserListings
-                    .Where(ul => ul.ListingId == id)
-                    .Include(ul => ul.User)
-                    .Select(ul => ul.User)
-                    .FirstOrDefaultAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore durante il recupero dell'utente per la listing {ListingId}.", id);
                 return null;
             }
         }
@@ -343,7 +324,7 @@ namespace TravelApi.Services
             }
         }
 
-        public async Task<ICollection<CartItem?>> GetCartAsync(ClaimsPrincipal userPrincipal)
+        public async Task<ICollection<CartItem>?> GetCartAsync(ClaimsPrincipal userPrincipal)
         {
             try
             {
@@ -354,6 +335,9 @@ namespace TravelApi.Services
                             .ThenInclude(ci => ci.Listing)
                                 .ThenInclude(l => l.Description)
                                     .ThenInclude(d => d.City)
+                        .Include(u => u.CartItems)
+                            .ThenInclude(ci => ci.Listing)
+                                .ThenInclude(l => l.User)
                         .FirstOrDefaultAsync(u => u.Email == userEmail);
 
                 return user?.CartItems;
@@ -373,6 +357,8 @@ namespace TravelApi.Services
                             .Include(ci => ci.Listing)
                                 .ThenInclude(l => l.Description)
                                     .ThenInclude(d => d.PropertyType)
+                            .Include(ci => ci.Listing)
+                                .ThenInclude(l => l.User)
                             .FirstOrDefaultAsync(ci => ci.Id == id);
             }
             catch (Exception ex)
@@ -426,6 +412,33 @@ namespace TravelApi.Services
                 return null;
             }
         }
+
+        public async Task<ICollection<ExperienceType>?> getExperienceTypeAsync()
+        {
+            try
+            {
+                return await _context.ExperienceTypes.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero dei tipi di esperienza.");
+                return null;
+            }
+        }
+
+        public async Task<ICollection<Country>?> getCountriesAsync()
+        {
+            try
+            {
+                return await _context.Countries.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante il recupero dei paesi.");
+                return null;
+            }
+        }
+
 
         public async Task<bool> UpdateListingAsync(Guid id, ListingRequestDto updateDto)
         {

@@ -5,6 +5,8 @@ using TravelApi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using TravelApi.DTOs.Account;
+using Azure;
 
 namespace TravelApi.Controllers
 {
@@ -14,10 +16,15 @@ namespace TravelApi.Controllers
     public class ListingController : ControllerBase
     {
         private readonly ListingService _listingService;
+        private readonly CityService _cityService;
+        private readonly ILogger<ListingService> _logger;
 
-        public ListingController(ListingService listingService)
+
+        public ListingController(ListingService listingService, CityService cityService, ILogger<ListingService> logger)
         {
             _listingService = listingService;
+            _cityService = cityService;
+            _logger = logger;
         }
 
         [HttpGet("all")]
@@ -28,43 +35,57 @@ namespace TravelApi.Controllers
             {
                 var listings = await _listingService.GetAllListingsAsync();
 
-                var listingsDto = listings.Select(l => new ListingDto()
+                var listingsDto = listings?.Select(l =>
                 {
-                    Id = l.Id,
-                    HotelName = l.HotelName,
-                    ImgUrls = l.ImgUrls,
-                    Description = new ListingDescriptionDto()
+                    var dto = new ListingDto()
                     {
-                        Id = l.Description.Id,
-                        Description = l.Description.Description,
-                        Beds = l.Description.Beds,
-                        Capacity = l.Description.Capacity,
-                        PricePerNight = l.Description.PricePerNight,
-                        PropertyType = new PropertyTypeDto()
+                        Id = l.Id,
+                        HotelName = l.HotelName,
+                        ImgUrls = l.ImgUrls,
+                        Description = new ListingDescriptionDto()
                         {
-                            Id = l.Description.PropertyType.Id,
-                            Name = l.Description.PropertyType.Name,
-                        },
-                        City = new CityDto()
-                        {
-                            Id = l.Description.City.Id,
-                            Name = l.Description.City.Name,
-                            Description = l.Description.City.Description,
-                            Country = new CountryDto()
+                            Id = l.Description.Id,
+                            Description = l.Description.Description,
+                            Beds = l.Description.Beds,
+                            Capacity = l.Description.Capacity,
+                            PricePerNight = l.Description.PricePerNight,
+                            PropertyType = new PropertyTypeDto()
                             {
-                                Id = l.Description.City.Country.Id,
-                                Name = l.Description.City.Country.Name,
-                                ImgUrl = l.Description.City.Country.ImgUrl,
+                                Id = l.Description.PropertyType.Id,
+                                Name = l.Description.PropertyType.Name,
                             },
-                            ExperienceType = new ExperienceTypeDto()
+                            City = new CityDto()
                             {
-                                Id = l.Description.City.ExperienceType.Id,
-                                Name = l.Description.City.ExperienceType.Name,
-                                Icon = l.Description.City.ExperienceType.Icon,
+                                Id = l.Description.City.Id,
+                                Name = l.Description.City.Name,
+                                Description = l.Description.City.Description,
+                                Country = new CountryDto()
+                                {
+                                    Id = l.Description.City.Country.Id,
+                                    Name = l.Description.City.Country.Name,
+                                    ImgUrl = l.Description.City.Country.ImgUrl,
+                                },
+                                ExperienceType = new ExperienceTypeDto()
+                                {
+                                    Id = l.Description.City.ExperienceType.Id,
+                                    Name = l.Description.City.ExperienceType.Name,
+                                    Icon = l.Description.City.ExperienceType.Icon,
+                                }
                             }
                         }
+                    };
+
+                    if (l.User?.Email != null)
+                    {
+                        dto.User = new UserInfoDto
+                        {
+                            Email = l.User.Email
+                        };
                     }
-                });
+
+                    return dto;
+                }).ToList();
+
 
                 return Ok(listingsDto);
             }
@@ -125,6 +146,16 @@ namespace TravelApi.Controllers
                     }
                 };
 
+                if (listing.User?.Email != null)
+                {
+                    listingDto.User = new UserInfoDto()
+                    {
+                        Email = listing.User?.Email,
+                        FirstName = listing.User?.FirstName,
+                        LastName = listing.User?.LastName,
+                    };
+                }
+
                 return Ok(listingDto);
             }
             catch (Exception ex)
@@ -134,15 +165,25 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> addListing(ListingRequestDto listingRequestDto)
+        public async Task<IActionResult> addListing([FromBody] ListingRequestDto listingRequestDto)
         {
             try
             {
+                if (!string.IsNullOrWhiteSpace(listingRequestDto.CityDescription))
+                {
+                    var resultCityAdded = await _cityService.AddCityAsync(listingRequestDto);
+                    if (!resultCityAdded)
+                    {
+                        _logger.LogInformation("-------------------ROBE GIA ESISTENTI------------------------------");
+                        return BadRequest(new { message = "Città o Paese già esistenti!" });
+                    }
+                }
+                _logger.LogInformation("-------------------INFO CONTROLLATE, ENTRO DENTRO AL SERVICE LISTING------------------------------");
                 var result = await _listingService.AddListingAsync(listingRequestDto, User);
 
                 if (!result)
                 {
-                    return BadRequest(new { message = "Something went wrong" });
+                    return BadRequest("Something went wrong");
                 }
                 return Ok(new { message = "Prodotto aggiunto correttamente!" });
             }
@@ -159,7 +200,7 @@ namespace TravelApi.Controllers
             {
                 var listings = await _listingService.GetListingByUserAsync(User);
 
-                var listingsDto = listings.Select(li => li.Listing).Select(l => new ListingDto()
+                var listingsDto = listings?.Select(l => new ListingDto()
                 {
                     Id = l.Id,
                     HotelName = l.HotelName,
@@ -200,13 +241,14 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet("user/{email}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetListingsByUserEmail(string email)
         {
             try
             {
                 var listings = await _listingService.GetListingByUserEmailAsync(email);
 
-                var listingsDto = listings.Select(li => li.Listing).Select(l => new ListingDto()
+                var listingsDto = listings?.Select(l => new ListingDto()
                 {
                     Id = l.Id,
                     HotelName = l.HotelName,
@@ -253,59 +295,53 @@ namespace TravelApi.Controllers
             {
                 var favorites = await _listingService.GetFavoritesAsync(User);
 
-                var listingsDto = favorites.Select(f => f.Listing).Select(l => new ListingDto()
+                var listingsDto = favorites?.Select(f => f.Listing).Select(l =>
                 {
-                    Id = l.Id,
-                    HotelName = l.HotelName,
-                    ImgUrls = l.ImgUrls,
-                    Description = new ListingDescriptionDto()
+                    var dto = new ListingDto()
                     {
-                        Id = l.Description.Id,
-                        Description = l.Description.Description,
-                        Beds = l.Description.Beds,
-                        Capacity = l.Description.Capacity,
-                        PricePerNight = l.Description.PricePerNight,
-                        PropertyType = new PropertyTypeDto()
+                        Id = l.Id,
+                        HotelName = l.HotelName,
+                        ImgUrls = l.ImgUrls,
+                        Description = new ListingDescriptionDto()
                         {
-                            Id = l.Description.PropertyType.Id,
-                            Name = l.Description.PropertyType.Name,
-                        },
-                        City = new CityDto()
-                        {
-                            Id = l.Description.City.Id,
-                            Name = l.Description.City.Name,
-                            Description = l.Description.City.Description,
-                            ExperienceType = new ExperienceTypeDto()
+                            Id = l.Description.Id,
+                            Description = l.Description.Description,
+                            Beds = l.Description.Beds,
+                            Capacity = l.Description.Capacity,
+                            PricePerNight = l.Description.PricePerNight,
+                            PropertyType = new PropertyTypeDto()
                             {
-                                Id = l.Description.City.ExperienceType.Id,
-                                Name = l.Description.City.ExperienceType.Name,
-                                Icon = l.Description.City.ExperienceType.Icon,
+                                Id = l.Description.PropertyType.Id,
+                                Name = l.Description.PropertyType.Name,
+                            },
+                            City = new CityDto()
+                            {
+                                Id = l.Description.City.Id,
+                                Name = l.Description.City.Name,
+                                Description = l.Description.City.Description,
+                                ExperienceType = new ExperienceTypeDto()
+                                {
+                                    Id = l.Description.City.ExperienceType.Id,
+                                    Name = l.Description.City.ExperienceType.Name,
+                                    Icon = l.Description.City.ExperienceType.Icon,
+                                }
                             }
                         }
+                    };
+
+                    if (l.User?.Email != null)
+                    {
+                        dto.User = new UserInfoDto()
+                        {
+                            FirstName = l.User?.FirstName,
+                            LastName = l.User?.LastName,
+                        };
                     }
-                });
+
+                    return dto;
+                }).ToList();
 
                 return Ok(listingsDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        [HttpGet("user/{listingId:Guid}")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetUserByListing(Guid listingId)
-        {
-            try
-            {
-                var user = await _listingService.GetUserByListingAsync(listingId);
-
-                if (user == null)
-                {
-                    return NotFound("user non trovato");
-                }
-                return Ok(user);
             }
             catch (Exception ex)
             {
@@ -418,29 +454,43 @@ namespace TravelApi.Controllers
                     return NotFound("Carrello vuoto");
                 }
 
-                var cartItemsDto = cartItems.Select(cartItem => new CartItemDto()
+                var cartItemsDto = cartItems.Select(cartItem =>
                 {
-                    Id = cartItem.Id,
-                    NumberOfPeople = cartItem.NumberOfPeople,
-                    StartDate = cartItem.StartDate,
-                    EndDate = cartItem.EndDate,
-                    Listing = new ListingDto()
+                    var dto = new CartItemDto()
                     {
-                        Id = cartItem.Listing.Id,
-                        HotelName = cartItem.Listing.HotelName,
-                        ImgUrls = cartItem.Listing.ImgUrls,
-                        Description = new ListingDescriptionDto()
+                        Id = cartItem.Id,
+                        NumberOfPeople = cartItem.NumberOfPeople,
+                        StartDate = cartItem.StartDate,
+                        EndDate = cartItem.EndDate,
+                        Listing = new ListingDto()
                         {
-                            Id = cartItem.Listing.Description.Id,
-                            Description = cartItem.Listing.Description.Description,
-                            PricePerNight = cartItem.Listing.Description.PricePerNight,
-                            City = new CityDto
+                            Id = cartItem.Listing.Id,
+                            HotelName = cartItem.Listing.HotelName,
+                            ImgUrls = cartItem.Listing.ImgUrls,
+                            Description = new ListingDescriptionDto()
                             {
-                                Id = cartItem.Listing.Description.City.Id,
-                                Name = cartItem.Listing.Description.City.Name,
+                                Id = cartItem.Listing.Description.Id,
+                                Description = cartItem.Listing.Description.Description,
+                                PricePerNight = cartItem.Listing.Description.PricePerNight,
+                                City = new CityDto
+                                {
+                                    Id = cartItem.Listing.Description.City.Id,
+                                    Name = cartItem.Listing.Description.City.Name,
+                                }
                             }
                         }
+                    };
+
+                    if (cartItem.Listing.User?.Email != null)
+                    {
+                        dto.Listing.User = new UserInfoDto()
+                        {
+                            FirstName = cartItem.Listing.User?.FirstName,
+                            LastName = cartItem.Listing.User?.LastName,
+                        };
                     }
+
+                    return dto;
                 }).ToList();
 
                 return Ok(cartItemsDto);
@@ -489,6 +539,16 @@ namespace TravelApi.Controllers
                     },
                 };
 
+                if (cartItem.Listing.User?.Email != null)
+                {
+                    cartItemDto.Listing.User = new UserInfoDto()
+                    {
+                        Email = cartItem.Listing.User?.Email,
+                        FirstName = cartItem.Listing.User?.FirstName,
+                        LastName = cartItem.Listing.User?.LastName,
+                    };
+                }
+
                 return Ok(cartItemDto);
             }
             catch (Exception ex)
@@ -529,6 +589,59 @@ namespace TravelApi.Controllers
                 });
 
                 return Ok(propertyTypeDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("experience-type")]
+        public async Task<IActionResult> getExperienceTypes()
+        {
+            try
+            {
+                _logger.LogInformation("--------------------EXPERIENCE TYPE------------------------------");
+                var experienceTypes = await _listingService.getExperienceTypeAsync();
+                if (experienceTypes == null)
+                {
+                    return BadRequest("Non ci sono experience types");
+                }
+
+                var experienceTypeDto = experienceTypes.Select(et => new ExperienceTypeDto()
+                {
+                    Id = et.Id,
+                    Name = et.Name,
+                    Icon = et.Icon
+                });
+
+                return Ok(experienceTypeDto);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("countries")]
+        public async Task<IActionResult> getCountries()
+        {
+            try
+            {
+                var countries = await _listingService.getCountriesAsync();
+                if (countries == null)
+                {
+                    return BadRequest("Non ci sono countries");
+                }
+
+                var countriesDto = countries.Select(c => new CountryDto()
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    ImgUrl = c.ImgUrl
+                });
+
+                return Ok(countriesDto);
             }
             catch (Exception ex)
             {

@@ -3,7 +3,8 @@ import '../style/account.css';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     FiUser, FiMail, FiLogOut, FiTrash2, FiCalendar,
-    FiShield, FiSettings, FiHelpCircle, FiEdit2, FiKey, FiActivity
+    FiShield, FiSettings, FiHelpCircle, FiEdit2, FiKey, FiActivity,
+    FiHome
 } from 'react-icons/fi';
 
 const AccountComponent = () => {

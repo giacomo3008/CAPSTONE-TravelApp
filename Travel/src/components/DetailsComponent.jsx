@@ -9,10 +9,8 @@ const DetailsComponent = function () {
     const [structure, setStructure] = useState(null);
     const token = useSelector((state) => state.authLogin.token);
     const [isLoading, setIsLoading] = useState(true);
-    const [isLoading2, setIsLoading2] = useState(true);
     const [imageSubset, setImageSubset] = useState([]);
     const [remainingSlots, setRemainingSlots] = useState(0);
-    const [userHost, setUserHost] = useState(null);
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [guests, setGuests] = useState(1);
@@ -40,38 +38,8 @@ const DetailsComponent = function () {
         }
     }
 
-    const getUserHost = async (id) => {
-        try {
-            const URL = "https://localhost:7146/api/"
-            const response = await fetch(URL + "listing/user/" + id, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            });
-            if (response.status === 404) {
-                console.warn("Utente non trovato per questa listing.");
-                setUserHost(null);
-                setIsLoading2(false);
-                return;
-            }
-
-            if (!response.ok) {
-                throw new Error("Errore nel recuperare la struttura");
-            }
-            const data = await response.json();
-            console.log(data);
-            setUserHost(data);
-            setIsLoading2(false);
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
     useEffect(() => {
         getStructureDetails(id);
-        getUserHost(id);
     }, []);
 
     useEffect(() => {
@@ -82,6 +50,11 @@ const DetailsComponent = function () {
             setIsLoading(false);
         }
     }, [structure]);
+
+    const handleHost = (e) => {
+        e.preventDefault();
+        navigate(`/userInfo/${structure.user.email}`);
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -133,7 +106,7 @@ const DetailsComponent = function () {
 
     return (
         <>
-            {!isLoading && !isLoading2 ? (
+            {!isLoading ? (
                 <Container className="details-container mt-5">
                     <h2 className="mt-5">{structure.hotelName}</h2>
                     {/* Sezione immagini */}
@@ -219,10 +192,10 @@ const DetailsComponent = function () {
                                     className="profile-icon me-3"
                                 />
                                 {
-                                    userHost ? (
-                                        <h5 className="m-0 host-name">Nome dell'host : &nbsp; {userHost.firstName} {userHost.lastName}</h5>
+                                    structure.user != null ? (
+                                        <h5 className="m-0 host-name"><strong>Nome dell'host :</strong> &nbsp; <span className="host-name-span" onClick={handleHost}>{structure.user.firstName} {structure.user.lastName}</span></h5>
                                     ) : (
-                                        <h5 className="m-0 host-name">Nome dell'host : &nbsp; Utente Sconosciuto</h5>
+                                        <h5 className="m-0 host-name"><strong>Nome dell'host :</strong> &nbsp; Utente Sconosciuto</h5>
                                     )
                                 }
                             </div>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TravelApi.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -260,11 +260,18 @@ namespace TravelApi.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HotelName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ImgUrls = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DescriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    DescriptionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Listings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Listings_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Listings_ListingDescriptions_DescriptionId",
                         column: x => x.DescriptionId,
@@ -292,34 +299,9 @@ namespace TravelApi.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_CartItems_Listings_ListingId",
-                        column: x => x.ListingId,
-                        principalTable: "Listings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserListings",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ListingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserListings", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserListings_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserListings_Listings_ListingId",
                         column: x => x.ListingId,
                         principalTable: "Listings",
                         principalColumn: "Id",
@@ -342,7 +324,7 @@ namespace TravelApi.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_UserListingsFavorites_Listings_ListingId",
                         column: x => x.ListingId,
@@ -427,13 +409,8 @@ namespace TravelApi.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserListings_ListingId",
-                table: "UserListings",
-                column: "ListingId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserListings_UserId",
-                table: "UserListings",
+                name: "IX_Listings_UserId",
+                table: "Listings",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -469,19 +446,16 @@ namespace TravelApi.Migrations
                 name: "CartItems");
 
             migrationBuilder.DropTable(
-                name: "UserListings");
-
-            migrationBuilder.DropTable(
                 name: "UserListingsFavorites");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Listings");
 
             migrationBuilder.DropTable(
-                name: "Listings");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "ListingDescriptions");

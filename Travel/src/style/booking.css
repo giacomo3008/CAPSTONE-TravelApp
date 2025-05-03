@@ -45,6 +45,26 @@
     box-shadow: 5px 8px 26px rgba(39, 39, 39, 0.323);
 }
 
+.booking-container .host-name-span {
+    cursor: pointer;
+}
+
+.booking-container .host-name-span:hover {
+    text-decoration: underline;
+}
+
+.booking-container .profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: none;
+    box-shadow: 3px 3px 15px rgba(63, 63, 63, 0.191);
+}
+
+.booking-container .host-name {
+    color: rgb(101, 101, 101);
+}
 
 .booking-container section h2,
 .booking-container section h3 {

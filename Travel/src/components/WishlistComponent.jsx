@@ -137,13 +137,22 @@ const WishlistComponent = function () {
                                             <div className='listing-imgs me-5'>
                                                 <img src={listing.imgUrls[0]} height="100%" />
                                             </div>
-                                            <div className="listing-info mt-4 mt-md-0">
-                                                <h2 className="hotel-name">{listing.hotelName} - {listing.description.city.name}</h2>
-                                                <p><strong>Tipo esperienza : &nbsp; </strong> {listing.description.city.experienceType.name}</p>
-                                                <p><strong>Descrizione : &nbsp; </strong> {listing.description.description}</p>
-                                                <p><strong>Posti letto : &nbsp; </strong> {listing.description.beds}</p>
-                                                <p><strong>Capacità : &nbsp; </strong> {listing.description.capacity} persone</p>
-                                                <p><strong>Prezzo a notte : &nbsp; </strong> €{listing.description.pricePerNight}</p>
+                                            <div className='d-flex flex-column justify-content-between align-items-start'>
+                                                <div className="listing-info mt-4 mt-md-0">
+                                                    <h2 className="hotel-name">{listing.hotelName} - {listing.description.city.name}</h2>
+                                                    <p><strong>Tipo esperienza : &nbsp; </strong> {listing.description.city.experienceType.name}</p>
+                                                    <p><strong>Descrizione : &nbsp; </strong> {listing.description.description}</p>
+                                                    <p><strong>Posti letto : &nbsp; </strong> {listing.description.beds}</p>
+                                                    <p><strong>Capacità : &nbsp; </strong> {listing.description.capacity} persone</p>
+                                                    <p><strong>Prezzo a notte : &nbsp; </strong> €{listing.description.pricePerNight}</p>
+                                                </div>
+                                                {
+                                                    listing.user != null ? (
+                                                        <p className="p-0 m-0 user-name-favorite"><strong>Host : &nbsp; </strong> {listing.user.firstName} {listing.user.lastName}</p>
+                                                    ) : (
+                                                        <p className="p-0 m-0 user-name-favorite"><strong>Host : &nbsp; </strong> Utente sconosciuto</p>
+                                                    )
+                                                }
                                             </div>
                                             <div className="favorite-btn" onClick={(e) => {
                                                 e.preventDefault();

@@ -269,3 +269,19 @@
         gap: 0rem;
     }
 }
+
+.user-name {
+    display: none;
+}
+
+@media (min-width: 1200px) {
+    .user-name {
+        display: block;
+    }
+}
+
+@media (max-width: 992px) {
+    .my-listings-div {
+        padding: 0;
+    }
+}

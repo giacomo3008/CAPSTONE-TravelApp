@@ -74,6 +74,19 @@
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
+.add-container .input-group select:disabled {
+    background-color: #f0f0f0;
+    opacity: 0.2;
+    pointer-events: none;
+    box-shadow: none !important;
+    cursor: not-allowed;
+}
+
+.add-container .input-group select:disabled:hover,
+.add-container .input-group select:disabled:focus {
+    box-shadow: none;
+}
+
 .add-container textarea {
     min-height: 100px;
 }
@@ -103,6 +116,44 @@
 .add-container .img-urls .img-input-last {
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
+}
+
+.add-container .add-city-btn {
+    background-color: transparent;
+    color: #444;
+    padding: 0 1rem;
+    height: 44px;
+    border-radius: 15px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0;
+}
+
+.add-container .add-city-btn:hover {
+    box-shadow: 3px 3px 10px rgba(91, 91, 91, 0.259);
+    color: #222;
+}
+
+.add-container .delete-city-btn {
+    background-color: transparent;
+    color: #444;
+    padding: 0 1rem;
+    height: 44px;
+    border-radius: 15px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0;
+}
+
+.add-container .delete-city-btn:hover {
+    box-shadow: 3px 3px 10px rgba(91, 91, 91, 0.259);
+    color: #222;
 }
 
 .add-container .add-img-btn {

@@ -22,8 +22,10 @@ import BookingComponent from './components/BookingComponent';
 import DashboardComponent from './components/DashboardComponent';
 import DashboardAccountsComponent from './components/DashboardAccountsComponent';
 import DashboardListingsComponent from './components/DashboardListingsComponent';
-import AccountInfoComponent from './components/AccountInfoComponent copy';
+import AccountInfoComponent from './components/AccountInfoComponent';
 import ThanknyouComponent from './components/ThankyouComponent';
+import AccountInfoUserComponent from './components/AccountInfoUserComponent';
+import UserListingsComponent from './components/UserListingsComponent';
 
 function App() {
   const token = useSelector((state) => state.authLogin.token);
@@ -78,7 +80,9 @@ function App() {
           <Route path='/dashboard-acc' element={<DashboardAccountsComponent />} />
           <Route path='/dashboard-list' element={<DashboardListingsComponent />} />
           <Route path='/user/:email' element={<AccountInfoComponent />} />
+          <Route path='/userInfo/:email' element={<AccountInfoUserComponent />} />
           <Route path='/thankyou' element={<ThanknyouComponent />} />
+          <Route path='/user/listings/:email/:name' element={<UserListingsComponent />} />
         </Routes>
         <FooterComponent />
       </div>

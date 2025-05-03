@@ -38,8 +38,15 @@ namespace TravelApi.Controllers
 
         [Authorize]
         [HttpGet("validate")]
-        public IActionResult ValidateToken()
+        public async Task<IActionResult> ValidateToken()
         {
+            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var user = await _userManager.FindByEmailAsync(userEmail);
+
+            if (user == null)
+                return Unauthorized("Utente non autenticato.");
+
+
             return Ok(new { status = "valid" });
         }
 
@@ -189,14 +196,14 @@ namespace TravelApi.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
-            var users = _userManager.Users.ToList();
+            var users = _userManager.Users.Include(u => u.Listings).ToList();
 
             var userInfoList = new List<UserInfoDto>();
 
             foreach (var user in users)
             {
                 var roles = await _signInManager.UserManager.GetRolesAsync(user);
-                var listingsCount = user.UserListings?.Count ?? 0; //se non ci sono listings associate ritorna 0
+                var listingsCount = user.Listings?.Count ?? 0; //se non ci sono listings associate ritorna 0
 
                 userInfoList.Add(new UserInfoDto
                 {
@@ -215,10 +222,10 @@ namespace TravelApi.Controllers
         [HttpGet("{email}")]
         public async Task<IActionResult> GetUserInfo(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.Users.Include(u => u.Listings).FirstOrDefaultAsync(u => u.Email == email);
 
             var roles = await _signInManager.UserManager.GetRolesAsync(user);
-            var listingsCount = user.UserListings?.Count ?? 0; //se non ci sono listings associate ritorna 0
+            var listingsCount = user.Listings?.Count ?? 0; //se non ci sono listings associate ritorna 0
 
             var userInfo = new UserInfoDto
             {

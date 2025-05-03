@@ -18,6 +18,19 @@ const AddListingComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [newCity, setNewCity] = useState(false);
+    const [experienceTypes, setExperienceTypes] = useState([]);
+    const [ExperienceType, setExperienceType] = useState("");
+    const [countries, setCountries] = useState([]);
+    const [Country, setCountry] = useState("");
+    const [CityDescription, setCityDescription] = useState("");
+    const [CountryName, setCountryName] = useState("");
+    const [CountryImg, setCountryImg] = useState("");
+    const [newCountry, setNewCountry] = useState(false);
+    const [invalidInfo, setInvalidInfo] = useState("");
+
+
+
 
     const getCities = async () => {
         try {
@@ -73,9 +86,73 @@ const AddListingComponent = function () {
         }
     }
 
+    const getExperienceTypes = async () => {
+        try {
+            const response = await fetch("https://localhost:7146/api/listing/experience-type", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (response.status === 401 || response.status === 403) {
+                dispatch({
+                    type: 'LOGOUT',
+                    payload: true
+                });
+                localStorage.removeItem('token');
+                navigate('/');
+            } else {
+                if (!response.ok) {
+                    throw new Error("Errore durante la richiesta delle experience types");
+                }
+
+                const data = await response.json();
+                console.log(data);
+                setExperienceTypes(data);
+            }
+        } catch (err) {
+            console.error("Errore:", err);
+            alert("C'è stato un errore nell'invio.");
+        }
+    }
+
+    const getCountries = async () => {
+        try {
+            const response = await fetch("https://localhost:7146/api/listing/countries", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            });
+            if (response.status === 401 || response.status === 403) {
+                dispatch({
+                    type: 'LOGOUT',
+                    payload: true
+                });
+                localStorage.removeItem('token');
+                navigate('/');
+            } else {
+                if (!response.ok) {
+                    throw new Error("Errore durante la richiesta dei paesi");
+                }
+
+                const data = await response.json();
+                console.log(data);
+                setCountries(data);
+            }
+        } catch (err) {
+            console.error("Errore:", err);
+            alert("C'è stato un errore nell'invio.");
+        }
+    }
+
     useEffect(() => {
         getCities();
         getPropertyTypes();
+        getExperienceTypes();
+        getCountries();
     }, [])
 
 
@@ -91,6 +168,11 @@ const AddListingComponent = function () {
             PricePerNight,
             City,
             PropertyType,
+            ExperienceType,
+            Country,
+            CityDescription,
+            CountryName,
+            CountryImg,
         };
         console.log(payload);
         try {
@@ -104,6 +186,13 @@ const AddListingComponent = function () {
             });
 
             if (!response.ok) {
+                const errorMessage = await response.json();
+                if (errorMessage.message != null) {
+                    console.log(errorMessage);
+                    setInvalidInfo(errorMessage.message);
+                    navigate("/add");
+                    return;
+                }
                 throw new Error("Errore durante l'invio del form");
             }
 
@@ -133,13 +222,49 @@ const AddListingComponent = function () {
         }
     };
 
+    const addCity = (e) => {
+        e.preventDefault();
+        setCity("");
+        setNewCity(true);
+    };
+
+    const deleteCity = (e) => {
+        e.preventDefault();
+        setCity("");
+        setExperienceType("");
+        setCountry("");
+        setCountryImg("");
+        setCountryName("");
+        setCityDescription("");
+        setNewCity(false);
+        setNewCountry(false);
+    };
+
+    const addCountry = (e) => {
+        e.preventDefault();
+        setCountry("");
+        setNewCountry(true);
+    };
+
+    const deleteCountry = (e) => {
+        e.preventDefault();
+        setCountryName("");
+        setCountryImg("");
+        setNewCountry(false);
+    };
+
     return (
         <>
             <div className="add-container">
                 <h2 className="mb-4">Add your Listing</h2>
                 {
-                    propertyTypes.length > 0 && cities.length > 0 ? (
+                    propertyTypes.length > 0 && cities.length > 0 && experienceTypes.length > 0 && countries.length > 0 ? (
                         <form onSubmit={handleSubmit}>
+                            {invalidInfo && (
+                                <div className="error-message mb-3" style={{ color: 'red', marginBottom: '10px' }}>
+                                    {invalidInfo}
+                                </div>
+                            )}
                             <div className="input-group">
                                 <label>Listing title</label>
                                 <input
@@ -207,22 +332,6 @@ const AddListingComponent = function () {
 
                             <hr className="my-5" />
 
-                            <div className="input-group mt-3 w-75">
-                                <label>City</label>
-                                <select
-                                    value={City}
-                                    onChange={(e) => setCity(e.target.value)}
-                                    required
-                                >
-                                    <option value="">Select a City</option>
-                                    {cities.map((city) => (
-                                        <option key={city.id} value={city.name}>
-                                            {city.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
                             <div className="input-group w-75">
                                 <label>Property Type</label>
                                 <select
@@ -238,6 +347,148 @@ const AddListingComponent = function () {
                                     ))}
                                 </select>
                             </div>
+
+                            <div className="input-group mt-3 w-100">
+                                <label>City</label>
+                                <div className="d-flex flex-row justify-content-start align-items-center">
+                                    <select
+                                        value={newCity ? "" : City}
+                                        onChange={(e) => setCity(e.target.value)}
+                                        className="w-75 me-4"
+                                        disabled={newCity}
+                                        required
+                                    >
+                                        <option value="">Select a City</option>
+                                        {cities.map((city) => (
+                                            <option key={city.id} value={city.name}>
+                                                {city.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {
+                                        newCity ? (
+                                            <button type="button" onClick={deleteCity} className={`delete-city-btn`}>
+                                                <i class="fa-solid fa-x"></i>
+                                            </button>
+                                        ) : (
+                                            <button type="button" onClick={addCity} className={`add-city-btn`}>
+                                                + New City
+                                            </button>
+                                        )
+                                    }
+                                </div>
+                            </div>
+
+                            {
+                                newCity && (
+                                    <>
+                                        <Container fluid className="mt-3 p-0">
+                                            <Row className="px-1">
+                                                <Col md={6}>
+                                                    <div className="input-group">
+                                                        <label>City Name</label>
+                                                        <input
+                                                            type="text"
+                                                            value={City}
+                                                            onChange={(e) => setCity(e.target.value)}
+                                                            placeholder="Enter the city name"
+                                                            required
+                                                        />
+                                                    </div>
+                                                </Col>
+                                                <Col md={6}>
+                                                    <div className="input-group">
+                                                        <label>Experience Type</label>
+                                                        <select
+                                                            value={ExperienceType}
+                                                            onChange={(e) => setExperienceType(e.target.value)}
+                                                            required
+                                                        >
+                                                            <option value="">Select an Experience Type</option>
+                                                            {experienceTypes.map((experienceType) => (
+                                                                <option key={experienceType.id} value={experienceType.name}>
+                                                                    {experienceType.name}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </Container>
+                                        <div className="input-group">
+                                            <label>City Description</label>
+                                            <textarea
+                                                value={CityDescription}
+                                                onChange={(e) => setCityDescription(e.target.value)}
+                                                placeholder="Enter a city description"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="input-group mt-3 w-100">
+                                            <label>Country</label>
+                                            <div className="d-flex flex-row justify-content-start align-items-center">
+                                                <select
+                                                    value={newCountry ? "" : Country}
+                                                    onChange={(e) => setCountry(e.target.value)}
+                                                    className="w-75 me-4"
+                                                    disabled={newCountry}
+                                                    required
+                                                >
+                                                    <option value="">Select Country</option>
+                                                    {countries.map((country) => (
+                                                        <option key={country.id} value={country.name}>
+                                                            {country.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {
+                                                    newCountry ? (
+                                                        <button type="button" onClick={deleteCountry} className={`delete-city-btn`}>
+                                                            <i class="fa-solid fa-x"></i>
+                                                        </button>
+                                                    ) : (
+                                                        <button type="button" onClick={addCountry} className={`add-city-btn`}>
+                                                            + New Country
+                                                        </button>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                        {
+                                            newCountry && (
+                                                <Container fluid className="mt-3 p-0">
+                                                    <Row className="px-1">
+                                                        <Col md={6}>
+                                                            <div className="input-group">
+                                                                <label>Country Name</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={CountryName}
+                                                                    onChange={(e) => setCountryName(e.target.value)}
+                                                                    placeholder="Enter the country name"
+                                                                    required
+                                                                />
+                                                            </div>
+                                                        </Col>
+                                                        <Col md={6}>
+                                                            <div className="input-group">
+                                                                <label>Country Image</label>
+                                                                <input
+                                                                    type="text"
+                                                                    value={CountryImg}
+                                                                    onChange={(e) => setCountryImg(e.target.value)}
+                                                                    placeholder="Enter the image URL"
+
+                                                                />
+                                                            </div>
+                                                        </Col>
+                                                    </Row>
+                                                </Container>
+                                            )
+                                        }
+                                    </>
+                                )
+                            }
 
                             <hr className="my-5" />
 

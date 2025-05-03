@@ -72,6 +72,11 @@ const BookingComponent = function () {
         getListingInfo();
     }, []);
 
+    const handleHost = (e) => {
+        e.preventDefault();
+        navigate(`/userInfo/${structure.user.email}`);
+    }
+
     const handleDetails = (e) => {
         e.preventDefault();
         navigate(`/details/${structure.listing.id}`);
@@ -235,8 +240,22 @@ const BookingComponent = function () {
                                             <h2>Termini di cancellazione</h2>
                                             <p><strong>Cancellazione gratuita entro il giorno {formatCancellationDate(structure.startDate)}.</strong> Dopo tale data, la prenotazione non è rimborsabile. <a>Scopri di più</a></p>
                                         </section>
-                                        <hr className='my-5' />
-
+                                        <hr className='mt-5' />
+                                        <div className="d-flex flex-row align-items-center">
+                                            <img
+                                                src="/src/assets/img/profile-placeholder.png"
+                                                alt="User"
+                                                className="profile-icon me-3"
+                                            />
+                                            {
+                                                structure.user != null ? (
+                                                    <h5 className="m-0 host-name"><strong>Nome dell'host :</strong> &nbsp; <span className='host-name-span' onClick={handleHost}>{structure.user.firstName} {structure.user.lastName}</span></h5>
+                                                ) : (
+                                                    <h5 className="m-0 host-name"><strong>Nome dell'host :</strong> &nbsp; <span className='host-name-span'>Utente Sconosciuto</span></h5>
+                                                )
+                                            }
+                                        </div>
+                                        <hr className='mb-5' />
                                         <section className="section-block mb-5">
                                             <h2>Regole di base</h2>
                                             <p>Chiediamo a tutti gli ospiti di rispettare alcune linee guida per soddisfare le aspettative dell'host.</p>

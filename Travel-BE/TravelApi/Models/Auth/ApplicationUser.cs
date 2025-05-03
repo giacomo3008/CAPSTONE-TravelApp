@@ -17,7 +17,7 @@ public class ApplicationUser : IdentityUser
 
     public ICollection<ApplicationUserRole> UserRoles { get; set; }
 
-    public ICollection<UserListing>? UserListings { get; set; }
+    public ICollection<Listing>? Listings { get; set; }
 
     public ICollection<UserListingFavorites>? UserListingsFavorites { get; set; }
 

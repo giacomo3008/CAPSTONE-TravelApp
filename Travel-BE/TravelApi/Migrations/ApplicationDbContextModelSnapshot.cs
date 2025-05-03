@@ -231,28 +231,6 @@ namespace TravelApi.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("TravelApi.Models.Auth.UserListing", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ListingId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserListings");
-                });
-
             modelBuilder.Entity("TravelApi.Models.Auth.UserListingFavorites", b =>
                 {
                     b.Property<Guid>("Id")
@@ -389,10 +367,15 @@ namespace TravelApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DescriptionId")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Listings");
                 });
@@ -501,25 +484,6 @@ namespace TravelApi.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("TravelApi.Models.Auth.UserListing", b =>
-                {
-                    b.HasOne("TravelApi.Models.Listing", "Listing")
-                        .WithMany("UserListings")
-                        .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TravelApi.Models.Auth.ApplicationUser", "User")
-                        .WithMany("UserListings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Listing");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TravelApi.Models.Auth.UserListingFavorites", b =>
                 {
                     b.HasOne("TravelApi.Models.Listing", "Listing")
@@ -531,7 +495,7 @@ namespace TravelApi.Migrations
                     b.HasOne("TravelApi.Models.Auth.ApplicationUser", "User")
                         .WithMany("UserListingsFavorites")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Listing");
@@ -550,7 +514,7 @@ namespace TravelApi.Migrations
                     b.HasOne("TravelApi.Models.Auth.ApplicationUser", "User")
                         .WithMany("CartItems")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Listing");
@@ -585,7 +549,14 @@ namespace TravelApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TravelApi.Models.Auth.ApplicationUser", "User")
+                        .WithMany("Listings")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("Description");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TravelApi.Models.ListingDescription", b =>
@@ -616,7 +587,7 @@ namespace TravelApi.Migrations
                 {
                     b.Navigation("CartItems");
 
-                    b.Navigation("UserListings");
+                    b.Navigation("Listings");
 
                     b.Navigation("UserListingsFavorites");
 
@@ -641,8 +612,6 @@ namespace TravelApi.Migrations
             modelBuilder.Entity("TravelApi.Models.Listing", b =>
                 {
                     b.Navigation("CartItems");
-
-                    b.Navigation("UserListings");
 
                     b.Navigation("UserListingsFavorites");
                 });

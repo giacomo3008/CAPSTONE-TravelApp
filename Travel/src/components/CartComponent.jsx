@@ -157,13 +157,23 @@ const CartComponent = function () {
                                                 }
 
                                             </div>
-                                            <div className="listing-info mt-4 mt-lg-0">
-                                                <h2 className="hotel-name">{listing.listing.hotelName} - {listing.listing.description.city.name}</h2>
-                                                <p><strong>Data di inizio : &nbsp; </strong> {listing.startDate}</p>
-                                                <p><strong>Data di fine : &nbsp; </strong> {listing.endDate}</p>
-                                                <p><strong>Ospiti : &nbsp; </strong> {listing.numberOfPeople}</p>
-                                                <hr />
-                                                <p><strong>Descrizione : &nbsp; </strong> {listing.listing.description.description}</p>
+                                            <div className="d-flex flex-column justify-content-between align-items-start">
+                                                <div className="listing-info mt-4 mt-lg-0">
+                                                    <h2 className="hotel-name">{listing.listing.hotelName} - {listing.listing.description.city.name}</h2>
+                                                    <p><strong>Data di inizio : &nbsp; </strong> {listing.startDate}</p>
+                                                    <p><strong>Data di fine : &nbsp; </strong> {listing.endDate}</p>
+                                                    <p><strong>Ospiti : &nbsp; </strong> {listing.numberOfPeople}</p>
+                                                    <hr />
+                                                    <p><strong>Descrizione : &nbsp; </strong> {listing.listing.description.description}</p>
+                                                </div>
+                                                {
+                                                    listing.user != null ? (
+                                                        <p className="p-0 m-0 user-name"><strong>Host : &nbsp; </strong> {listing.user.firstName} {listing.user.lastName}</p>
+                                                    ) : (
+                                                        <p className="p-0 m-0 user-name"><strong>Host : &nbsp; </strong> Utente sconosciuto</p>
+                                                    )
+                                                }
+
                                             </div>
                                             <div className='price-div'>
 

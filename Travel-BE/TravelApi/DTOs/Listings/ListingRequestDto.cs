@@ -17,5 +17,7 @@ namespace TravelApi.DTOs.Listings
         public string? CityDescription { get; set; }
         public string? Country { get; set; }
         public string? ExperienceType { get; set; }
+        public string? CountryName { get; set; }
+        public string? CountryImg { get; set; }
     }
 }

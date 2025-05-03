@@ -99,6 +99,10 @@
     transition: all 0.3s;
 }
 
+.account-page .listings-card-number:hover {
+    cursor: pointer;
+}
+
 .account-page .info-card.email {
     overflow: scroll !important;
 }
