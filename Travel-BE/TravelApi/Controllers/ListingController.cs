@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TravelApi.DTOs.Account;
 using Azure;
+using TravelApi.DTOs.Email;
 
 namespace TravelApi.Controllers
 {
@@ -17,14 +18,16 @@ namespace TravelApi.Controllers
     {
         private readonly ListingService _listingService;
         private readonly CityService _cityService;
+        private readonly EmailService _emailService;
         private readonly ILogger<ListingService> _logger;
 
 
-        public ListingController(ListingService listingService, CityService cityService, ILogger<ListingService> logger)
+        public ListingController(ListingService listingService, CityService cityService, ILogger<ListingService> logger, EmailService emailService)
         {
             _listingService = listingService;
             _cityService = cityService;
             _logger = logger;
+            _emailService = emailService;
         }
 
         [HttpGet("all")]
@@ -443,6 +446,24 @@ namespace TravelApi.Controllers
             }
         }
 
+        [HttpPut("cart/{id:Guid}")]
+        public async Task<IActionResult> UpdateCartItem(Guid id, CartItemRequestDto cartItemRequestDto)
+        {
+            try
+            {
+                var result = await _listingService.UpdateCartItemAsync(id, cartItemRequestDto);
+                if (!result)
+                {
+                    return BadRequest(new { message = "Something went wrong" });
+                }
+                return Ok(new { message = "Cart item aggiornato correttamente!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("cart")]
         public async Task<IActionResult> GetCart()
         {
@@ -535,6 +556,24 @@ namespace TravelApi.Controllers
                                 Id = cartItem.Listing.Description.PropertyType.Id,
                                 Name = cartItem.Listing.Description.PropertyType.Name,
                             },
+                            City = new CityDto()
+                            {
+                                Id = cartItem.Listing.Description.City.Id,
+                                Name = cartItem.Listing.Description.City.Name,
+                                Description = cartItem.Listing.Description.City.Description,
+                                Country = new CountryDto()
+                                {
+                                    Id = cartItem.Listing.Description.City.Country.Id,
+                                    Name = cartItem.Listing.Description.City.Country.Name,
+                                    ImgUrl = cartItem.Listing.Description.City.Country.ImgUrl,
+                                },
+                                ExperienceType = new ExperienceTypeDto()
+                                {
+                                    Id = cartItem.Listing.Description.City.ExperienceType.Id,
+                                    Name = cartItem.Listing.Description.City.ExperienceType.Name,
+                                    Icon = cartItem.Listing.Description.City.ExperienceType.Icon,
+                                }
+                            }
                         },
                     },
                 };
@@ -659,6 +698,25 @@ namespace TravelApi.Controllers
                     return BadRequest(new { message = "Aggiornamento non riuscito" });
 
                 return Ok(new { message = "Listing aggiornato correttamente!" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpPost("email")]
+        public async Task<IActionResult> SendEmail([FromBody] BookingDto bookingDto)
+        {
+            try
+            {
+                _logger.LogInformation("--------------------DTO RICEVUTO------------------------------");
+                var result = await _emailService.SendEmail(bookingDto);
+                if (!result)
+                    return BadRequest(new { message = "Invio email non riuscito" });
+
+                return Ok(new { message = "Email inviata con successo!" });
             }
             catch (Exception ex)
             {

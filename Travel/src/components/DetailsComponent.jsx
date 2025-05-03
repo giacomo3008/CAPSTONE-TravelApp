@@ -302,22 +302,31 @@ const DetailsComponent = function () {
 
                                             <div class="rows">
                                                 <p className="d-flex flex-row justify-content-between m-0 underline-p">Alloggio </p>
-                                                <p>{Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight} €</p>
+                                                <p>{parseFloat(Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight).toLocaleString('it-IT', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                })} €</p>
                                             </div>
                                             <div class="rows">
                                                 <p className="d-flex flex-row justify-content-between m-0 underline-p">Costi di pulizia </p>
-                                                <p>100.00 €</p>
+                                                <p>100,00 €</p>
                                             </div>
                                             <div class="rows">
                                                 <p className="d-flex flex-row justify-content-between m-0 p-0 underline-p">Costi del servizio Travel </p>
-                                                <p className="m-0 p-0">{Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight * 0.2} €</p>
+                                                <p className="m-0 p-0">{parseFloat(Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight * 0.2).toLocaleString('it-IT', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                })} €</p>
                                             </div>
 
                                             <hr className="my-4" />
 
                                             <div class="rows total">
                                                 <p className="d-flex flex-row justify-content-between m-0 p-0">Totale </p>
-                                                <p className="m-0 p-0">{(Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight) * 1.2 + 100} €</p>
+                                                <p className="m-0 p-0">{parseFloat((Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) * structure.description.pricePerNight) * 1.2 + 100).toLocaleString('it-IT', {
+                                                    minimumFractionDigits: 2,
+                                                    maximumFractionDigits: 2
+                                                })} €</p>
                                             </div>
                                         </div>
                                     )

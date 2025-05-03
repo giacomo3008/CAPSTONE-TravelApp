@@ -119,6 +119,29 @@
     background-color: #e01e4f;
 }
 
+.booking-container .insurance .aggiungi-btn {
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+}
+
+.booking-container .insurance .aggiungi-btn:hover {
+    background-color: #F7F7F7;
+}
+
+.booking-container .insurance .aggiungi-link {
+    color: black;
+    font-weight: 400;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.booking-container .insurance .aggiungi-link:hover {
+    text-decoration: underline;
+}
+
 .booking-container .cards {
     font-size: 14px;
     color: #444;

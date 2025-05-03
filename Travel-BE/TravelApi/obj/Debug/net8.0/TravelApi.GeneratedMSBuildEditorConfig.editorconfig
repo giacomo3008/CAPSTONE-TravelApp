@@ -17,3 +17,7 @@ build_property.SupportLocalizedComponentNames =
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
 build_property.MSBuildProjectDirectory = /Users/giacomorigo/Desktop/epicode/CAPSTONE-TravelApp/Travel-BE/TravelApi
 build_property._RazorSourceGeneratorDebug = 
+
+[/Users/giacomorigo/Desktop/epicode/CAPSTONE-TravelApp/Travel-BE/TravelApi/Views/Templates/EmailTemplate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVGVtcGxhdGVzL0VtYWlsVGVtcGxhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 

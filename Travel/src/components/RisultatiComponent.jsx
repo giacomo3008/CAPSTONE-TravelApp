@@ -170,7 +170,7 @@ const RisultatiComponent = function () {
                                 {
                                     cards.map((card) => (
                                         <Col sm={6} lg={4} key={card.id}>
-                                            <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative card-listings">
+                                            <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative card-listings" onClick={(e) => handleDetailsBtn(e, card.listing.id)}>
                                                 <div className="img-card-cities">
                                                     {
                                                         card.listing.imgUrls[0] ? (
@@ -237,7 +237,6 @@ const RisultatiComponent = function () {
                                                             {card.description}
                                                         </Card.Text>
                                                     </div>
-                                                    <Button onClick={(e) => handleDetailsBtn(e, card.listing.id)}>DETAILS</Button>
                                                 </Card.Body>
                                             </Card>
                                         </Col>

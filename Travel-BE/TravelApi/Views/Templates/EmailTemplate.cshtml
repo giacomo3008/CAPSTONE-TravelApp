@@ -1,0 +1,103 @@
+@model TravelApi.DTOs.Email.BookingDto
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .navbar img {
+            height: 40px;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #007BFF;
+        }
+
+        .image-container img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .details {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+
+        .details h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #007BFF;
+        }
+
+        .details p {
+            margin: 5px 0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+        <div class="header">
+            <h1>Booking Confirmed!</h1>
+            <p>Hi @Model.RecipientEmail, here are the details of your reservation:</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ImgUrl))
+        {
+            <div class="image-container">
+                <img src="@Model.ImgUrl" alt="Hotel Image" />
+            </div>
+        }
+
+        <div class="details">
+            <h2>@Model.HotelName - @Model.City (@Model.Country)</h2>
+            <p><strong>Property Type:</strong> @Model.PropertyType</p>
+            <p><strong>Experience:</strong> @Model.ExperienceType</p>
+            <p><strong>Description:</strong> @Model.Description</p>
+            <p><strong>Beds:</strong> @Model.Beds</p>
+            <p><strong>Guests:</strong> @Model.NumberOfPeople</p>
+            @if (!string.IsNullOrEmpty(Model.HostName))
+            {
+                <hr/>
+                <p><strong>HOST:</strong> @Model.HostName</p>
+            }
+            <hr/>
+            <p><strong>Check-in:</strong> @Model.StartDate</p>
+            <p><strong>Check-out:</strong> @Model.EndDate</p>
+            <p><strong>Total Price:</strong> €@Model.TotPrice</p>
+        </div>
+
+        <div class="footer">
+            &copy; 2025 TravelApp. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

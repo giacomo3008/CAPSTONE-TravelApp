@@ -324,6 +324,29 @@ namespace TravelApi.Services
             }
         }
 
+        public async Task<bool> UpdateCartItemAsync(Guid id, CartItemRequestDto cartItemRequestDto)
+        {
+            try
+            {
+                var cartItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.Id == id);
+                if (cartItem == null)
+                {
+                    return false;
+                }
+
+                cartItem.NumberOfPeople = cartItemRequestDto.NumberOfPeople;
+                cartItem.StartDate = cartItemRequestDto.StartDate;
+                cartItem.EndDate = cartItemRequestDto.EndDate;
+
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante l'aggiornamento del cart item.");
+                return false;
+            }
+        }
+
         public async Task<ICollection<CartItem>?> GetCartAsync(ClaimsPrincipal userPrincipal)
         {
             try
@@ -357,6 +380,14 @@ namespace TravelApi.Services
                             .Include(ci => ci.Listing)
                                 .ThenInclude(l => l.Description)
                                     .ThenInclude(d => d.PropertyType)
+                            .Include(ci => ci.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.City)
+                                        .ThenInclude(c => c.ExperienceType)
+                            .Include(ci => ci.Listing)
+                                .ThenInclude(l => l.Description)
+                                    .ThenInclude(d => d.City)
+                                        .ThenInclude(c => c.Country)
                             .Include(ci => ci.Listing)
                                 .ThenInclude(l => l.User)
                             .FirstOrDefaultAsync(ci => ci.Id == id);

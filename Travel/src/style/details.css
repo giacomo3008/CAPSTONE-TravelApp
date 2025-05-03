@@ -93,6 +93,17 @@
     top: 130px;
 }
 
+.summary-box-form {
+    background-color: transparent;
+    padding: 2.5rem 2rem;
+    border-radius: none;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: none;
+    animation: slideIn 0.4s ease-out forwards;
+    top: 130px;
+}
+
 .booking-form .box-form {
     border: 0.5px solid rgba(71, 71, 71, 0.51);
     border-radius: 15px;

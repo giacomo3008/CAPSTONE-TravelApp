@@ -7,6 +7,8 @@ using TravelApi.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using FluentEmail.MailKitSmtp;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,19 @@ builder.Services.Configure<Jwt>(builder.Configuration.GetSection(nameof(Jwt)));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+builder.Services.AddFluentEmail(builder.Configuration.GetSection("MailSettings").GetValue<string>("FromDefault"))
+    .AddRazorRenderer()
+    .AddMailKitSender(new SmtpClientOptions()
+    {
+        Server = builder.Configuration.GetSection("MailSettings").GetValue<string>("Server"),
+        Port = builder.Configuration.GetSection("MailSettings").GetValue<int>("Port"),
+        User = builder.Configuration.GetSection("MailSettings").GetValue<string>("Username"),
+        Password = builder.Configuration.GetSection("MailSettings").GetValue<string>("Password"),
+        UseSsl = builder.Configuration.GetSection("MailSettings").GetValue<bool>("UseSsl"),
+        RequiresAuthentication = builder.Configuration.GetSection("MailSettings").GetValue<bool>("RequiresAuthentication"),
+    });
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
         {

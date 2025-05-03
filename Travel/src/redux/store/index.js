@@ -8,6 +8,8 @@ import errorReducer from '../reducers/error';
 import filtersSearchReducer from '../reducers/filtersSearch';
 import isLoadingReducer from '../reducers/isLoading';
 import cartInfoReducer from '../reducers/cartInfo';
+import bookingInfoReducer from '../reducers/bookingInfo';
+import summaryBoxReducer from '../reducers/summaryBox';
 
 const mainReducer = combineReducers({
     toggleSearch: toggleSearchReducer,
@@ -19,6 +21,8 @@ const mainReducer = combineReducers({
     filtersSearch: filtersSearchReducer,
     isLoading: isLoadingReducer,
     cartInfo: cartInfoReducer,
+    bookingInfo: bookingInfoReducer,
+    summaryBox: summaryBoxReducer
 });
 
 const store = configureStore({
