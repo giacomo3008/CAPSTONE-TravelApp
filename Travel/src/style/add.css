@@ -7,6 +7,166 @@
     margin-bottom: 5rem;
 }
 
+
+.add-container .img-principal {
+    border: 0.5px solid rgba(148, 148, 148, 0.51);
+    border-right: none;
+    overflow: hidden;
+    border-top-left-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+    transition: all 0.3s ease;
+}
+
+.add-container .imgs-details.responsive {
+    padding: 0 5rem;
+}
+
+@media (max-width: 576px) {
+    .add-container .imgs-details.responsive {
+        padding: 0 1rem;
+    }
+}
+
+.add-container .img-principal-responsive {
+    border: 0.5px solid rgba(148, 148, 148, 0.51);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 280px;
+}
+
+.add-container .img-principal-responsive:hover {
+    border: 0.5px solid rgba(64, 64, 64, 0.701);
+}
+
+
+.add-container .img-principal:hover {
+    border: 0.5px solid rgba(64, 64, 64, 0.701);
+    border-right: none;
+}
+
+.add-container .img-principal .img-principal-div {
+    transition: all 0.3s ease;
+}
+
+.add-container .imgs-small {
+    height: 95px;
+}
+
+.add-container .imgs-small-country {
+    height: 200px;
+    cursor: pointer;
+}
+
+.add-container .imgs-details.responsive .imgs-small {
+    height: 140px;
+}
+
+.add-container .img-principal:hover .img-principal-div {
+    border-right: 0.5px solid rgba(64, 64, 64, 0.701) !important;
+}
+
+.add-container .imgs-details img {
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.add-container .imgs-small-div {
+    transition: all 0.3s ease;
+}
+
+.add-container .img-handle {
+    transition: all 0.3s ease;
+    background-color: transparent;
+}
+
+.add-container .img-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-color: rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    cursor: pointer;
+}
+
+.add-container .img-handle-resp {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.25);
+    opacity: 1;
+    cursor: pointer;
+}
+
+.add-container .img-handle-resp i {
+    color: white;
+    font-size: 1.7rem;
+}
+
+@media (max-width: 768px) {
+    .add-container .imgs-small-country {
+        max-width: 400px !important;
+    }
+
+    .add-container .imgs-small-country .img-handle {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+        background-color: rgba(0, 0, 0, 0.25);
+        opacity: 1;
+        cursor: pointer;
+    }
+
+    .add-container .imgs-small-country .img-handle i {
+        color: white;
+        font-size: 1.7rem;
+    }
+}
+
+.add-container .img-handle:hover {
+    z-index: 1000;
+    opacity: 1;
+}
+
+.add-container .img-handle i {
+    color: white;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.add-container .img-handle i:hover {
+    transform: scale(1.2);
+}
+
+.add-container .imgs-small-div:hover {
+    border: 0.5px solid rgba(64, 64, 64, 0.701) !important;
+}
+
+.add-container .imgs-details img:hover {
+    transform: scale(1.05);
+}
+
+.add-container .imgs-details .icon-div,
+.add-container .imgs-small-country .icon-div {
+    color: rgba(148, 148, 148, 0.51);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.add-container .imgs-details .icon-div:hover,
+.add-container .imgs-small-country .icon-div:hover {
+    color: rgba(64, 64, 64, 0.701);
+    transform: scale(1.1);
+}
+
 .add-container form {
     background-color: #ffffff;
     padding: 3rem 2rem;

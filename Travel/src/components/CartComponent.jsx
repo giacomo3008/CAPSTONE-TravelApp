@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import '../style/myListings.css'
+import config from '../config';
 
 const CartComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
@@ -14,8 +15,8 @@ const CartComponent = function () {
 
     const getListingsFromCart = async () => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/cart", {
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/listing/cart", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -46,8 +47,8 @@ const CartComponent = function () {
 
     const deleteById = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/cart?id=" + id, {
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/listing/cart?id=" + id, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -138,7 +139,7 @@ const CartComponent = function () {
                                             <div className='listing-imgs me-5'>
                                                 {
                                                     listing.listing.imgUrls[0] ? (
-                                                        <img src={listing.listing.imgUrls[0]} height="100%" />
+                                                        <img src={config.serverUrl + listing.listing.imgUrls[0]} height="100%" />
                                                     ) : (
                                                         <div style={{
                                                             width: "100%",

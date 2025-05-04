@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import '../style/login.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import config from '../config';
 
 const SummaryBoxComponent = ({ idCartItem, maxGuests, _startDate, _endDate, _guests }) => {
     const isSummaryBox = useSelector((state) => state.summaryBox.summaryBox);
@@ -61,7 +62,7 @@ const SummaryBoxComponent = ({ idCartItem, maxGuests, _startDate, _endDate, _gue
         console.log("info aggiornate cart item: ", payload);
 
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "listing/cart/" + idCartItem, {
                 method: "PUT",
                 headers: {

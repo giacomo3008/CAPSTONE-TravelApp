@@ -1,8 +1,10 @@
+import config from '../../config';
+
 export const LOGIN_ACCESSO = "LOGIN_ACCESSO";
 
 export const login = (email, password, reload) => async (dispatch) => {
     try {
-        const URL = "https://localhost:7146/api/"
+        const URL = config.serverUrl + "/api/"
         const response = await fetch(URL + "account/login", {
             method: 'POST',
             headers: {

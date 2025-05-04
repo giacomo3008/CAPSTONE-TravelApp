@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { cityStructures } from "../redux/actions/cityStructuresAction";
+import config from '../config';
 
 const RisultatiComponent = function () {
     const { destination } = useParams();
@@ -44,7 +45,7 @@ const RisultatiComponent = function () {
 
     const handleFavoriteDelete = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "listing/favorite/" + id, {
                 method: "DELETE",
                 headers: {
@@ -80,7 +81,7 @@ const RisultatiComponent = function () {
 
     const handleFavoriteAuthenticated = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "listing/favorites/" + id, {
                 method: "POST",
                 headers: {
@@ -174,7 +175,7 @@ const RisultatiComponent = function () {
                                                 <div className="img-card-cities">
                                                     {
                                                         card.listing.imgUrls[0] ? (
-                                                            <img src={card.listing.imgUrls[0]} height="195px" />
+                                                            <img src={config.serverUrl + card.listing.imgUrls[0]} height="195px" />
                                                         ) : (
                                                             <div style={{
                                                                 width: "100%",

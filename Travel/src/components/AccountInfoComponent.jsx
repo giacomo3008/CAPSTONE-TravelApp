@@ -7,6 +7,7 @@ import {
     FiHome
 } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
+import config from '../config';
 
 const AccountInfoComponent = () => {
     const { email } = useParams();
@@ -17,8 +18,8 @@ const AccountInfoComponent = () => {
 
     const getUserInfo = async () => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "account/" + email);
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/account/" + email);
 
             if (!response.ok) {
                 throw new Error(`Errore nella GET delle info: ${response.status} ${response.statusText}`);
@@ -34,8 +35,8 @@ const AccountInfoComponent = () => {
     const deleteUser = async () => {
         if (window.confirm("Sei sicuro di voler eliminare questo account?")) {
             try {
-                const url = "https://localhost:7146/api/";
-                const response = await fetch(url + "account/" + email, {
+                const url = config.serverUrl;
+                const response = await fetch(url + "/api/account/" + email, {
                     method: "DELETE",
                     headers: {
                         "Authorization": `Bearer ${token}`,

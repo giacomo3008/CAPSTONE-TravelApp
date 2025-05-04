@@ -1,11 +1,13 @@
+import config from '../../config';
+
 export const CITY_STRUCTURES = "CITY_STRUCTURES";
 export const CITY_STRUCTURES_NULL = "CITY_STRUCTURES_NULL";
 
 export const cityStructures = ({ name, token = null, maxBudget = null }) => async (dispatch) => {
     try {
         const URL = maxBudget != null
-            ? `https://localhost:7146/api/city/${name}?budget=${maxBudget}`
-            : `https://localhost:7146/api/city/${name}`;
+            ? `${config.serverUrl}/api/city/${name}?budget=${maxBudget}`
+            : `${config.serverUrl}/api/city/${name}`;
         let response;
         if (token) {
             response = await fetch(URL, {

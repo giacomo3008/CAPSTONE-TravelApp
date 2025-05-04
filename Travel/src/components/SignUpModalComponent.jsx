@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import '../style/signup.css';
 import { useDispatch, useSelector } from 'react-redux';
+import config from '../config';
 
 const SignUpModalComponent = () => {
     const isSignUpModal = useSelector((state) => state.loginSignUp.signup);
@@ -49,7 +50,7 @@ const SignUpModalComponent = () => {
         console.log('Registrazione con:', firstName, lastName, email, password);
 
         try {
-            const URL = "https://localhost:7146/api/"
+            const URL = config.serverUrl + "/api/";
             const response = await fetch(URL + "account/register", {
                 method: 'POST',
                 headers: {

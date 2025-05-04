@@ -2,6 +2,7 @@ import { Button, Card, Col, Row } from "react-bootstrap";
 import "../style/suggested.css"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import config from '../config';
 
 const SuggestedComponent = function () {
     const navigate = useNavigate();
@@ -9,7 +10,7 @@ const SuggestedComponent = function () {
 
     const getSuggestedCities = async () => {
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "city/suggested");
 
             if (!response.ok) {
@@ -46,7 +47,7 @@ const SuggestedComponent = function () {
                                 <Col sm={6} lg={4} key={card.id}>
                                     <Card style={{ width: '18rem' }} className=" mx-auto mb-4 position-relative">
                                         <div className="img-card">
-                                            <img height="195px" src={encodeURI(card.country.imgUrl.trim())} />
+                                            <img height="195px" src={config.serverUrl + card.country.imgUrl} />
                                         </div>
                                         <div className=" position-absolute icons">
                                             <i className={card.experienceType.icon}></i>

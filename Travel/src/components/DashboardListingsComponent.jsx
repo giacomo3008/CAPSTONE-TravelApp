@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import '../style/myListings.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import config from '../config';
 
 const DashboardListingsComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
@@ -11,42 +12,10 @@ const DashboardListingsComponent = function () {
     const [dataLength, setDataLength] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
 
-    // const getListingsUser = async (email) => {
-    //     try {
-    //         const url = "https://localhost:7146/api/";
-    //         const response = await fetch(url + "listing/user/" + email, {
-    //             method: "GET",
-    //             headers: {
-    //                 "Authorization": `Bearer ${token}`,
-    //                 "Content-Type": "application/json"
-    //             }
-    //         });
-    //         if (response.status === 401 || response.status === 403) {
-    //             dispatch({
-    //                 type: 'LOGOUT',
-    //                 payload: true
-    //             });
-    //             localStorage.removeItem('token');
-    //             navigate('/');
-    //         } else {
-    //             if (!response.ok) {
-    //                 throw new Error("Errore nella richiesta delle listings dell'utente");
-    //             }
-    //             const data = await response.json();
-    //             console.log(data);
-    //             setDataLength(data.length);
-    //             setListings(data);
-    //             setIsLoading(false);
-    //         }
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // }
-
     const getAllListings = async () => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/all", {
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/listing/all", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -77,8 +46,8 @@ const DashboardListingsComponent = function () {
 
     const deleteById = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/general/" + id, {
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/listing/general/" + id, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -182,7 +151,7 @@ const DashboardListingsComponent = function () {
                                             <div className='listing-imgs m-0 me-lg-5'>
                                                 {
                                                     listing.imgUrls[0] ? (
-                                                        <img src={listing.imgUrls[0]} height="100%" />
+                                                        <img src={config.serverUrl + listing.imgUrls[0]} height="100%" />
                                                     ) : (
                                                         <div style={{
                                                             width: "100%",

@@ -3,6 +3,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import "../style/add.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import config from '../config';
 
 const EditListingComponent = function () {
     const { id } = useParams();
@@ -23,8 +24,8 @@ const EditListingComponent = function () {
 
     const getStructureDetails = async (id) => {
         try {
-            const URL = "https://localhost:7146/api/"
-            const response = await fetch(URL + "listing/" + id);
+            const URL = config.serverUrl;
+            const response = await fetch(URL + "/api/listing/" + id);
 
             if (!response.ok) {
                 throw new Error("Errore nel recuperare la struttura");
@@ -48,7 +49,7 @@ const EditListingComponent = function () {
 
     const getCities = async () => {
         try {
-            const response = await fetch("https://localhost:7146/api/city", {
+            const response = await fetch(config.serverUrl + "/api/city", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -71,7 +72,7 @@ const EditListingComponent = function () {
 
     const getPropertyTypes = async () => {
         try {
-            const response = await fetch("https://localhost:7146/api/listing/property-type", {
+            const response = await fetch(config.serverUrl + "/api/listing/property-type", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -122,7 +123,7 @@ const EditListingComponent = function () {
         };
         console.log(payload);
         try {
-            const response = await fetch("https://localhost:7146/api/listing/" + id, {
+            const response = await fetch(config.serverUrl + "/api/listing/" + id, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

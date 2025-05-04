@@ -6,6 +6,8 @@ import {
     FiShield, FiSettings, FiHelpCircle, FiEdit2, FiKey, FiActivity,
     FiHome
 } from 'react-icons/fi';
+import config from '../config';
+
 
 const AccountComponent = () => {
     const dispatch = useDispatch();
@@ -31,8 +33,8 @@ const AccountComponent = () => {
         e.preventDefault();
         if (window.confirm("Sei sicuro di voler eliminare il tuo account?")) {
             try {
-                const url = "https://localhost:7146/api/";
-                const response = await fetch(url + "account", {
+                const url = config.serverUrl;
+                const response = await fetch(url + "/api/account", {
                     method: "DELETE",
                     headers: {
                         "Authorization": `Bearer ${token}`,

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import '../style/myListings.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import config from '../config';
 
 const WishlistComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
@@ -13,7 +14,7 @@ const WishlistComponent = function () {
 
     const getFavoritesUser = async () => {
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "listing/favorites", {
                 method: "GET",
                 headers: {
@@ -53,7 +54,7 @@ const WishlistComponent = function () {
 
     const deleteFavorite = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "listing/favorite/" + id, {
                 method: "DELETE",
                 headers: {
@@ -135,7 +136,7 @@ const WishlistComponent = function () {
                                             handleClickDiv(listing.id);
                                         }}>
                                             <div className='listing-imgs me-5'>
-                                                <img src={listing.imgUrls[0]} height="100%" />
+                                                <img src={config.serverUrl + listing.imgUrls[0]} height="100%" />
                                             </div>
                                             <div className='d-flex flex-column justify-content-between align-items-start'>
                                                 <div className="listing-info mt-4 mt-md-0">

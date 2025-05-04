@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../style/myListings.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import config from '../config';
 
 const UserListingsComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
@@ -15,7 +16,7 @@ const UserListingsComponent = function () {
 
     const getListingsUser = async () => {
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "listing/user/" + user.email);
 
             if (!response.ok) {
@@ -34,7 +35,7 @@ const UserListingsComponent = function () {
 
     const deleteById = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
+            const url = config.serverUrl + "/api/";
             const response = await fetch(url + "listing/user/" + id, {
                 method: "DELETE",
                 headers: {
@@ -130,7 +131,7 @@ const UserListingsComponent = function () {
                                             <div className='listing-imgs m-0 me-lg-5'>
                                                 {
                                                     listing.imgUrls[0] ? (
-                                                        <img src={listing.imgUrls[0]} height="100%" />
+                                                        <img src={config.serverUrl + listing.imgUrls[0]} height="100%" />
                                                     ) : (
                                                         <div style={{
                                                             width: "100%",

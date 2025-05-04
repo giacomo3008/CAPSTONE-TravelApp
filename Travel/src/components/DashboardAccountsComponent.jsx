@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import '../style/dashboard-acc.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import config from '../config';
 
 const DashboardAccountsComponent = function () {
     const token = useSelector((state) => state.authLogin.token);
@@ -14,8 +15,8 @@ const DashboardAccountsComponent = function () {
 
     const getAllUsers = async () => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "account/all", {
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/account/all", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -55,8 +56,8 @@ const DashboardAccountsComponent = function () {
     const deleteUser = async (email) => {
         if (window.confirm("Sei sicuro di voler eliminare questo account?")) {
             try {
-                const url = "https://localhost:7146/api/";
-                const response = await fetch(url + "account/" + email, {
+                const url = config.serverUrl;
+                const response = await fetch(url + "/api/account/" + email, {
                     method: "DELETE",
                     headers: {
                         "Authorization": `Bearer ${token}`,

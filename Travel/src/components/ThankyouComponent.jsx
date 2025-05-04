@@ -2,6 +2,7 @@ import { FaCheckCircle, FaEnvelope, FaCalendarCheck, FaHome, FaMapMarkerAlt, FaT
 import '../style/thankyou.css'
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import config from '../config';
 
 
 const ThanknyouComponent = function () {
@@ -13,7 +14,7 @@ const ThanknyouComponent = function () {
 
     const sendBookingInfo = async () => {
         try {
-            const URL = "https://localhost:7146/api/"
+            const URL = config.serverUrl + "/api/"
             const response = await fetch(URL + "listing/email", {
                 method: "POST",
                 headers: {

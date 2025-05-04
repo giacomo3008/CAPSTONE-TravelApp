@@ -179,17 +179,35 @@ namespace TravelApi.Services
         {
             try
             {
+                _logger.LogInformation("-----------------ADD COUNTRY METHOD------------------");
                 var countryExist = await _context.Countries.FirstOrDefaultAsync(c => c.Name == listingRequestDto.CountryName);
                 if (countryExist != null)
                 {
                     return false;
                 }
+                _logger.LogInformation("-----------------COUNTRY NON TROVATO. APPOSTO!------------------");
+
                 var countryToAdd = new Country()
                 {
                     Id = Guid.NewGuid(),
                     Name = listingRequestDto.CountryName,
-                    ImgUrl = listingRequestDto?.CountryImg,
                 };
+
+                _logger.LogInformation("-----------------COUNTRY CREATO------------------");
+                if (listingRequestDto.CountryImg != null)
+                {
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", "countriesImages");
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(listingRequestDto.CountryImg.FileName); //Per evitare duplicati nei filename
+                    var filePath = Path.Combine(path, fileName);
+
+                    await using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await listingRequestDto.CountryImg.CopyToAsync(stream);
+                    }
+
+                    var webPath = Path.Combine("/uploads", "images", "countriesImages", fileName).Replace("\\", "/"); //Cosi da essere compatibile anche con sistemi windows
+                    countryToAdd.ImgUrl = webPath;
+                }
 
                 _context.Countries.Add(countryToAdd);
                 return await SaveAsync();

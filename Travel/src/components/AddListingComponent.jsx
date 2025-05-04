@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import "../style/add.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import config from "../config";
 
 const AddListingComponent = function () {
+
     const [listingTitle, setListingTitle] = useState("");
     const [Description, setDescription] = useState("");
-    const [imgUrls, setImgUrls] = useState([""]);
+    const [images, setImages] = useState(Array(7).fill(null));
+    const [imagesUrls, setImgagesUrls] = useState(Array(7).fill(null));
+    const inputRefs = useRef([...Array(7)].map(() => React.createRef()));
+    const countryRef = useRef();
     const [Beds, setBeds] = useState(1);
     const [Capacity, setCapacity] = useState(1);
     const [PricePerNight, setPricePerNight] = useState(50);
@@ -25,16 +30,50 @@ const AddListingComponent = function () {
     const [Country, setCountry] = useState("");
     const [CityDescription, setCityDescription] = useState("");
     const [CountryName, setCountryName] = useState("");
-    const [CountryImg, setCountryImg] = useState("");
+    const [CountryImg, setCountryImg] = useState(null);
+    const [CountryImgUrl, setCountryImgUrl] = useState(null);
     const [newCountry, setNewCountry] = useState(false);
     const [invalidInfo, setInvalidInfo] = useState("");
 
 
+    const handleImageChange = (e, index) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const newImages = [...images];
+        newImages[index] = file;
+        const newImagesUrl = [...imagesUrls];
+        newImagesUrl[index] = URL.createObjectURL(file);
+        setImages(newImages);
+        setImgagesUrls(newImagesUrl);
+    };
+
+    const handleDeleteImg = (index) => {
+
+        const newImages = [...images];
+        newImages[index] = null;
+        const newImagesUrl = [...imagesUrls];
+        newImagesUrl[index] = null;
+        setImages(newImages);
+        setImgagesUrls(newImagesUrl);
+    }
+
+    const handleImageCountryChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setCountryImg(file);
+        setCountryImgUrl(URL.createObjectURL(file));
+    };
+
+    const handleDeleteImgCountry = () => {
+        setCountryImg(null);
+        setCountryImgUrl(null);
+    }
 
 
     const getCities = async () => {
         try {
-            const response = await fetch("https://localhost:7146/api/city", {
+            const response = await fetch(config.serverUrl + "/api/city", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -57,7 +96,7 @@ const AddListingComponent = function () {
 
     const getPropertyTypes = async () => {
         try {
-            const response = await fetch("https://localhost:7146/api/listing/property-type", {
+            const response = await fetch(config.serverUrl + "/api/listing/property-type", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -88,7 +127,7 @@ const AddListingComponent = function () {
 
     const getExperienceTypes = async () => {
         try {
-            const response = await fetch("https://localhost:7146/api/listing/experience-type", {
+            const response = await fetch(config.serverUrl + "/api/listing/experience-type", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -119,7 +158,7 @@ const AddListingComponent = function () {
 
     const getCountries = async () => {
         try {
-            const response = await fetch("https://localhost:7146/api/listing/countries", {
+            const response = await fetch(config.serverUrl + "/api/listing/countries", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -158,31 +197,39 @@ const AddListingComponent = function () {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const formData = new FormData();
 
-        const payload = {
-            HotelName: listingTitle,
-            ImgUrls: imgUrls.filter(url => url.trim() !== ""),
-            Description,
-            Beds,
-            Capacity,
-            PricePerNight,
-            City,
-            PropertyType,
-            ExperienceType,
-            Country,
-            CityDescription,
-            CountryName,
-            CountryImg,
-        };
-        console.log(payload);
+        formData.append("HotelName", listingTitle);
+        formData.append("Description", Description);
+        formData.append("Beds", Beds);
+        formData.append("Capacity", Capacity);
+        formData.append("PricePerNight", PricePerNight);
+        formData.append("City", City);
+        formData.append("PropertyType", PropertyType);
+        formData.append("ExperienceType", ExperienceType);
+        formData.append("Country", Country);
+        formData.append("CityDescription", CityDescription);
+        formData.append("CountryName", CountryName);
+
+        if (CountryImg !== null) {
+            formData.append("CountryImg", CountryImg);
+        }
+
+        console.log(CountryImg);
+
+        images.forEach((img) => {
+            if (img !== null) {
+                formData.append("Imgs", img);
+            }
+        });
+        console.log("INVIO AL BACKEND:  ", formData);
         try {
-            const response = await fetch("https://localhost:7146/api/listing", {
+            const response = await fetch(config.serverUrl + "/api/listing", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(payload)
+                body: formData,
             });
 
             if (!response.ok) {
@@ -201,24 +248,6 @@ const AddListingComponent = function () {
         } catch (err) {
             console.error("Errore:", err);
             alert("C'è stato un errore nell'invio.");
-        }
-    };
-
-    const removeImageField = (indexToRemove) => {
-        const updatedUrls = imgUrls.filter((_, index) => index !== indexToRemove);
-        setImgUrls(updatedUrls);
-    };
-
-
-    const handleImageChange = (index, value) => {
-        const newUrls = [...imgUrls];
-        newUrls[index] = value;
-        setImgUrls(newUrls);
-    };
-
-    const addImageField = () => {
-        if (imgUrls.length < 7) {
-            setImgUrls([...imgUrls, ""]);
         }
     };
 
@@ -286,6 +315,187 @@ const AddListingComponent = function () {
                                 />
                             </div>
 
+                            <hr className="my-5" />
+
+                            <div className="input-group w-100">
+                                <label>Listing Images (up to 7)</label>
+                                <div style={{ height: "300px" }} className="imgs-details mt-4 d-none d-lg-flex flex-row w-100">
+                                    {/* Immagine principale a sinistra */}
+                                    <div className="img-principal m-0 w-50">
+                                        {
+                                            imagesUrls[0] ? (
+                                                <div style={{
+                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                    borderRight: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                    overflow: "hidden",
+                                                    height: "100%",
+                                                    width: "100%",
+                                                    position: "relative",
+                                                }}>
+                                                    <div className="img-handle d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(0)}></i>
+                                                    </div>
+                                                    <img style={{ width: "150%" }} src={imagesUrls[0]} />
+                                                </div>
+                                            ) : (
+                                                <div style={{
+                                                    width: "100%",
+                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                    borderRight: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    fontSize: "1.5rem",
+                                                    height: "100%",
+                                                    overflow: "hidden"
+                                                }} onClick={() => inputRefs.current[0].current.click()} className="img-principal-div">
+                                                    <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </div>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*" //accetta solo immagini
+                                                        ref={inputRefs.current[0]}
+                                                        onChange={(e) => handleImageChange(e, 0)}
+                                                        style={{ display: "none" }}
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+
+                                    <div style={{ width: "50%" }} className=" container-fluid h-100">
+                                        <div className="row h-100">
+                                            {imagesUrls.slice(1).map((url, index) => (
+                                                <div key={`img-${index}`} className={`col-lg-6 p-0 ps-2 imgs-small ${index == 0 || index == 1 ? "" : "mt-2"}`}>
+                                                    {
+                                                        url !== null ? (
+                                                            <div style={{
+                                                                backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                overflow: "hidden",
+                                                                height: "100%",
+                                                                position: "relative",
+                                                            }}>
+                                                                <div className="img-handle d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(index + 1)}></i>
+                                                                </div>
+                                                                <img src={url} style={{ width: "110%" }} />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="h-100">
+                                                                <div style={{
+                                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                    border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    height: "100%",
+                                                                    overflow: "hidden"
+                                                                }} className="imgs-small-div" onClick={() => inputRefs.current[index + 1].current.click()}>
+                                                                    <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                        <i class="fa-solid fa-plus"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <input
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    ref={inputRefs.current[index + 1]}
+                                                                    onChange={(e) => handleImageChange(e, index + 1)}
+                                                                    style={{ display: "none" }}
+                                                                />
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
+                                            ))
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="imgs-details w-100 responsive mt-4 d-block d-lg-none">
+                                    <div className="row w-100">
+                                        <div className="img-principal-responsive col-12 mb-2 p-0">
+                                            <div
+                                                style={{
+                                                    height: "100%",
+                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    fontSize: "1.5rem",
+                                                    overflow: "hidden",
+                                                    position: "relative",
+                                                }} className="img-principal-div"
+                                            >{
+                                                    imagesUrls[0] ? (
+                                                        <>
+                                                            <div className="img-handle-resp d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(0)}></i>
+                                                            </div>
+                                                            <img style={{ width: "110%" }} src={imagesUrls[0]} />
+                                                        </>
+                                                    ) : (
+                                                        <div style={{
+                                                            width: "100%",
+                                                            backgroundColor: "trasparent",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            height: "100%",
+                                                            overflow: "hidden"
+                                                        }} onClick={() => inputRefs.current[0].current.click()}>
+                                                            <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                <i class="fa-solid fa-plus"></i>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                        {imagesUrls.slice(1).map((url, index) => (
+                                            <div key={`img-${index}`} className={`col-6 mb-2 p-0 imgs-small ${index == 0 || index == 2 || index == 4 ? "" : "ps-2"}`}>
+                                                {
+                                                    url !== null ? (
+                                                        <div style={{
+                                                            backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                            border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                            overflow: "hidden",
+                                                            height: "100%",
+                                                            position: "relative",
+                                                        }}>
+                                                            <div className="img-handle-resp d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(index + 1)}></i>
+                                                            </div>
+                                                            <img src={url} style={{ width: "110%" }} />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="h-100">
+                                                            <div style={{
+                                                                backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                height: "100%",
+                                                                overflow: "hidden"
+                                                            }} className="imgs-small-div" onClick={() => inputRefs.current[index + 1].current.click()}>
+                                                                <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </div>
+                                                            </div>
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                ref={inputRefs.current[index + 1]}
+                                                                onChange={(e) => handleImageChange(e, index + 1)}
+                                                                style={{ display: "none" }}
+                                                            />
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        ))
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                             <hr className="my-5" />
 
                             <Container fluid className="mt-3">
@@ -473,13 +683,46 @@ const AddListingComponent = function () {
                                                         <Col md={6}>
                                                             <div className="input-group">
                                                                 <label>Country Image</label>
-                                                                <input
-                                                                    type="text"
-                                                                    value={CountryImg}
-                                                                    onChange={(e) => setCountryImg(e.target.value)}
-                                                                    placeholder="Enter the image URL"
-
-                                                                />
+                                                                <div className={`w-100 imgs-small-country`}>
+                                                                    {
+                                                                        CountryImg !== null ? (
+                                                                            <div style={{
+                                                                                backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                                border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                                overflow: "hidden",
+                                                                                height: "100%",
+                                                                                position: "relative",
+                                                                            }}>
+                                                                                <div className="img-handle d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={handleDeleteImgCountry}></i>
+                                                                                </div>
+                                                                                <img src={CountryImgUrl} style={{ width: "110%" }} />
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="h-100">
+                                                                                <div style={{
+                                                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                                    border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                                    display: "flex",
+                                                                                    alignItems: "center",
+                                                                                    justifyContent: "center",
+                                                                                    height: "100%",
+                                                                                    overflow: "hidden"
+                                                                                }} className="imgs-small-div" onClick={() => countryRef.current.click()}>
+                                                                                    <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                                        <i class="fa-solid fa-plus"></i>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <input
+                                                                                    type="file"
+                                                                                    accept="image/*"
+                                                                                    ref={countryRef}
+                                                                                    onChange={handleImageCountryChange}
+                                                                                    style={{ display: "none" }}
+                                                                                />
+                                                                            </div>
+                                                                        )
+                                                                    }
+                                                                </div>
                                                             </div>
                                                         </Col>
                                                     </Row>
@@ -492,46 +735,7 @@ const AddListingComponent = function () {
 
                             <hr className="my-5" />
 
-                            <div className="form-bottom d-flex flex-row justify-content-between align-items-end mt-3">
-                                <div className="image-url-section d-flex flex-column w-50">
-                                    <label>Image URLs (up to 7)</label>
-                                    <div className="img-urls w-100">
-                                        {imgUrls.map((url, index) => {
-                                            const isFirst = index === 0;
-                                            const isLast = index === imgUrls.length - 1;
-                                            const isMaxed = imgUrls.length === 7;
-
-                                            let inputClass = "img-input w-100";
-                                            if (isFirst) inputClass += " img-input-first";
-                                            if (isLast && isMaxed) inputClass += " img-input-last";
-
-                                            return (
-                                                <div key={index} className={`input-urls input-${index} w-100`}>
-                                                    <input
-                                                        key={index}
-                                                        type="text"
-                                                        value={url}
-                                                        onChange={(e) => handleImageChange(index, e.target.value)}
-                                                        placeholder={`Image ${index + 1} URL`}
-                                                        className={inputClass}
-                                                    />
-                                                    <i class="fa-solid fa-x" onClick={(e) => {
-                                                        e.preventDefault();
-                                                        removeImageField(index);
-                                                    }}></i>
-                                                </div>
-                                            );
-                                        })}
-
-                                        {imgUrls.length < 7 && (
-                                            <button type="button" onClick={addImageField} className={`add-img-btn ${imgUrls.length == 0 ? 'alone' : ''} w-100`}>
-                                                + Add Image
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-
-
+                            <div className="form-bottom d-flex flex-row justify-content-center align-items-end mt-3">
                                 <button type="submit" className="submit-btn me-5"><i class="fa-solid fa-plus"></i></button>
                             </div>
                         </form>

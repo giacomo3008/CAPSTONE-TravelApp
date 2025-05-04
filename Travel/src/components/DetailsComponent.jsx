@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../style/details.css"
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import config from '../config';
 
 const DetailsComponent = function () {
     const { id } = useParams();
@@ -23,8 +24,8 @@ const DetailsComponent = function () {
 
     const getStructureDetails = async (id) => {
         try {
-            const URL = "https://localhost:7146/api/"
-            const response = await fetch(URL + "listing/" + id);
+            const URL = config.serverUrl;
+            const response = await fetch(URL + "/api/listing/" + id);
 
             if (!response.ok) {
                 throw new Error("Errore nel recuperare la struttura");
@@ -75,8 +76,8 @@ const DetailsComponent = function () {
 
         try {
             const numberOfPeople = guests;
-            const URL = "https://localhost:7146/api/"
-            const response = await fetch(URL + "listing/cart/" + id, {
+            const URL = config.serverUrl;
+            const response = await fetch(URL + "/api/listing/cart/" + id, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -125,7 +126,7 @@ const DetailsComponent = function () {
                                 }}
                             >{
                                     structure.imgUrls[0] ? (
-                                        <img className="h-100" src={structure.imgUrls[0]} />
+                                        <img className="h-100" src={config.serverUrl + structure.imgUrls[0]} />
                                     ) : (
                                         <div style={{
                                             width: "100%",
@@ -154,7 +155,7 @@ const DetailsComponent = function () {
                                         marginLeft: "0.5rem",
                                         overflow: "hidden"
                                     }}>
-                                        <img src={url} className="w-100" />
+                                        <img src={config.serverUrl + url} className="w-100" />
                                     </div>
                                 ))
                             }

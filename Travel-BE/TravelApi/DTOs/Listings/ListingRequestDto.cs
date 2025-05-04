@@ -7,7 +7,7 @@ namespace TravelApi.DTOs.Listings
     public class ListingRequestDto
     {
         public required string HotelName { get; set; }
-        public List<string>? ImgUrls { get; set; }
+        public List<IFormFile>? Imgs { get; set; }
         public required string Description { get; set; }
         public required int Beds { get; set; }
         public required int Capacity { get; set; }
@@ -18,6 +18,6 @@ namespace TravelApi.DTOs.Listings
         public string? Country { get; set; }
         public string? ExperienceType { get; set; }
         public string? CountryName { get; set; }
-        public string? CountryImg { get; set; }
+        public IFormFile? CountryImg { get; set; }
     }
 }

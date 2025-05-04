@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { cityStructures } from "../redux/actions/cityStructuresAction";
+import config from '../config';
 
 const CityComponent = function () {
     const { name } = useParams();
@@ -34,8 +35,8 @@ const CityComponent = function () {
 
     const handleFavoriteDelete = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/favorite/" + id, {
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/listing/favorite/" + id, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -65,8 +66,8 @@ const CityComponent = function () {
 
     const handleFavoriteAuthenticated = async (id) => {
         try {
-            const url = "https://localhost:7146/api/";
-            const response = await fetch(url + "listing/favorites/" + id, {
+            const url = config.serverUrl;
+            const response = await fetch(url + "/api/listing/favorites/" + id, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -118,7 +119,7 @@ const CityComponent = function () {
                                             <div className="img-card-cities">
                                                 {
                                                     card.listing.imgUrls[0] ? (
-                                                        <img src={card.listing.imgUrls[0]} height="195px" />
+                                                        <img src={config.serverUrl + card.listing.imgUrls[0]} height="195px" />
                                                     ) : (
                                                         <div style={{
                                                             width: "100%",

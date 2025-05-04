@@ -117,10 +117,29 @@ namespace TravelApi.Services
                 {
                     Id = Guid.NewGuid(),
                     HotelName = listingRequestDto.HotelName,
-                    ImgUrls = listingRequestDto.ImgUrls ?? new List<string>(),
                     DescriptionId = listingDescription.Id,
+                    ImgUrls = new List<string>(),
                     UserId = user.Id
                 };
+
+                if (listingRequestDto.Imgs != null && listingRequestDto.Imgs.Count > 0)
+                {
+                    foreach (var img in listingRequestDto.Imgs)
+                    {
+                        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", "listingsImages");
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); //Per evitare duplicati nei filename
+                        var filePath = Path.Combine(path, fileName);
+
+                        await using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await img.CopyToAsync(stream);
+                        }
+
+                        var webPath = Path.Combine("/uploads", "images", "listingsImages", fileName).Replace("\\", "/"); //Cosi da essere compatibile anche con sistemi windows
+                        listing.ImgUrls.Add(webPath);
+                    }
+                }
+
                 _logger.LogInformation("--------------------LISTING CREATA------------------------------");
 
                 _context.Listings.Add(listing);
@@ -258,6 +277,18 @@ namespace TravelApi.Services
                 var listing = await GetListingByIdAsync(id);
                 var listingDescription = listing.Description;
                 if (listing == null) return false;
+
+                if (listing.ImgUrls != null) //Elimino le immaagini della listing dal server
+                {
+                    foreach (var oldImgUrl in listing.ImgUrls)
+                    {
+                        var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImgUrl.TrimStart('/'));
+                        if (File.Exists(oldFilePath))
+                        {
+                            File.Delete(oldFilePath);   //COsi ottimizzo lo spazio nel server
+                        }
+                    }
+                }
 
                 _context.ListingDescriptions.Remove(listingDescription);
                 return await SaveAsync();
@@ -487,7 +518,6 @@ namespace TravelApi.Services
                 if (city == null || propertyType == null) return false;
 
                 listing.HotelName = updateDto.HotelName;
-                listing.ImgUrls = updateDto.ImgUrls;
                 listing.Description.Description = updateDto.Description;
                 listing.Description.Beds = updateDto.Beds;
                 listing.Description.Capacity = updateDto.Capacity;
@@ -495,6 +525,37 @@ namespace TravelApi.Services
                 listing.Description.CityId = city.Id;
                 listing.Description.PropertyTypeId = propertyType.Id;
 
+                if (listing.ImgUrls != null)
+                {
+                    foreach (var oldImgUrl in listing.ImgUrls)
+                    {
+                        var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", oldImgUrl.TrimStart('/'));
+                        if (File.Exists(oldFilePath))
+                        {
+                            File.Delete(oldFilePath);   //COsi ottimizzo lo spazio nel database
+                        }
+                    }
+
+                    listing.ImgUrls.Clear();
+                }
+
+                if (updateDto.Imgs != null && updateDto.Imgs.Count > 0)
+                {
+                    foreach (var img in updateDto.Imgs)
+                    {
+                        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "images", "listingsImages");
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); //Per evitare duplicati nei filename
+                        var filePath = Path.Combine(path, fileName);
+
+                        await using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await img.CopyToAsync(stream);
+                        }
+
+                        var webPath = Path.Combine("/uploads", "images", "listingsImages", fileName).Replace("\\", "/"); //Cosi da essere compatibile anche con sistemi windows
+                        listing.ImgUrls.Add(webPath);
+                    }
+                }
                 return await SaveAsync();
             }
             catch (Exception ex)

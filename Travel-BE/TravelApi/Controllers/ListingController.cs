@@ -168,7 +168,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> addListing([FromBody] ListingRequestDto listingRequestDto)
+        public async Task<IActionResult> addListing([FromForm] ListingRequestDto listingRequestDto)
         {
             try
             {
@@ -689,7 +689,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpPut("{id:Guid}")]
-        public async Task<IActionResult> UpdateListing(Guid id, ListingRequestDto updateListingDto)
+        public async Task<IActionResult> UpdateListing(Guid id, [FromForm] ListingRequestDto updateListingDto)
         {
             try
             {

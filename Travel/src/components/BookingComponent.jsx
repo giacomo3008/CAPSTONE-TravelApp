@@ -3,6 +3,7 @@ import '../style/booking.css'
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SummaryBoxComponent from './SummaryBoxComponent';
+import config from '../config';
 
 
 const BookingComponent = function () {
@@ -19,8 +20,8 @@ const BookingComponent = function () {
 
     const getListingInfo = async () => {
         try {
-            const URL = "https://localhost:7146/api/"
-            const response = await fetch(URL + "listing/cart/" + idListing, {
+            const URL = config.serverUrl;
+            const response = await fetch(URL + "/api/listing/cart/" + idListing, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -346,7 +347,7 @@ const BookingComponent = function () {
                                                         <div className='img-booking-div'>
                                                             {
                                                                 structure.listing.imgUrls[0] ? (
-                                                                    <img src={structure.listing.imgUrls[0]} height="100%" />
+                                                                    <img src={config.serverUrl + structure.listing.imgUrls[0]} height="100%" />
                                                                 ) : (
 
                                                                     <div style={{
@@ -459,7 +460,7 @@ const BookingComponent = function () {
                                             <div className='img-booking-div'>
                                                 {
                                                     structure.listing.imgUrls[0] ? (
-                                                        <img src={structure.listing.imgUrls[0]} height="100%" />
+                                                        <img src={config.serverUrl + structure.listing.imgUrls[0]} height="100%" />
                                                     ) : (
 
                                                         <div style={{
