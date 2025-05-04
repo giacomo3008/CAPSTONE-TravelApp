@@ -204,6 +204,7 @@ const RisultatiComponent = function () {
                                                                     token == null ? (
                                                                         <i className="fa-solid fa-heart" onClick={(e) => {
                                                                             e.preventDefault();
+                                                                            e.stopPropagation();
                                                                             dispatch({
                                                                                 type: 'LOGIN',
                                                                                 payload: true,
@@ -212,6 +213,7 @@ const RisultatiComponent = function () {
                                                                     ) : (
                                                                         <i className="fa-solid fa-heart" onClick={(e) => {
                                                                             e.preventDefault();
+                                                                            e.stopPropagation();
                                                                             handleFavoriteAuthenticated(card.listing.id);
                                                                         }}></i>
                                                                     )
@@ -220,6 +222,7 @@ const RisultatiComponent = function () {
                                                         ) : (
                                                             <i className="fa-solid fa-heart fav-card" onClick={(e) => {
                                                                 e.preventDefault();
+                                                                e.stopPropagation();
                                                                 handleFavoriteDelete(card.listing.id);
                                                             }}></i>
                                                         )

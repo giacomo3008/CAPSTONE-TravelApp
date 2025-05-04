@@ -80,7 +80,7 @@ const CityComponent = function () {
                     payload: true
                 });
                 localStorage.removeItem('token');
-                navigate('/');  //TODO: SISTEMARE IL FATTO CHE IN QUETO CASO DEVE MANDARMI ALLA PAGINA DI LOIGN
+                navigate('/');
             } else {
                 if (!response.ok) {
                     throw new Error("Errore nella post");
@@ -148,6 +148,7 @@ const CityComponent = function () {
                                                             {
                                                                 token == null ? (
                                                                     <i className="fa-solid fa-heart" onClick={(e) => {
+                                                                        e.stopPropagation();
                                                                         e.preventDefault();
                                                                         dispatch({
                                                                             type: 'LOGIN',
@@ -156,6 +157,7 @@ const CityComponent = function () {
                                                                     }}></i>
                                                                 ) : (
                                                                     <i className="fa-solid fa-heart" onClick={(e) => {
+                                                                        e.stopPropagation();
                                                                         e.preventDefault();
                                                                         handleFavoriteAuthenticated(card.listing.id);
                                                                     }}></i>
@@ -165,6 +167,7 @@ const CityComponent = function () {
                                                     ) : (
                                                         <i className="fa-solid fa-heart fav-card" onClick={(e) => {
                                                             e.preventDefault();
+                                                            e.stopPropagation();
                                                             handleFavoriteDelete(card.listing.id);
                                                         }}></i>
                                                     )
