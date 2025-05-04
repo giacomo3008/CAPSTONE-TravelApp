@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import "../style/add.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,9 @@ const EditListingComponent = function () {
     const { id } = useParams();
     const [listingTitle, setListingTitle] = useState("");
     const [Description, setDescription] = useState("");
-    const [imgUrls, setImgUrls] = useState([""]);
+    const [images, setImages] = useState(Array(7).fill(null));
+    const [imagesUrls, setImgagesUrls] = useState(null);
+    const inputRefs = useRef([...Array(7)].map(() => React.createRef()));
     const [Beds, setBeds] = useState(1);
     const [Capacity, setCapacity] = useState(1);
     const [PricePerNight, setPricePerNight] = useState(50);
@@ -21,6 +23,53 @@ const EditListingComponent = function () {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
+    const [stopLoadImages, setStopLoadImages] = useState(false);
+
+    const handleImageChange = (e, index) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const newImages = [...images];
+        newImages[index] = file;
+        const newImagesUrl = [...imagesUrls];
+        newImagesUrl[index] = URL.createObjectURL(file);
+        setImages(newImages);
+        setImgagesUrls(newImagesUrl);
+    };
+
+    const handleDeleteImg = (index) => {
+
+        const newImages = [...images];
+        newImages[index] = null;
+        const newImagesUrl = [...imagesUrls];
+        newImagesUrl[index] = null;
+        setImages(newImages);
+        setImgagesUrls(newImagesUrl);
+    }
+
+    const urlToFile = async (url, filename) => {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const ext = url.split('.').pop().split('?')[0];
+        const mimeType = blob.type || `image/${ext}`;
+        return new File([blob], filename, { type: mimeType });
+    };
+
+    const loadImages = async (urls) => {
+        const loadedImages = await Promise.all(
+            urls.map(async (url) => {
+                if (url !== null) {
+                    const file = await urlToFile(url, url.split('/').pop());
+                    console.log("FILENAME DA AGGIUNGERE: ", file);
+                    return file;
+                }
+                return null;
+            })
+        );
+        setImages(loadedImages);
+        setStopLoadImages(true);
+        setIsLoading(false);
+    };
 
     const getStructureDetails = async (id) => {
         try {
@@ -34,18 +83,29 @@ const EditListingComponent = function () {
             console.log(data);
             setListingTitle(data.hotelName);
             setDescription(data.description.description);
-            setImgUrls(data.imgUrls);
+            let urlsToAdd = Array(7).fill(null);
+            for (let i = 0; i < data.imgUrls.length; i++) {
+                urlsToAdd[i] = config.serverUrl + data.imgUrls[i];
+            }
+            setImgagesUrls(urlsToAdd);
             setBeds(data.description.beds);
             setCapacity(data.description.capacity);
             setPricePerNight(data.description.pricePerNight);
             setCity(data.description.city.name);
             setPropertyType(data.description.propertyType.name);
-            setIsLoading(false);
         }
         catch (error) {
             console.error(error);
         }
     }
+
+    useEffect(() => {
+        if (!stopLoadImages && imagesUrls !== null) {
+            console.log(imagesUrls);
+            loadImages(imagesUrls);
+        }
+    }, [imagesUrls]);
+
 
     const getCities = async () => {
         try {
@@ -111,25 +171,29 @@ const EditListingComponent = function () {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const payload = {
-            HotelName: listingTitle,
-            ImgUrls: imgUrls.filter(url => url.trim() !== ""),
-            Description,
-            Beds,
-            Capacity,
-            PricePerNight,
-            City,
-            PropertyType,
-        };
-        console.log(payload);
+        const formData = new FormData();
+
+        formData.append("HotelName", listingTitle);
+        formData.append("Description", Description);
+        formData.append("Beds", Beds);
+        formData.append("Capacity", Capacity);
+        formData.append("PricePerNight", PricePerNight);
+        formData.append("City", City);
+        formData.append("PropertyType", PropertyType);
+
+        images.forEach((img) => {
+            if (img !== null) {
+                console.log(img);
+                formData.append("Imgs", img);
+            }
+        });
         try {
             const response = await fetch(config.serverUrl + "/api/listing/" + id, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(payload)
+                body: formData,
             });
 
             if (!response.ok) {
@@ -144,23 +208,6 @@ const EditListingComponent = function () {
         }
     };
 
-    const removeImageField = (indexToRemove) => {
-        const updatedUrls = imgUrls.filter((_, index) => index !== indexToRemove);
-        setImgUrls(updatedUrls);
-    };
-
-
-    const handleImageChange = (index, value) => {
-        const newUrls = [...imgUrls];
-        newUrls[index] = value;
-        setImgUrls(newUrls);
-    };
-
-    const addImageField = () => {
-        if (imgUrls.length < 7) {
-            setImgUrls([...imgUrls, ""]);
-        }
-    };
 
     return (
         <>
@@ -190,6 +237,187 @@ const EditListingComponent = function () {
                                 />
                             </div>
 
+                            <hr className="my-5" />
+
+                            <div className="input-group w-100">
+                                <label>Listing Images (up to 7)</label>
+                                <div style={{ height: "300px" }} className="imgs-details mt-4 d-none d-lg-flex flex-row w-100">
+                                    {/* Immagine principale a sinistra */}
+                                    <div className="img-principal m-0 w-50">
+                                        {
+                                            imagesUrls[0] ? (
+                                                <div style={{
+                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                    borderRight: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                    overflow: "hidden",
+                                                    height: "100%",
+                                                    width: "100%",
+                                                    position: "relative",
+                                                }}>
+                                                    <div className="img-handle d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(0)}></i>
+                                                    </div>
+                                                    <img style={{ width: "150%" }} src={imagesUrls[0]} />
+                                                </div>
+                                            ) : (
+                                                <div style={{
+                                                    width: "100%",
+                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                    borderRight: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    fontSize: "1.5rem",
+                                                    height: "100%",
+                                                    overflow: "hidden"
+                                                }} onClick={() => inputRefs.current[0].current.click()} className="img-principal-div">
+                                                    <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                        <i class="fa-solid fa-plus"></i>
+                                                    </div>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*" //accetta solo immagini
+                                                        ref={inputRefs.current[0]}
+                                                        onChange={(e) => handleImageChange(e, 0)}
+                                                        style={{ display: "none" }}
+                                                    />
+                                                </div>
+                                            )
+                                        }
+                                    </div>
+
+                                    <div style={{ width: "50%" }} className=" container-fluid h-100">
+                                        <div className="row h-100">
+                                            {imagesUrls.slice(1).map((url, index) => (
+                                                <div key={`img-${index}`} className={`col-lg-6 p-0 ps-2 imgs-small ${index == 0 || index == 1 ? "" : "mt-2"}`}>
+                                                    {
+                                                        url !== null ? (
+                                                            <div style={{
+                                                                backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                overflow: "hidden",
+                                                                height: "100%",
+                                                                position: "relative",
+                                                            }}>
+                                                                <div className="img-handle d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(index + 1)}></i>
+                                                                </div>
+                                                                <img src={url} style={{ width: "110%" }} />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="h-100">
+                                                                <div style={{
+                                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                    border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    justifyContent: "center",
+                                                                    height: "100%",
+                                                                    overflow: "hidden"
+                                                                }} className="imgs-small-div" onClick={() => inputRefs.current[index + 1].current.click()}>
+                                                                    <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                        <i class="fa-solid fa-plus"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <input
+                                                                    type="file"
+                                                                    accept="image/*"
+                                                                    ref={inputRefs.current[index + 1]}
+                                                                    onChange={(e) => handleImageChange(e, index + 1)}
+                                                                    style={{ display: "none" }}
+                                                                />
+                                                            </div>
+                                                        )
+                                                    }
+                                                </div>
+                                            ))
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="imgs-details w-100 responsive mt-4 d-block d-lg-none">
+                                    <div className="row w-100">
+                                        <div className="img-principal-responsive col-12 mb-2 p-0">
+                                            <div
+                                                style={{
+                                                    height: "100%",
+                                                    backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    fontSize: "1.5rem",
+                                                    overflow: "hidden",
+                                                    position: "relative",
+                                                }} className="img-principal-div"
+                                            >{
+                                                    imagesUrls[0] ? (
+                                                        <>
+                                                            <div className="img-handle-resp d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(0)}></i>
+                                                            </div>
+                                                            <img style={{ width: "110%" }} src={imagesUrls[0]} />
+                                                        </>
+                                                    ) : (
+                                                        <div style={{
+                                                            width: "100%",
+                                                            backgroundColor: "trasparent",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            height: "100%",
+                                                            overflow: "hidden"
+                                                        }} onClick={() => inputRefs.current[0].current.click()}>
+                                                            <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                <i class="fa-solid fa-plus"></i>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
+                                        {imagesUrls.slice(1).map((url, index) => (
+                                            <div key={`img-${index}`} className={`col-6 mb-2 p-0 imgs-small ${index == 0 || index == 2 || index == 4 ? "" : "ps-2"}`}>
+                                                {
+                                                    url !== null ? (
+                                                        <div style={{
+                                                            backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                            border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                            overflow: "hidden",
+                                                            height: "100%",
+                                                            position: "relative",
+                                                        }}>
+                                                            <div className="img-handle-resp d-flex justify-content-center align-items-center"><i class="fa-solid fa-trash" onClick={() => handleDeleteImg(index + 1)}></i>
+                                                            </div>
+                                                            <img src={url} style={{ width: "110%" }} />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="h-100">
+                                                            <div style={{
+                                                                backgroundColor: "rgba(249, 249, 249, 0.18)",
+                                                                border: "0.5px solid rgba(148, 148, 148, 0.51)",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                height: "100%",
+                                                                overflow: "hidden"
+                                                            }} className="imgs-small-div" onClick={() => inputRefs.current[index + 1].current.click()}>
+                                                                <div className="h-100 w-100 bg-transparent icon-div d-flex flex-row justify-content-center align-items-center">
+                                                                    <i class="fa-solid fa-plus"></i>
+                                                                </div>
+                                                            </div>
+                                                            <input
+                                                                type="file"
+                                                                accept="image/*"
+                                                                ref={inputRefs.current[index + 1]}
+                                                                onChange={(e) => handleImageChange(e, index + 1)}
+                                                                style={{ display: "none" }}
+                                                            />
+                                                        </div>
+                                                    )
+                                                }
+                                            </div>
+                                        ))
+                                        }
+                                    </div>
+                                </div>
+                            </div>
                             <hr className="my-5" />
 
                             <Container fluid className="mt-3">
@@ -236,6 +464,22 @@ const EditListingComponent = function () {
 
                             <hr className="my-5" />
 
+                            <div className="input-group w-75">
+                                <label>Property Type</label>
+                                <select
+                                    value={PropertyType}
+                                    onChange={(e) => setPropertyType(e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select a Property Type</option>
+                                    {propertyTypes.map((propertyType) => (
+                                        <option key={propertyType.id} value={propertyType.name}>
+                                            {propertyType.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <div className="input-group mt-3 w-75">
                                 <label>City</label>
                                 <select
@@ -270,47 +514,8 @@ const EditListingComponent = function () {
 
                             <hr className="my-5" />
 
-                            <div className="form-bottom d-flex flex-row justify-content-between align-items-end mt-3">
-                                <div className="image-url-section d-flex flex-column w-50">
-                                    <label>Image URLs (up to 7)</label>
-                                    <div className="img-urls w-100">
-                                        {imgUrls.map((url, index) => {
-                                            const isFirst = index === 0;
-                                            const isLast = index === imgUrls.length - 1;
-                                            const isMaxed = imgUrls.length === 7;
-
-                                            let inputClass = "img-input w-100";
-                                            if (isFirst) inputClass += " img-input-first";
-                                            if (isLast && isMaxed) inputClass += " img-input-last";
-
-                                            return (
-                                                <div key={index} className={`input-urls input-${index} w-100`}>
-                                                    <input
-                                                        key={index}
-                                                        type="text"
-                                                        value={url}
-                                                        onChange={(e) => handleImageChange(index, e.target.value)}
-                                                        placeholder={`Image ${index + 1} URL`}
-                                                        className={inputClass}
-                                                    />
-                                                    <i class="fa-solid fa-x" onClick={(e) => {
-                                                        e.preventDefault();
-                                                        removeImageField(index);
-                                                    }}></i>
-                                                </div>
-                                            );
-                                        })}
-
-                                        {imgUrls.length < 7 && (
-                                            <button type="button" onClick={addImageField} className={`add-img-btn ${imgUrls.length == 0 ? 'alone' : ''} w-100`}>
-                                                + Add Image
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-
-
-                                <button type="submit" className="submit-btn me-5"><i class="fa-solid fa-pen"></i></button>
+                            <div className="form-bottom d-flex flex-row justify-content-center align-items-end mt-3">
+                                <button type="submit" className="submit-btn me-5"><i class="fa-solid fa-plus"></i></button>
                             </div>
                         </form>
                     ) : (

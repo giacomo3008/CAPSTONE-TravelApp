@@ -40,6 +40,7 @@ const AddListingComponent = function () {
         const file = e.target.files[0];
         if (!file) return;
 
+        console.log("FILE DA ADD:: ", file);
         const newImages = [...images];
         newImages[index] = file;
         const newImagesUrl = [...imagesUrls];
@@ -220,9 +221,10 @@ const AddListingComponent = function () {
         images.forEach((img) => {
             if (img !== null) {
                 formData.append("Imgs", img);
+                console.log("IMMAGINE ADD: ", img);
             }
         });
-        console.log("INVIO AL BACKEND:  ", formData);
+
         try {
             const response = await fetch(config.serverUrl + "/api/listing", {
                 method: "POST",
