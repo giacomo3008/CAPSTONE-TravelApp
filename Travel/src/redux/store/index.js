@@ -10,6 +10,9 @@ import isLoadingReducer from '../reducers/isLoading';
 import cartInfoReducer from '../reducers/cartInfo';
 import bookingInfoReducer from '../reducers/bookingInfo';
 import summaryBoxReducer from '../reducers/summaryBox';
+import FiltersModalReducer from '../reducers/filtersModal';
+import storageSession from 'redux-persist/lib/storage/session';
+import { persistReducer, persistStore } from 'redux-persist';
 
 const mainReducer = combineReducers({
     toggleSearch: toggleSearchReducer,
@@ -22,11 +25,23 @@ const mainReducer = combineReducers({
     isLoading: isLoadingReducer,
     cartInfo: cartInfoReducer,
     bookingInfo: bookingInfoReducer,
-    summaryBox: summaryBoxReducer
+    summaryBox: summaryBoxReducer,
+    filtersModal: FiltersModalReducer
 });
 
+const persistConfig = {
+    key: 'root',
+    storage: storageSession,
+    whitelist: ['filtersSearch', 'filtersModal'] // salva solo questi due
+};
+
+const persistedReducer = persistReducer(persistConfig, mainReducer);
+
 const store = configureStore({
-    reducer: mainReducer,
+    reducer: persistedReducer,
 })
 
-export default store
+const persistor = persistStore(store);
+
+
+export { store, persistor }

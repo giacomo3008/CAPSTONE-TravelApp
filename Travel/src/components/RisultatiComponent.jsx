@@ -2,7 +2,7 @@ import { Button, Card, Col, Row } from "react-bootstrap";
 import "../style/suggested.css"
 import SearchFormComponent from "./SearchFormComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { cityStructures } from "../redux/actions/cityStructuresAction";
 import config from '../config';
@@ -11,13 +11,44 @@ const RisultatiComponent = function () {
     const { destination } = useParams();
     const pulseBool = useSelector((state) => state.pulseResults.pulseBool);
     const maxBudget = useSelector((state) => state.filtersSearch.maxBudget);
-    const prieviousDate = useSelector((state) => state.filtersSearch.date);
+    const prieviousStartDate = useSelector((state) => state.filtersSearch.startDate);
+    const prieviousEndDate = useSelector((state) => state.filtersSearch.endDate);
+    const beds = useSelector((state) => state.filtersSearch.beds);
+    const capacity = useSelector((state) => state.filtersSearch.capacity);
+    const propType = useSelector((state) => state.filtersSearch.propType);
+    const budgetFilter = useSelector((state) => state.filtersSearch.budgetFilter);
+
     const dispatch = useDispatch();
     const city = useSelector((state) => state.cityStructures.city);
-    const cards = useSelector((state) => state.cityStructures.listings);
+    const cardsReducer = useSelector((state) => state.cityStructures.listings);
+    const [cards, setCards] = useState([]);
     const navigate = useNavigate();
     const isLoading = useSelector((state) => state.isLoading.isLoading);
     const token = useSelector((state) => state.authLogin.token);
+
+    useEffect(() => {
+        if (propType === null) {
+            setCards(cardsReducer.filter(card => card.beds >= beds && card.capacity >= capacity && card.pricePerNight <= budgetFilter));
+        } else {
+            setCards(cardsReducer.filter(card => card.beds >= beds && card.capacity >= capacity && card.pricePerNight >= budgetFilter && card.propertyType.name === propType));
+        }
+    }, [beds, capacity, propType, budgetFilter]);
+
+    useEffect(() => {
+        setCards(cardsReducer);
+    }, [cardsReducer]);
+
+    useEffect(() => {
+        dispatch({
+            type: 'CHANGE_FILTERS',
+            payload: {
+                beds: 0,
+                capacity: 0,
+                propType: null,
+                budgetFilter: 10000,
+            },
+        });
+    }, []);
 
     useEffect(() => {
         dispatch({
@@ -34,7 +65,8 @@ const RisultatiComponent = function () {
         } else {
             dispatch(cityStructures({ name, maxBudget }));
         }
-    }, [destination, maxBudget, prieviousDate]);
+        console.log(prieviousEndDate, prieviousStartDate);
+    }, [destination, maxBudget, prieviousStartDate, prieviousEndDate]);
 
 
     const handleDetailsBtn = (e, id) => {
@@ -117,7 +149,7 @@ const RisultatiComponent = function () {
     if (!isLoading && city == null) {
         return (
             <div className="results-div container-fluid py-5 px-0 bg-white">
-                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousDate={prieviousDate} />
+                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousStartDate={prieviousStartDate} prieviousEndDate={prieviousEndDate} />
                 <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
                     <h3 className="mb-5">Non ci sono Strutture disponibili per "{destination}"</h3>
                 </div>
@@ -128,7 +160,7 @@ const RisultatiComponent = function () {
     if (!isLoading && cards.length == 0) {
         return (
             <div className="results-div container-fluid py-5 px-0 bg-white">
-                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousDate={prieviousDate} />
+                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousStartDate={prieviousStartDate} prieviousEndDate={prieviousEndDate} />
                 <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
                     <h3 className="mb-5">Non ci sono Strutture disponibili per {city.name}</h3>
                 </div>
@@ -139,7 +171,7 @@ const RisultatiComponent = function () {
     return (
         <>
             <div className="results-div container-fluid py-5 px-0 bg-white">
-                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousDate={prieviousDate} />
+                <SearchFormComponent search={true} budget={maxBudget} city={destination} prieviousStartDate={prieviousStartDate} prieviousEndDate={prieviousEndDate} />
                 <div className={`suggested-container ${pulseBool ? 'pulse' : ''} m-0 mx-auto bg-white`}>
                     <h2 className="mb-5">Risultati della tua ricerca :</h2>
                     <Row className="d-flex flex-row justify-content-start">

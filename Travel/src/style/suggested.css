@@ -1,6 +1,7 @@
 .suggested-container {
     width: 75%;
     max-width: 1245px;
+    min-height: 50vh;
     transition: transform 0.2s ease-in-out;
 }
 

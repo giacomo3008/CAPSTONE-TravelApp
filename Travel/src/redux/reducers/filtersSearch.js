@@ -1,6 +1,11 @@
 let initialState = {
     maxBudget: null,
-    date: null,
+    startDate: null,
+    endDate: null,
+    beds: 0,
+    capacity: 0,
+    propType: null,
+    budgetFilter: 10000,
 };
 
 const filtersSearchReducer = (state = initialState, action) => {
@@ -9,7 +14,16 @@ const filtersSearchReducer = (state = initialState, action) => {
             return {
                 ...state,
                 maxBudget: action.payload.maxBudget,
-                date: action.payload.date,
+                startDate: action.payload.startDate,
+                endDate: action.payload.endDate,
+            }
+        case 'CHANGE_FILTERS':
+            return {
+                ...state,
+                beds: action.payload.beds,
+                capacity: action.payload.capacity,
+                propType: action.payload.propType,
+                budgetFilter: action.payload.budgetFilter,
             }
         default:
             return state;

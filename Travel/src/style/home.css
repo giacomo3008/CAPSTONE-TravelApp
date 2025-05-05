@@ -20,3 +20,10 @@
         width: auto;
     }
 }
+
+@media (max-width: 576px) {
+    .home-container .bg-img-home {
+        height: 640px;
+        width: auto;
+    }
+}

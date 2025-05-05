@@ -12,8 +12,10 @@ const DetailsComponent = function () {
     const [isLoading, setIsLoading] = useState(true);
     const [imageSubset, setImageSubset] = useState([]);
     const [remainingSlots, setRemainingSlots] = useState(0);
-    const [startDate, setStartDate] = useState("");
-    const [endDate, setEndDate] = useState("");
+    const reduxStartDate = useSelector((state) => state.filtersSearch.startDate);
+    const reduxEndDate = useSelector((state) => state.filtersSearch.endDate);
+    const [startDate, setStartDate] = useState(reduxStartDate);
+    const [endDate, setEndDate] = useState(reduxEndDate);
     const [guests, setGuests] = useState(1);
     const [maxGuests, setMaxGuests] = useState(1);
     const [invalidDates, setInvalidDates] = useState(false);

@@ -2,7 +2,7 @@ import { Button, Card, Col, Row } from "react-bootstrap";
 import "../style/suggested.css"
 import SearchFormComponent from "./SearchFormComponent";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { cityStructures } from "../redux/actions/cityStructuresAction";
 import config from '../config';
@@ -12,21 +12,57 @@ const CityComponent = function () {
     const pulseBool = useSelector((state) => state.pulseResults.pulseBool)
     const dispatch = useDispatch();
     const city = useSelector((state) => state.cityStructures.city);
-    const cards = useSelector((state) => state.cityStructures.listings);
-    const navigate = useNavigate();
+    const cardsReducer = useSelector((state) => state.cityStructures.listings);
+    const [cards, setCards] = useState([]); const navigate = useNavigate();
     const token = useSelector((state) => state.authLogin.token);
+    const beds = useSelector((state) => state.filtersSearch.beds);
+    const capacity = useSelector((state) => state.filtersSearch.capacity);
+    const propType = useSelector((state) => state.filtersSearch.propType);
+    const budgetFilter = useSelector((state) => state.filtersSearch.budgetFilter);
 
     useEffect(() => {
         dispatch({
             type: 'TOGGLE_SEARCH',
             payload: true,
         });
+
+        dispatch({
+            type: 'SEARCH_FILTERS',
+            payload: {
+                maxBudget: null,
+                startDate: null,
+                endDate: null,
+            },
+        });
+
+        dispatch({
+            type: 'CHANGE_FILTERS',
+            payload: {
+                beds: 0,
+                capacity: 0,
+                propType: null,
+                budgetFilter: 10000,
+            },
+        });
+
         if (token) {
             dispatch(cityStructures({ name, token }));
         } else {
             dispatch(cityStructures({ name }));
         }
     }, []);
+
+    useEffect(() => {
+        if (propType === null) {
+            setCards(cardsReducer.filter(card => card.beds >= beds && card.capacity >= capacity && card.pricePerNight <= budgetFilter));
+        } else {
+            setCards(cardsReducer.filter(card => card.beds >= beds && card.capacity >= capacity && card.pricePerNight >= budgetFilter && card.propertyType.name === propType));
+        }
+    }, [beds, capacity, propType, budgetFilter]);
+
+    useEffect(() => {
+        setCards(cardsReducer);
+    }, [cardsReducer]);
 
     const handleDetailsBtn = (e, id) => {
         e.preventDefault();

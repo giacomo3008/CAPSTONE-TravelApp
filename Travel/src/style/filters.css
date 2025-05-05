@@ -1,0 +1,243 @@
+.modal-overlay-filters {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 15, 15, 0.5);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content-filters {
+    background-color: #ffffff;
+    overflow: hidden;
+    padding: 0;
+    border-radius: 25px;
+    width: 100%;
+    height: 80vh;
+    max-width: 550px;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close-button:hover {
+    color: #F16571;
+}
+
+.h6-div {
+    height: 10%;
+}
+
+.form-filters {
+    border-top: 0.5px solid black;
+    overflow: scroll !important;
+    height: 79% !important;
+}
+
+
+
+.modal-overlay-filters .range {
+    margin-top: 2rem;
+    appearance: none;
+    /* disattiva lo stile di default su Chrome/Safari */
+    width: 100%;
+    height: 4px;
+    background: transparent;
+    cursor: pointer;
+    box-shadow: 0 0 0px rgba(0, 0, 0, 0);
+    transition: all 0.3 ease-in-out;
+}
+
+.modal-overlay-filters .range:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.151);
+}
+
+.modal-overlay-filters .range::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(to right,
+            #20949a 0%,
+            /* colore prima del thumb */
+            #20949a var(--progress),
+            /* colore fino al valore */
+            #d0d0d0 var(--progress),
+            /* colore dopo il valore */
+            #d0d0d0 100%);
+    /* colore della barra */
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+
+#max-value {
+    color: rgb(55, 55, 55);
+}
+
+.modal-overlay-filters .range::-webkit-slider-thumb {
+    appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #20949a;
+    /* colore del thumb */
+    margin-top: -6px;
+    /* centratura verticale rispetto alla track */
+    cursor: pointer;
+}
+
+.modal-content-filters p {
+    font-size: 0.8rem;
+}
+
+.modal-content-filters .subtitles {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.modal-content-filters .filters-p {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.modal-content-filters .filters-div {
+    width: 152px;
+}
+
+.modal-content-filters .btn-piu,
+.modal-content-filters .btn-meno {
+    height: 2rem;
+    width: 2rem;
+    background-color: white;
+    border-radius: 20px;
+    border: 1px solid rgba(69, 69, 69, 0.51);
+    color: rgba(69, 69, 69, 0.51);
+    font-size: 0.9rem;
+}
+
+.modal-content-filters .btn-piu:hover,
+.modal-content-filters .btn-meno:hover {
+    border: 1px solid black;
+    color: black;
+}
+
+.modal-content-filters .btn-piu-disabled,
+.modal-content-filters .btn-meno-disabled {
+    height: 2rem;
+    width: 2rem;
+    background-color: white;
+    border-radius: 20px;
+    border: 1px solid rgba(130, 130, 130, 0.212);
+    color: rgba(130, 130, 130, 0.212);
+    font-size: 0.9rem;
+}
+
+.modal-content-filters .opt-typeProp {
+    padding: 0 16px;
+    height: 50px;
+    font-size: 0.9rem;
+    border-radius: 40px;
+    border: 1px solid rgb(184, 184, 184);
+    color: rgb(36, 36, 36);
+    margin-right: 2rem;
+    cursor: pointer;
+}
+
+.modal-content-filters .opt-typeProp.selected {
+    border: 1.5px solid rgb(92, 92, 92);
+    padding: 0 15.5px;
+    background: rgb(241, 241, 241);
+}
+
+.modal-content-filters .opt-typeProp svg {
+    margin-right: 0.5rem;
+}
+
+.modal-content-filters .opt-typeProp:hover {
+    border-color: rgb(75, 75, 75);
+}
+
+.modal-content-filters .opt-typeProp:active {
+    transform: scale(0.95);
+}
+
+.modal-content-filters .opt-typeProp.selected:hover {
+    border: 1.5px solid rgb(92, 92, 92);
+    padding: 0 15.5px;
+    background: rgb(241, 241, 241);
+}
+
+.modal-content-filters .submit-div {
+    width: 100%;
+    height: 11%;
+    border-top: 0.5px solid rgb(168, 168, 168);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content-filters .submit-div .dlt-filters {
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.modal-content-filters .submit-div .dlt-filters:hover {
+    text-decoration: underline;
+}
+
+.modal-content-filters .submit-div .btn-submit-filters {
+    background-color: rgb(93, 93, 93);
+    border: none;
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.modal-content-filters .submit-div .btn-submit-filters:hover {
+    background-color: black;
+}
+
+
+@media (max-width: 768px) {
+    .modal-content-filters .range-section {
+        margin-top: 0rem !important;
+    }
+}
