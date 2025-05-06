@@ -53,11 +53,11 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet("suggested")]
-        public async Task<IActionResult> GetSuggestedCities()
+        public async Task<IActionResult> GetSuggestedCities([FromQuery] List<string> listCities)
         {
             try
             {
-                var cities = await _cityService.GetSuggestedCitiesAsync();
+                var cities = await _cityService.GetSuggestedCitiesAsync(listCities);
 
                 var citiesDto = cities.Select(c => new CityDto()
                 {

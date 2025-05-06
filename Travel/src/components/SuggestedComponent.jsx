@@ -7,11 +7,15 @@ import config from '../config';
 const SuggestedComponent = function () {
     const navigate = useNavigate();
     const [cards, setCards] = useState([]);
+    const [suggestedCities, setSuggestedCities] = useState(["Tokyo", "Roma", "Barcellona", "Parigi", "Londra", "Xi'an"]);
 
     const getSuggestedCities = async () => {
         try {
-            const url = config.serverUrl + "/api/";
-            const response = await fetch(url + "city/suggested");
+            const params = new URLSearchParams();
+            suggestedCities.forEach(city => params.append("listCities", city));
+
+            const url = config.serverUrl + "/api/city/suggested?" + params.toString();
+            const response = await fetch(url);
 
             if (!response.ok) {
                 throw new Error("Errore nella richiesta delle città consigliate");

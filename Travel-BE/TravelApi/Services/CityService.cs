@@ -44,12 +44,10 @@ namespace TravelApi.Services
             }
         }
 
-        public async Task<List<City>?> GetSuggestedCitiesAsync()
+        public async Task<List<City>?> GetSuggestedCitiesAsync(List<string> suggestedCities)
         {
             try
             {
-                var suggestedCities = new List<string> { "Pechino", "Roma", "Barcellona", "Parigi", "Londra", "Kyoto" };
-
                 var cities = await _context.Cities
                     .Include(c => c.Country)
                     .Include(c => c.ExperienceType)

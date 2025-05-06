@@ -16,10 +16,6 @@ const SearchComponent = function () {
                         <h5 className='me-3'>NAME <span><i className="fa-solid fa-chevron-down"></i></span></h5>
                     </div>
                 </div>
-                <div className='order d-flex flex-row'>
-                    <h4></h4> {/*TODO: DA COMPLETARE */}
-                    <h4></h4>
-                </div>
             </div>
         </div>
     );

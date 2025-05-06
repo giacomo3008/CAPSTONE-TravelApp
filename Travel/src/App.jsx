@@ -29,9 +29,19 @@ import UserListingsComponent from './components/UserListingsComponent';
 
 function App() {
   const token = useSelector((state) => state.authLogin.token);
+  const user = useSelector((state) => state.authLogin.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  let roles = [];
+
+  if (user) {
+    if (Array.isArray(user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])) {
+      roles = user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    } else {
+      roles.push(user["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
+    }
+  }
 
   const checkTokenValidity = async () => {
     try {
@@ -65,23 +75,35 @@ function App() {
       <NavBarComponent />
       <div className='app-div'>
         <Routes>
+          {
+            user && (
+              <>
+                <Route path='/listings' element={<MyListingsComponent />} />
+                <Route path='/wishlist' element={<WishlistComponent />} />
+                <Route path='/add' element={<AddListingComponent />} />
+                <Route path='/edit/:id' element={<EditListingComponent />} />
+                <Route path='/cart' element={<CartComponent />} />
+                <Route path='/account' element={<AccountComponent />} />
+                <Route path='/booking/:idListing' element={<BookingComponent />} />
+                <Route path='/thankyou' element={<ThanknyouComponent />} />
+                {
+                  roles.includes("Admin") && (
+                    <>
+                      <Route path='/dashboard' element={<DashboardComponent />} />
+                      <Route path='/dashboard-acc' element={<DashboardAccountsComponent />} />
+                      <Route path='/dashboard-list' element={<DashboardListingsComponent />} />
+                      <Route path='/user/:email' element={<AccountInfoComponent />} />
+                    </>
+                  )
+                }
+              </>
+            )
+          }
           <Route path='/' element={<HomeComponent />} />
           <Route path='/results/:destination' element={<RisultatiComponent />} />
           <Route path='/city/:name' element={<CityComponent />} />
           <Route path='/details/:id' element={<DetailsComponent />} />
-          <Route path='/listings' element={<MyListingsComponent />} />
-          <Route path='/wishlist' element={<WishlistComponent />} />
-          <Route path='/add' element={<AddListingComponent />} />
-          <Route path='/edit/:id' element={<EditListingComponent />} />
-          <Route path='/cart' element={<CartComponent />} />
-          <Route path='/account' element={<AccountComponent />} />
-          <Route path='/booking/:idListing' element={<BookingComponent />} />
-          <Route path='/dashboard' element={<DashboardComponent />} />
-          <Route path='/dashboard-acc' element={<DashboardAccountsComponent />} />
-          <Route path='/dashboard-list' element={<DashboardListingsComponent />} />
-          <Route path='/user/:email' element={<AccountInfoComponent />} />
           <Route path='/userInfo/:email' element={<AccountInfoUserComponent />} />
-          <Route path='/thankyou' element={<ThanknyouComponent />} />
           <Route path='/user/listings/:email/:name' element={<UserListingsComponent />} />
         </Routes>
         <FooterComponent />
