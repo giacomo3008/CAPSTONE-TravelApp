@@ -149,7 +149,9 @@ const NavBarComponent = function () {
                                         className="profile-icon"
                                     />
                                 ) : (
-                                    <div className="profile-icon-login">
+                                    <div className="profile-icon-login" style={{
+                                        backgroundColor: `${user.colorString}`,
+                                    }}>
                                         {user.firstName.charAt(0)}
                                     </div>
                                 )}

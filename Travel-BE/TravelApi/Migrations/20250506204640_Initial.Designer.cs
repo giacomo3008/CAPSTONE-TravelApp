@@ -12,8 +12,8 @@ using TravelApi.Data;
 namespace TravelApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250502163430_Init")]
-    partial class Init
+    [Migration("20250506204640_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,6 +150,10 @@ namespace TravelApi.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("ColorProfile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()

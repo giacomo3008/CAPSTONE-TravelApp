@@ -8,5 +8,7 @@ namespace TravelApi.DTOs.Account
         public DateTime? CreatedAt { get; set; }
         public List<string>? Roles { get; set; }
         public int? ListingsCount { get; set; }
+
+        public string ColorString { get; set; }
     }
 }

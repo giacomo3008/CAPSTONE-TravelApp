@@ -1,4 +1,4 @@
-# 🌍 Travel - Your Ultimate Booking Experience ✈️🏡
+# 🌍 Travel - CAPSTONE PROJECT ✈️🏡
 
 **Travel** is a full-stack web application inspired by Airbnb, where users can **book accommodations** around the world, manage their listings, and explore curated travel destinations. The project is divided into a **React-based frontend** and an **ASP.NET Core 8 backend** with **Entity Framework Core** and **SQL Server**.
 
@@ -17,12 +17,12 @@
 #### 🔧 Getting Started
 
 ```bash
-cd TravelBackend
-dotnet restore
+cd Travel-BE
+cd TravelApi
 dotnet run
 ```
 
-> This will start the backend server at `https://localhost:5001` (or specified port).
+> This will start the backend server at `https://localhost:5001`  (by default)..
 
 ---
 
@@ -48,10 +48,11 @@ npm install redux-persist
 #### ▶️ Start Frontend
 
 ```bash
-npm start
+cd Travel
+npm run dev
 ```
 
-> The frontend will be served on `http://localhost:3000`
+> The frontend will be served on `http://localhost:3000` (by default).
 
 ---
 
@@ -59,38 +60,42 @@ npm start
 
 ### 👥 Authentication & Roles
 
-- 🔐 User Login / Registration  
-- 🙍‍♂️ Role-based access: **User** and **Admin**  
-- 🧭 Protected routes based on authentication  
+-  User Login / Registration
+-  Role-based access: **User** and **Admin**: If you create an account using the email "giacomorigo7@gmail.com" or "giacomorigo007@gmail.com", you will be authenticated as Admins and will have access to admin features such as the site's main dashboard.
+-  Protected routes based on authentication  
 
 ### 🏠 User Functionality
 
-- 📋 Search by **city**, **dates**, **budget**  
-- 🌆 Filter results by **price**, **location**, and more  
-- 💖 Wishlist management  
-- 🛒 Shopping cart for saved trips  
-- ⚙️ Account information management  
+-  Search by **city**, **dates**, **budget**: 
+-  Filter results by **price**, **property type**, **beds**, and more  
+![Testo alternativo](./Travel/src/assets/img/filters.png)
+-  Wishlist management  
+-  Shopping cart for saved trips  
+-  Account information management  
 
 ### 🔧 Admin Panel
 
-- 📊 Dashboard with full user management (view, delete)  
-- 🏨 Property management (edit, delete listings)  
-- 📈 Overview of all bookings and data  
+-  Dashboard with full user management: You will be able to view all the accounts on the site, and if you wish, you can delete any one of them.
+-  Property management: Just like with users, you will have full control over their listings as well, which you can either edit or delete.
+-  Overview of all bookings and data  
 
 ### 🗂️ Listings & Search
 
-- 🔍 Real-time filtering on results page  
-- 📤 Upload images directly from local machine (no URL required)  
-- 🌍 View popular trips or change to categories like:  
-  - 🏖️ Budget Trips  
-  - 🕌 Asian Destinations  
-  - 🏰 European Getaways  
+-  Real-time filtering on results page  
+-  Upload images directly from local machine: Feel free to upload a photo directly from your computer, without pasting an internet URL, so you can also see a preview of it!
+-  View popular trips on the home page or change to categories like:  
+  -  Budget Trips  
+  -  Asian Destinations  
+  -  European Getaways  
+- Once the reservation is made, an email will be sent to the account owner with the booking confirmation:
+![Testo alternativo](./Travel/src/assets/img/email.png)
+![Testo alternativo](./Travel/src/assets/img/email2.png)
 
 ### ⚠️ Error Handling & Validation
 
-- ❌ Route protection for unauthorized access  
-- 📅 Validations on date selections and search criteria  
-- ✅ Comprehensive handling for API and client-side errors  
+-  Route protection for unauthorized access  
+-  Validations on date selections and search criteria  
+-  Comprehensive handling for API and client-side errors  
 
 ---
 
@@ -98,7 +103,7 @@ npm start
 
 ### 🖥️ Frontend
 
-- React (with JSX)  
+- React   
 - React Router  
 - Redux + Redux Persist  
 - Bootstrap  
@@ -106,42 +111,11 @@ npm start
 
 ### 💻 Backend
 
-- ASP.NET Core 8  
-- C#  
+- ASP.NET Core 8  (C#)
 - Entity Framework Core  
 - SQL Server  
 - NuGet packages:  
-  - Microsoft.EntityFrameworkCore.SqlServer  
+  - Microsoft.EntityFrameworkCore 
   - FluentEmail  
+  - Microsoft.AspNetCore.Identity
 
----
-
-## 🌐 Demo & Links
-
-🔗 [Live Site (coming soon)](https://your-live-demo-link.com)  
-📂 [Frontend Repo](https://github.com/yourusername/travel-frontend)  
-📁 [Backend Repo](https://github.com/yourusername/travel-backend)
-
----
-
-## 💡 Notes
-
-- Node.js is used as the environment to run and manage the frontend dependencies via npm.  
-- Both frontend and backend are developed in **Visual Studio Code**, providing a smooth developer experience.  
-- All images are uploaded from the local file system and served via the backend API.
-
----
-
-## ❤️ Special Thanks
-
-Thanks to the open-source community and all the contributors who helped make this project possible.
-
----
-
-## 📸 Screenshots
-
-> _Add screenshots here to show off the UI, search filters, admin panel, etc._
-
----
-
-Feel free to ⭐️ this repository if you like the project or fork it for your own learning journey!

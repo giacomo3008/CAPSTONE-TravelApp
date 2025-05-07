@@ -70,7 +70,9 @@ const AccountComponent = () => {
         <>
             <div className="account-page">
                 <div className="account-header position-relative">
-                    <div className="profile-icon-account">
+                    <div className="profile-icon-account" style={{
+                        backgroundColor: `${user.colorString}`,
+                    }}>
                         {user.firstName.charAt(0)}
                     </div>
                     <FiUser className="header-icon d-none d-lg-block" />

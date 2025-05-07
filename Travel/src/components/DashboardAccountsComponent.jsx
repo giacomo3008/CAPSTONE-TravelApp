@@ -138,7 +138,9 @@ const DashboardAccountsComponent = function () {
                                             handleClickDiv(user.email);
                                         }}>
                                             <div className='d-flex flex-row justify-content-start'>
-                                                <div className="profile-icon-account">
+                                                <div className="profile-icon-account" style={{
+                                                    backgroundColor: `${user.colorString}`,
+                                                }}>
                                                     {user.firstName.charAt(0)}
                                                 </div>
                                                 <div className="listing-info d-flex flex-column justify-content-center ms-5">

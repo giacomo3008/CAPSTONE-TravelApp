@@ -26,6 +26,8 @@ import AccountInfoComponent from './components/AccountInfoComponent';
 import ThanknyouComponent from './components/ThankyouComponent';
 import AccountInfoUserComponent from './components/AccountInfoUserComponent';
 import UserListingsComponent from './components/UserListingsComponent';
+import AboutUsComponent from './components/AboutUsComponent';
+import ContactUsComponent from './components/ContactUsComponent';
 
 function App() {
   const token = useSelector((state) => state.authLogin.token);
@@ -100,6 +102,8 @@ function App() {
             )
           }
           <Route path='/' element={<HomeComponent />} />
+          <Route path='/aboutus' element={<AboutUsComponent />} />
+          <Route path='/contact' element={<ContactUsComponent />} />
           <Route path='/results/:destination' element={<RisultatiComponent />} />
           <Route path='/city/:name' element={<CityComponent />} />
           <Route path='/details/:id' element={<DetailsComponent />} />

@@ -14,6 +14,7 @@ const ThanknyouComponent = function () {
 
     const sendBookingInfo = async () => {
         try {
+            console.log(bookingInfo);
             const URL = config.serverUrl + "/api/"
             const response = await fetch(URL + "listing/email", {
                 method: "POST",

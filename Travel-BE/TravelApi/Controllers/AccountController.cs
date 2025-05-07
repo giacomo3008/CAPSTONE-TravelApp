@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using TravelApi.Helpers;
 
 
 namespace TravelApi.Controllers
@@ -71,6 +72,7 @@ namespace TravelApi.Controllers
                 UserName = registerRequestDto.Email,
                 FirstName = registerRequestDto.FirstName,
                 LastName = registerRequestDto.LastName,
+                ColorProfile = HelperFunctions.GenerateRandomColor(),
             };
 
             var result = await _userManager.CreateAsync(newUser, registerRequestDto.Password);
@@ -134,6 +136,7 @@ namespace TravelApi.Controllers
             claims.Add(new Claim("firstName", user.FirstName));
             claims.Add(new Claim("lastName", user.LastName));
             claims.Add(new Claim("createdAt", user.CreatedAt.ToString("o")));
+            claims.Add(new Claim("colorString", user.ColorProfile));
             foreach (var role in roles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
@@ -211,6 +214,7 @@ namespace TravelApi.Controllers
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     CreatedAt = user.CreatedAt,
+                    ColorString = user.ColorProfile,
                     Roles = roles.ToList(),
                     ListingsCount = listingsCount
                 });
@@ -233,6 +237,7 @@ namespace TravelApi.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 CreatedAt = user.CreatedAt,
+                ColorString = user.ColorProfile,
                 Roles = roles.ToList(),
                 ListingsCount = listingsCount
             };

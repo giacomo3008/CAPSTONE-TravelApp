@@ -13,6 +13,8 @@ public class ApplicationUser : IdentityUser
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public string ColorProfile { get; set; }
+
     public ICollection<CartItem>? CartItems { get; set; }
 
     public ICollection<ApplicationUserRole> UserRoles { get; set; }

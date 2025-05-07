@@ -1,0 +1,70 @@
+.about-container {
+    font-family: 'Segoe UI', sans-serif;
+    color: #2c3e50;
+    background-color: #fefefe;
+    padding: 50px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    margin-top: 8rem;
+}
+
+.hero-section {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.hero-section h1 {
+    font-size: 3.2em;
+    margin-bottom: 10px;
+}
+
+.hero-section p {
+    font-size: 1.2em;
+    color: #555;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.mission-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 60px;
+}
+
+.mission-section .text {
+    flex: 1;
+    min-width: 300px;
+}
+
+.mission-section img {
+    flex: 1;
+    width: 100%;
+    border-radius: 12px;
+    max-width: 500px;
+    object-fit: cover;
+}
+
+.cta-section {
+    text-align: center;
+    background-color: #eaf6ff;
+    padding: 60px 30px;
+    border-radius: 16px;
+}
+
+.cta-section .cta-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 14px 30px;
+    background-color: #007BFF;
+    color: #fff;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.cta-section .cta-button:hover {
+    background-color: #0056b3;
+}
