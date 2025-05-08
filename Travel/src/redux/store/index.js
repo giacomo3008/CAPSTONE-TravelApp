@@ -13,6 +13,7 @@ import summaryBoxReducer from '../reducers/summaryBox';
 import FiltersModalReducer from '../reducers/filtersModal';
 import storageSession from 'redux-persist/lib/storage/session';
 import { persistReducer, persistStore } from 'redux-persist';
+import suggestedCitiesReducer from '../reducers/suggestedCities';
 
 const mainReducer = combineReducers({
     toggleSearch: toggleSearchReducer,
@@ -26,7 +27,8 @@ const mainReducer = combineReducers({
     cartInfo: cartInfoReducer,
     bookingInfo: bookingInfoReducer,
     summaryBox: summaryBoxReducer,
-    filtersModal: FiltersModalReducer
+    filtersModal: FiltersModalReducer,
+    suggestedCities: suggestedCitiesReducer,
 });
 
 const persistConfig = {

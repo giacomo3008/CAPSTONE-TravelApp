@@ -89,7 +89,7 @@ namespace TravelApi.Controllers
         }
 
         [HttpGet("{name}")]
-        public async Task<IActionResult> GetCityByName(string name, [FromQuery] int? budget)
+        public async Task<IActionResult> GetCityByName(string name, [FromQuery] DateOnly? startDate, [FromQuery] DateOnly? endDate, [FromQuery] int? budget)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace TravelApi.Controllers
                     return BadRequest("Il nome della città è obbligatorio.");
                 }
 
-                var city = await _cityService.GetCityByNameAsync(name, budget);
+                var city = await _cityService.GetCityByNameAsync(name, budget, startDate, endDate);
 
                 if (city == null)
                 {

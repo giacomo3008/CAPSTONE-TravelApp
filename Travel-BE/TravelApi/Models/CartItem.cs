@@ -30,5 +30,7 @@ namespace TravelApi.Models
 
         [ForeignKey(nameof(UserId))]
         public ApplicationUser User { get; set; }
+
+        public bool isBooked { get; set; }
     }
 }

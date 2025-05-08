@@ -19,6 +19,7 @@ const DetailsComponent = function () {
     const [guests, setGuests] = useState(1);
     const [maxGuests, setMaxGuests] = useState(1);
     const [invalidDates, setInvalidDates] = useState(false);
+    const [invalidDates2, setInvalidDates2] = useState(false);
     const [pulse, setPulse] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -40,6 +41,9 @@ const DetailsComponent = function () {
             console.error(error);
         }
     }
+    useEffect(() => {
+        setInvalidDates2(false);
+    }, [startDate, endDate]);
 
     useEffect(() => {
         getStructureDetails(id);
@@ -61,7 +65,7 @@ const DetailsComponent = function () {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (invalidDates) {
+        if (invalidDates || invalidDates2) {
             setPulse(true);
             setTimeout(() => {
                 setPulse(false);
@@ -78,8 +82,8 @@ const DetailsComponent = function () {
 
         try {
             const numberOfPeople = guests;
-            const URL = config.serverUrl;
-            const response = await fetch(URL + "/api/listing/cart/" + id, {
+            const URL = `${config.serverUrl}/api/listing/cart/${id}`;
+            const response = await fetch(URL, {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -96,7 +100,13 @@ const DetailsComponent = function () {
                 navigate('/');
             } else {
                 if (!response.ok) {
-                    throw new Error("Errore nella post del cart item!");
+                    const errorData = await response.json();
+                    if (errorData.message == "Date non disponibili!") {
+                        setInvalidDates2(true);
+                        return;
+                    } else {
+                        throw new Error("Errore nella post del cart item!");
+                    }
                 }
                 const data = await response.json();
                 console.log(data);
@@ -299,7 +309,14 @@ const DetailsComponent = function () {
                                     )
                                 }
                                 {
-                                    startDate && endDate && !invalidDates && (
+                                    invalidDates2 && (
+                                        <div className={`ps-2 error-message ${pulse ? 'pulse' : ''}`} style={{ color: 'red', marginTop: '10px' }}>
+                                            Purtroppo queste date non sono disponibili!
+                                        </div>
+                                    )
+                                }
+                                {
+                                    startDate && endDate && !invalidDates && !invalidDates2 && (
                                         <div class="summary-box">
                                             <p class="info-text mt-3 mb-4">Non riceverai alcun addebito in questa fase</p>
 

@@ -335,6 +335,19 @@ namespace TravelApi.Services
                 var user = await _userManager.FindByEmailAsync(userEmail);
                 if (user == null) return false;
 
+                var cartItems = await _context.CartItems.Where(ci => ci.ListingId == id).ToListAsync();
+
+                if (cartItems != null)
+                {
+                    _logger.LogInformation("----------------CART ITEMS PRESENTI DI QUESTA LISTING----------------------");
+                    var isAvalaible = !cartItems.Any(cart => cart.EndDate > cartItemRequestDto.StartDate && cart.StartDate < cartItemRequestDto.EndDate && cart.isBooked);
+                    if (!isAvalaible)
+                    {
+                        _logger.LogInformation("----------------ISAVAILABLE è FALSE----------------------");
+                        return false;
+                    }
+                }
+
                 var cartItem = new CartItem
                 {
                     Id = Guid.NewGuid(),

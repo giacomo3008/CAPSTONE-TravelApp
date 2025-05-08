@@ -69,6 +69,7 @@ npm run dev
 -  Search by **city**, **dates**, **budget**: 
 -  Filter results by **price**, **property type**, **beds**, and more  
 ![Testo alternativo](./Travel/src/assets/img/filters.png)
+-  The available accommodations for those dates will be shown!
 -  Wishlist management  
 -  Shopping cart for saved trips  
 -  Account information management  
@@ -87,7 +88,7 @@ npm run dev
   -  Budget Trips  
   -  Asian Destinations  
   -  European Getaways  
-- Once the reservation is made, an email will be sent to the account owner with the booking confirmation:
+- Once the reservation is made, the accommodation will no longer be available to other users and an email will be sent to the account owner with the booking confirmation:
 ![Testo alternativo](./Travel/src/assets/img/email.png)
 ![Testo alternativo](./Travel/src/assets/img/email2.png)
 

@@ -60,12 +60,15 @@ const RisultatiComponent = function () {
             payload: true,
         });
         const name = destination;
-        if (token) {
-            dispatch(cityStructures({ name, token, maxBudget }));
-        } else {
-            dispatch(cityStructures({ name, maxBudget }));
+        if (prieviousStartDate != null && prieviousEndDate != null) {
+            if (token) {
+                console.log(prieviousEndDate, prieviousStartDate);
+                dispatch(cityStructures({ name, token, maxBudget, prieviousStartDate, prieviousEndDate }));
+            } else {
+                console.log(prieviousEndDate, prieviousStartDate);
+                dispatch(cityStructures({ name, maxBudget, prieviousStartDate, prieviousEndDate }));
+            }
         }
-        console.log(prieviousEndDate, prieviousStartDate);
     }, [destination, maxBudget, prieviousStartDate, prieviousEndDate]);
 
 
@@ -103,7 +106,7 @@ const RisultatiComponent = function () {
                 const data = await response.json();
                 console.log(data);
                 const name = destination;
-                dispatch(cityStructures({ name, token }));
+                dispatch(cityStructures({ name, token, prieviousStartDate, prieviousEndDate }));
                 navigate(`/results/${destination}`);
             }
         } catch (err) {
@@ -138,7 +141,7 @@ const RisultatiComponent = function () {
                 }
                 const name = destination;
 
-                dispatch(cityStructures({ name, token }));
+                dispatch(cityStructures({ name, token, prieviousStartDate, prieviousEndDate }));
                 navigate(`/results/${destination}`);
             }
         } catch (err) {

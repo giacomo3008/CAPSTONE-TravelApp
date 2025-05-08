@@ -74,6 +74,7 @@ const BookingComponent = function () {
     const handleThankyou = async (e) => {
         e.preventDefault();
         const payload = {
+            CartItemId: structure.id,
             HotelName: structure.listing.hotelName,
             ImgUrl: structure.listing.imgUrls.length > 0 ? structure.listing.imgUrls[0] : null,
             RecipientEmail: user["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],

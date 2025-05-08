@@ -3,11 +3,20 @@ import config from '../../config';
 export const CITY_STRUCTURES = "CITY_STRUCTURES";
 export const CITY_STRUCTURES_NULL = "CITY_STRUCTURES_NULL";
 
-export const cityStructures = ({ name, token = null, maxBudget = null }) => async (dispatch) => {
+export const cityStructures = ({ name, token = null, maxBudget = null, prieviousStartDate = null, prieviousEndDate = null }) => async (dispatch) => {
     try {
-        const URL = maxBudget != null
-            ? `${config.serverUrl}/api/city/${name}?budget=${maxBudget}`
-            : `${config.serverUrl}/api/city/${name}`;
+        let URL = "";
+        console.log("ENTRATO IN ACTION: ", prieviousStartDate, prieviousEndDate);
+        if (prieviousStartDate != null && prieviousEndDate != null) {
+            URL = maxBudget != null
+                ? `${config.serverUrl}/api/city/${name}?startDate=${prieviousStartDate}&endDate=${prieviousEndDate}&budget=${maxBudget}`
+                : `${config.serverUrl}/api/city/${name}?startDate=${prieviousStartDate}&endDate=${prieviousEndDate}`;
+        } else {
+            URL = maxBudget != null
+                ? `${config.serverUrl}/api/city/${name}?budget=${maxBudget}`
+                : `${config.serverUrl}/api/city/${name}`;
+        }
+        console.log(URL);
         let response;
         if (token) {
             response = await fetch(URL, {

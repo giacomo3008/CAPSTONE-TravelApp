@@ -67,7 +67,7 @@ namespace TravelApi.Services
             }
         }
 
-        public async Task<City?> GetCityByNameAsync(string name, int? budget)
+        public async Task<City?> GetCityByNameAsync(string name, int? budget, DateOnly? startDate, DateOnly? endDate)
         {
             try
             {
@@ -78,8 +78,23 @@ namespace TravelApi.Services
                                 .ThenInclude(l => l.UserListingsFavorites)
                         .Include(c => c.ListingDescriptions)
                             .ThenInclude(ld => ld.PropertyType)
+                        .Include(c => c.ListingDescriptions)
+                             .ThenInclude(ld => ld.Listing)
+                                .ThenInclude(l => l.CartItems)
                         .Where(c => c.Name == name)
                         .FirstOrDefaultAsync();
+
+                if (startDate != null && endDate != null)
+                {
+                    _logger.LogInformation("----------------------STATRT DATE E END DATE DIVERSI DA NULLL----------------------");
+                    city.ListingDescriptions = city.ListingDescriptions
+                                        .Where(ld =>
+                                                ld.Listing.CartItems == null || !ld.Listing.CartItems.Any(cart =>
+                                                cart.EndDate > startDate && cart.StartDate < endDate && cart.isBooked
+                                            )
+                                        ).ToList();
+                }
+
 
                 if (city != null && budget.HasValue)
                 {

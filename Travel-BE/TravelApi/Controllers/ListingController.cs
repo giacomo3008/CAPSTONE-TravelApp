@@ -436,7 +436,7 @@ namespace TravelApi.Controllers
                 var result = await _listingService.AddToCartAsync(id, User, cartItemRequestDto);
                 if (!result)
                 {
-                    return BadRequest(new { message = "Something went wrong" });
+                    return BadRequest(new { message = "Date non disponibili!" });
                 }
                 return Ok(new { message = "Prodotto aggiunto al carrello correttamente!" });
             }

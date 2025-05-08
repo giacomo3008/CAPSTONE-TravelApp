@@ -6,6 +6,7 @@ namespace TravelApi.DTOs.Email
 {
     public class BookingDto
     {
+        public required Guid CartItemId { get; set; }
         public required string RecipientEmail { get; set; }
         public required string HotelName { get; set; }
         public string? ImgUrl { get; set; }
