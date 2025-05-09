@@ -16,11 +16,19 @@
 
 #### 🔧 Getting Started
 
+1. **Update the Connection String**  
+   Before running the application, update the connection string in the `appsettings.json` file with your local SQL Server connection string.
+
+2. **Run the SQL Script to Seed the Database**  
+   Execute the SQL script located in the main project folder named `SQLQueryTravelApi1.sql`. This script will populate the database with the necessary initial data.
+
+3. **Run the Application**
+
 ```bash
 cd Travel-BE
 cd TravelApi
 dotnet run
-```
+
 
 > This will start the backend server at `https://localhost:5001`  (by default)..
 
